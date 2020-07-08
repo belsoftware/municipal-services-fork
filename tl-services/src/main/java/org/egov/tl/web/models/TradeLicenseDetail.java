@@ -192,6 +192,16 @@ public class TradeLicenseDetail   {
                 this.verificationDocuments.add(verificationDocumentsItem);
             return this;
         }
+        @JsonProperty("cbrNumber")
+        @Size(max=256)
+        private String cbrNumber = null;
+        
+        @JsonProperty("approverDate")
+        private Long approverDate = null;
+        
+        @JsonProperty("selectedTradeSubType")
+        @Size(max=256)
+        private String selectedTradeSubType = null;
 
 }
 
