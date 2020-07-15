@@ -128,5 +128,6 @@ config:
     build:
       - work-dir: "pg-detail"
         image-name: "pg-detail"
-        dockerfile: "build/maven/Dockerfile" 
-
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "pg-detail/src/main/resources/db"
+        image-name: "pg-detail-db"
