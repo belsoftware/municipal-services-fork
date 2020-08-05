@@ -123,11 +123,3 @@ config:
       - work-dir: "bpa-calculator"
         image-name: "bpa-calculator"
         dockerfile: "build/maven/Dockerfile" 
-        
-  - name: "builds/municipal-services/pg-detail"
-    build:
-      - work-dir: "pg-detail"
-        image-name: "pg-detail"
-        dockerfile: "build/maven/Dockerfile"
-      - work-dir: "pg-detail/src/main/resources/db"
-        image-name: "pg-detail-db"
