@@ -1,0 +1,59 @@
+serviceMaps:
+ serviceName: lams-services
+ mappings:
+ - version: 1.0
+   description: Persists lease renewal details in eg_lams_leaserenewal  table
+   fromTopic: save-lams-lr
+   isTransaction: true
+   queryMaps:
+
+       - query: INSERT INTO eg_lams_leaserenewal( id, accountid,tenantid,applicationnumber,applicationdate,action,status,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: Leases.*
+         jsonMaps:
+          - jsonPath: $.Leases.*.id
+
+          - jsonPath: $.Leases.*.accountId
+
+          - jsonPath: $.Leases.*.tenantId
+
+          - jsonPath: $.Leases.*.applicationNumber
+
+          - jsonPath: $.Leases.*.applicationDate
+
+          - jsonPath: $.Leases.*.action
+
+          - jsonPath: $.Leases.*.status
+
+          - jsonPath: $.Leases.*.auditDetails.createdBy
+
+          - jsonPath: $.Leases.*.auditDetails.lastModifiedBy
+
+          - jsonPath: $.Leases.*.auditDetails.createdTime
+
+          - jsonPath: $.Leases.*.auditDetails.lastModifiedTime
+
+
+
+       - query: INSERT INTO eg_lams_leaserenewaldetail( id, surveyno, termno, termexpirydate , annualrent, leaserenewalid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: Leases.*.leaseDetails
+         jsonMaps:
+          - jsonPath: $.Leases.*.leaseDetails.id
+
+          - jsonPath: $.Leases.*.leaseDetails.surveyNo
+
+          - jsonPath: $.Leases.*.leaseDetails.termno
+
+          - jsonPath: $.Leases.*.leaseDetails.termExpiryDate
+
+          - jsonPath: $.Leases.*.leaseDetails.annualRent
+
+          - jsonPath: $.Leases.*.id
+
+          - jsonPath: $.Leases.*.auditDetails.createdBy
+
+          - jsonPath: $.Leases.*.auditDetails.lastModifiedBy
+
+          - jsonPath: $.Leases.*.auditDetails.createdTime
+
+          - jsonPath: $.Leases.*.auditDetails.lastModifiedTime
+
