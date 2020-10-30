@@ -7,53 +7,53 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-       - query: INSERT INTO eg_lams_leaserenewal( id, accountid,tenantid,applicationnumber,applicationdate,action,status,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-         basePath: Leases.*
+       - query: INSERT INTO eg_lams_leaserenewal(id,accountid,tenantid,applicationnumber,applicationdate,action,status,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: leases.*
          jsonMaps:
-          - jsonPath: $.Leases.*.id
+          - jsonPath: $.leases.*.id
 
-          - jsonPath: $.Leases.*.accountId
+          - jsonPath: $.leases.*.accountId
 
-          - jsonPath: $.Leases.*.tenantId
+          - jsonPath: $.leases.*.tenantId
 
-          - jsonPath: $.Leases.*.applicationNumber
+          - jsonPath: $.leases.*.applicationNumber
 
-          - jsonPath: $.Leases.*.applicationDate
+          - jsonPath: $.leases.*.applicationDate
 
-          - jsonPath: $.Leases.*.action
+          - jsonPath: $.leases.*.action
 
-          - jsonPath: $.Leases.*.status
+          - jsonPath: $.leases.*.status
 
-          - jsonPath: $.Leases.*.auditDetails.createdBy
+          - jsonPath: $.leases.*.auditDetails.createdBy
 
-          - jsonPath: $.Leases.*.auditDetails.lastModifiedBy
+          - jsonPath: $.leases.*.auditDetails.lastModifiedBy
 
-          - jsonPath: $.Leases.*.auditDetails.createdTime
+          - jsonPath: $.leases.*.auditDetails.createdTime
 
-          - jsonPath: $.Leases.*.auditDetails.lastModifiedTime
+          - jsonPath: $.leases.*.auditDetails.lastModifiedTime
 
 
 
-       - query: INSERT INTO eg_lams_leaserenewaldetail( id, surveyno, termno, termexpirydate , annualrent, leaserenewalid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-         basePath: Leases.*.leaseDetails
+       - query: INSERT INTO eg_lams_leaserenewaldetail(id,surveyno,termno,termexpirydate,annualrent,leaserenewalid,createdby,lastmodifiedby,createdtime,lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: leases.*.leaseDetails
          jsonMaps:
-          - jsonPath: $.Leases.*.leaseDetails.id
+          - jsonPath: $.leases.*.leaseDetails.id
 
-          - jsonPath: $.Leases.*.leaseDetails.surveyNo
+          - jsonPath: $.leases.*.leaseDetails.surveyNo
 
-          - jsonPath: $.Leases.*.leaseDetails.termno
+          - jsonPath: $.leases.*.leaseDetails.termno
 
-          - jsonPath: $.Leases.*.leaseDetails.termExpiryDate
+          - jsonPath: $.leases.*.leaseDetails.termExpiryDate
 
-          - jsonPath: $.Leases.*.leaseDetails.annualRent
+          - jsonPath: $.leases.*.leaseDetails.annualRent
 
-          - jsonPath: $.Leases.*.id
+          - jsonPath: $.leases.*.id
 
-          - jsonPath: $.Leases.*.auditDetails.createdBy
+          - jsonPath: $.leases.*.auditDetails.createdBy
 
-          - jsonPath: $.Leases.*.auditDetails.lastModifiedBy
+          - jsonPath: $.leases.*.auditDetails.lastModifiedBy
 
-          - jsonPath: $.Leases.*.auditDetails.createdTime
+          - jsonPath: $.leases.*.auditDetails.createdTime
 
-          - jsonPath: $.Leases.*.auditDetails.lastModifiedTime
+          - jsonPath: $.leases.*.auditDetails.lastModifiedTime
 

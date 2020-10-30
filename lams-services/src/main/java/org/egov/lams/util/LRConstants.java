@@ -23,7 +23,7 @@ public class LRConstants {
 
     public static final String ACTION_STATUS_APPLIED  = "APPLY_APPLIED";
     
-    public static final String NOTIFICATION_APPLIED = "lr.en.counter.submit";
+    public static final String NOTIFICATION_APPLIED = "lams.lr.submit";
     
     public static final String NOTIF_OWNER_NAME_KEY = "{OWNER_NAME}";
     

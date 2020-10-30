@@ -35,7 +35,7 @@ public class LamsRequest   {
         private List<LeaseAgreementRenewal> leases = null;
 
 
-        public LamsRequest addLicensesItem(LeaseAgreementRenewal leaseItem) {
+        public LamsRequest addLeaseItem(LeaseAgreementRenewal leaseItem) {
             if (this.leases == null) {
             this.leases = new ArrayList<>();
             }

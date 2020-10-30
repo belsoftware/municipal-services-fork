@@ -15,16 +15,22 @@ import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.AuditDetails;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class EnrichmentService {
 
+	@Autowired
     private IdGenRepository idGenRepository;
+	@Autowired
     private LamsConfiguration config;
+	@Autowired
     private CommonUtils commUtils;
+	@Autowired
     private UserService userService;
+	@Autowired
     private LamsRepository lamsRepository;
 
     public void enrichCreateRequest(LamsRequest lamsRequset) {
@@ -57,6 +63,7 @@ public class EnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getLeases().get(0).getTenantId();
         request.getLeases().forEach(lease -> {
+        	//System.out.println("requestInfo, tenantId "+requestInfo + tenantId);
         	String applicationNumber = getIdList(requestInfo, tenantId, config.getLamsLRApplNumIdgenName(), config.getLamsLRApplNumIdgenFormat(), 1).get(0);
         	lease.setApplicationNumber(applicationNumber);
         });

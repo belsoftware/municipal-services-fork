@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("lams-services/v1")
+@RequestMapping("/v1")
 public class LamsController {
 
 	@Autowired
@@ -29,8 +29,8 @@ public class LamsController {
 	private ResponseInfoFactory responseInfoFactory;
 
 	@PostMapping("/_create")
-	public ResponseEntity<LamsResponse> create(@Valid @RequestBody LamsRequest lamsRequest) {
-
+	public ResponseEntity<LamsResponse> create(@RequestBody LamsRequest lamsRequest) {
+		System.out.println("in service");
 		List<LeaseAgreementRenewal> leaseRenewal = lamsService.create(lamsRequest);
 		LamsResponse response = LamsResponse.builder().leases(leaseRenewal).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(lamsRequest.getRequestInfo(), true))

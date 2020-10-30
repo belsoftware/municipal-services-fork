@@ -17,8 +17,8 @@ public class LamsValidator {
 		request.getLeases().forEach(lease -> {
 			if (lease.getSurveyNo() == null || lease.getSurveyNo().isEmpty())
 				errorMap.put("NULL_SurveyNo", " Survey Number cannot be empty");
-			if (!lease.getTenantId().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getTenantId()))
-				errorMap.put("Invalid Tenant", "Invalid tenant id");
+			//if (!lease.getTenantId().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getTenantId()))
+				//errorMap.put("Invalid Tenant", "Invalid tenant id");
 			if (!errorMap.isEmpty())
 				throw new CustomException(errorMap);
 		});

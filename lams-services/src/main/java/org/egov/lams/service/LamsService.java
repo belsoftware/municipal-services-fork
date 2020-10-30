@@ -17,12 +17,16 @@ public class LamsService {
     @Autowired
     private EnrichmentService enrichmentService;
 
+    @Autowired
     private UserService userService;
     
+    @Autowired
     private LamsRepository repository;
-    
+
+    @Autowired
     private LamsValidator validator;
     
+    @Autowired
     private WorkflowIntegrator wfIntegrator;
     
     
