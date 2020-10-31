@@ -3,6 +3,7 @@ package org.egov.lams.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -77,7 +78,7 @@ public class UserService {
 	}
 
 	private String createUser(Citizen citizen, RequestInfo requestInfo, String tenantId) {
-		citizen.setUserName(citizen.getMobileNumber());
+		citizen.setUserName(UUID.randomUUID().toString());
 		citizen.setActive(true);
 		citizen.setTenantId(tenantId);
 		citizen.setType(UserType.CITIZEN);

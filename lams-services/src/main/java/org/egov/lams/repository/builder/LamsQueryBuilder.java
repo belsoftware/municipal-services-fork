@@ -24,22 +24,19 @@ public class LamsQueryBuilder {
 
     private static final String INNER_JOIN_STRING = " INNER JOIN ";
 
-    private static final String QUERY = "SELECT challan.*,chaladdr.*,challan.id as challan_id,challan.tenantid as challan_tenantId,challan.lastModifiedTime as " +
-            "challan_lastModifiedTime,challan.createdBy as challan_createdBy,challan.lastModifiedBy as challan_lastModifiedBy,challan.createdTime as " +
-            "challan_createdTime,chaladdr.id as chaladdr_id," +
-            "challan.accountId as uuid,challan.description as description  FROM eg_echallan challan"
+    private static final String QUERY = "SELECT renewal.*,renewaldetail.*,renewal.id as renewal_id,renewal.tenantid as renewal_tenantId,renewal.lastModifiedTime as " +
+            "renewal_lastModifiedTime,renewal.createdBy as renewal_createdBy,renewal.lastModifiedBy as renewal_lastModifiedBy,renewal.createdTime as " +
+            "renewal_createdTime,renewaldetail.id as renewaldetail_id," +
+            "renewal.accountId as uuid,renewal.description as description  FROM eg_lams_leaserenewal renewal"
             +INNER_JOIN_STRING
-            +"eg_challan_address chaladdr ON chaladdr.echallanid = challan.id";
+            +"eg_lams_leaserenewaldetail renewaldetail ON renewaldetail.leaserenewalid = renewal.id";
 
 
       private final String paginationWrapper = "SELECT * FROM " +
-              "(SELECT *, DENSE_RANK() OVER (ORDER BY challan_lastModifiedTime DESC , challan_id) offset_ FROM " +
+              "(SELECT *, DENSE_RANK() OVER (ORDER BY renewal_lastModifiedTime DESC , renewal_id) offset_ FROM " +
               "({})" +
               " result) result_offset " +
               "WHERE offset_ > ? AND offset_ <= ?";
-
-      public static final String FILESTOREID_UPDATE_SQL = "UPDATE eg_echallan SET filestoreid=? WHERE id=?";
-
 
 
     public String getLeaseRenewalSearchQuery(SearchCriteria criteria, List<Object> preparedStmtList) {
@@ -54,12 +51,6 @@ public class LamsQueryBuilder {
             builder.append(" lr.accountid = ? ");
             preparedStmtList.add(criteria.getAccountId());
 
-            List<String> ownerIds = criteria.getUserIds();
-            if(!CollectionUtils.isEmpty(ownerIds)) {
-                builder.append(" OR (lr.accountid IN (").append(createQuery(ownerIds)).append(")");
-                addToPreparedStatement(preparedStmtList,ownerIds);
-                addBusinessServiceClause(criteria,preparedStmtList,builder);
-            }
         }
         else {
 
@@ -75,20 +66,17 @@ public class LamsQueryBuilder {
                 addToPreparedStatement(preparedStmtList, ids);
             }
 
-            if (criteria.getLrApplNo()!= null) {
+            if (criteria.getApplicationNumber()!= null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  lr.challanno = ? ");
-                preparedStmtList.add(criteria.getLrApplNo());
+                builder.append("  lr.applicationnumber = ? ");
+                preparedStmtList.add(criteria.getApplicationNumber());
             }
             if (criteria.getStatus() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  lr.applicationstatus = ? ");
+                builder.append("  lr.status = ? ");
                 preparedStmtList.add(criteria.getStatus());
             }
-
-
         }
-
         return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
     }
 

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.config.LamsConfiguration;
+import org.egov.lams.model.SearchCriteria;
 import org.egov.lams.models.Idgen.IdResponse;
 import org.egov.lams.repository.IdGenRepository;
 import org.egov.lams.repository.LamsRepository;
@@ -68,5 +69,13 @@ public class EnrichmentService {
         	lease.setApplicationNumber(applicationNumber);
         });
     }
+
+	public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo, SearchCriteria criteria) {
+		if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
+            criteria.setAccountId(requestInfo.getUserInfo().getUuid());
+            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
+            criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+        }
+	}
 
 }

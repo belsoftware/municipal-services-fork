@@ -30,8 +30,8 @@ public class SearchCriteria {
 	@JsonProperty("ids")
 	private List<String> ids;
 
-	@JsonProperty("lrApplNo")
-	private String lrApplNo;
+	@JsonProperty("applicationNumber")
+	private String applicationNumber;
 	
 	@JsonProperty("accountId")
 	private String accountId;
@@ -42,8 +42,8 @@ public class SearchCriteria {
 	@JsonProperty("businessService")
 	private String businessService;
 	
-	@JsonProperty("userIds")
-	private List<String> userIds;
+	//@JsonProperty("userIds")
+	//private List<String> userIds;
 	
 	@JsonProperty("offset")
 	private Integer offset;
@@ -53,10 +53,22 @@ public class SearchCriteria {
 	
 	@JsonProperty("status")
     private String status;
-	
-	public boolean isEmpty() {
-        return (this.tenantId == null && this.ids == null  && this.mobileNumber == null 
-        );
-    }
 
+	@JsonProperty("applicationType")
+	private String applicationType;
+
+	@Override
+	public String toString() {
+		return "SearchCriteria [tenantId=" + tenantId + ", ids=" + ids + ", applicationNumber=" + applicationNumber
+				+ ", accountId=" + accountId + ", mobileNumber=" + mobileNumber + ", businessService=" + businessService
+				+ ", offset=" + offset + ", limit=" + limit + ", status=" + status + "]";
+	}
+
+	public boolean isEmpty() {
+		return (this.tenantId == null && this.status == null && this.applicationType == null && this.ids == null && this.applicationNumber == null
+                &&  this.mobileNumber == null 
+        );
+	}
+	
+	
 }
