@@ -10,10 +10,12 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.lams.model.Citizen;
+import org.egov.lams.model.SearchCriteria;
 import org.egov.lams.repository.ServiceRequestRepository;
 import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.user.CreateUserRequest;
+import org.egov.lams.web.models.user.UserDetailResponse;
 import org.egov.lams.web.models.user.UserResponse;
 import org.egov.lams.web.models.user.UserSearchRequest;
 import org.egov.lams.web.models.user.UserType;
@@ -92,4 +94,13 @@ public class UserService {
 		return res.getUser().get(0).getId().toString();
 	}
 	
+	public UserDetailResponse getUser(SearchCriteria criteria,RequestInfo requestInfo){
+        UserSearchRequest userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo)
+        		.tenantId(criteria.getTenantId()).mobileNumber(criteria.getMobileNumber()).active(true)
+        		.userType(LRConstants.ROLE_CITIZEN).build();
+        StringBuilder url = new StringBuilder(userHost+userSearchEndpoint); 
+        UserDetailResponse res = mapper.convertValue(serviceRequestRepository.fetchResult(url, userSearchRequest), UserDetailResponse.class);
+        return res;
+    }
+    
 }

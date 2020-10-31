@@ -1,8 +1,7 @@
 package org.egov.lams.service;
 
+import java.util.Collections;
 import java.util.List;
-
-import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.model.SearchCriteria;
@@ -10,6 +9,7 @@ import org.egov.lams.repository.LamsRepository;
 import org.egov.lams.validator.LamsValidator;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
+import org.egov.lams.web.models.user.UserDetailResponse;
 import org.egov.lams.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -47,8 +47,16 @@ public class LamsService {
 			HttpHeaders headers) {
 		List<LeaseAgreementRenewal> leases = null;
 		enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo, criteria);
+		if(criteria.getMobileNumber()!=null){
+			UserDetailResponse userDetailResponse = userService.getUser(criteria,requestInfo);
+	        if(userDetailResponse.getUser().size()==0){
+	            return Collections.emptyList();
+	        }
+	        criteria.setAccountId(userDetailResponse.getUser().get(0).getId().toString());
+        }
 		repository.getLeaseRenewals(criteria);
 		validator.validateUserwithOwnerDetail(requestInfo, leases);
 		return leases;
 	}
+	
 }
