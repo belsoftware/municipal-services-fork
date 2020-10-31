@@ -136,4 +136,12 @@ config:
     build:
       - work-dir: "echallan-calculator"
         image-name: "echallan-calculator"
-        dockerfile: "build/maven/Dockerfile"         
+        dockerfile: "build/maven/Dockerfile"     
+        
+  - name: "builds/municipal-services/lams-services"
+    build:
+      - work-dir: "lams-services"
+        image-name: "lams-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "lams-services/src/main/resources/db"
+        image-name: "lams-services-db"        
