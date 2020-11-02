@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.TimeZone;
 
-@SpringBootApplication
-@Component
+@SpringBootApplication(scanBasePackages = "org.egov.lams")
+@EnableAutoConfiguration
 @Import({ TracerConfiguration.class })
 public class LamsMain {
 
