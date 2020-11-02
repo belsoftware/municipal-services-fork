@@ -100,7 +100,7 @@
   </repositories>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
-    <pluginManagement> 
+
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -161,6 +161,6 @@
         </configuration>
       </plugin>
     </plugins>
-    </pluginManagement> 
+
   </build>
 </project>
