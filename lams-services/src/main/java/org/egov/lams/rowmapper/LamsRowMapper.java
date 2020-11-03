@@ -56,7 +56,7 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
                 		.action(rs.getString("action"))
                 		.tenantId(rs.getString("tenantid"))
                 		.status(rs.getString("status"))
-                		.filestoreid(rs.getString("filestoreid"))
+                		//.filestoreid(rs.getString("filestoreid"))
                         .id(id)
                         .businessService(LRConstants.businessService_LAMS)
                         .build();
