@@ -50,12 +50,12 @@ public class LamsQueryBuilder {
 
         StringBuilder builder = new StringBuilder(QUERY);
 
-        addBusinessServiceClause(criteria,preparedStmtList,builder);
+        //addBusinessServiceClause(criteria,preparedStmtList,builder);
 
 
         if(criteria.getAccountId()!=null){
             addClauseIfRequired(preparedStmtList,builder);
-            builder.append(" lr.accountid = ? ");
+            builder.append(" renewal.accountid = ? ");
             preparedStmtList.add(criteria.getAccountId());
 
         }
@@ -63,24 +63,24 @@ public class LamsQueryBuilder {
 
             if (criteria.getTenantId() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" lr.tenantid=? ");
+                builder.append(" renewal.tenantid=? ");
                 preparedStmtList.add(criteria.getTenantId());
             }
             List<String> ids = criteria.getIds();
             if (!CollectionUtils.isEmpty(ids)) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" lr.id IN (").append(createQuery(ids)).append(")");
+                builder.append(" renewal.id IN (").append(createQuery(ids)).append(")");
                 addToPreparedStatement(preparedStmtList, ids);
             }
 
             if (criteria.getApplicationNumber()!= null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  lr.applicationnumber = ? ");
+                builder.append("  renewal.applicationnumber = ? ");
                 preparedStmtList.add(criteria.getApplicationNumber());
             }
             if (criteria.getStatus() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  lr.status = ? ");
+                builder.append("  renewal.status = ? ");
                 preparedStmtList.add(criteria.getStatus());
             }
         }
@@ -88,14 +88,14 @@ public class LamsQueryBuilder {
     }
 
 
-    private void addBusinessServiceClause(SearchCriteria criteria,List<Object> preparedStmtList,StringBuilder builder){
+    /*private void addBusinessServiceClause(SearchCriteria criteria,List<Object> preparedStmtList,StringBuilder builder){
     	if(criteria.getBusinessService()!=null) {
     	List<String> businessServices = Arrays.asList(criteria.getBusinessService().split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" lr.businessservice IN (").append(createQuery(businessServices)).append(")");
             addToPreparedStatement(preparedStmtList, businessServices);
     }
-    }
+    }*/
 
     private String createQuery(List<String> ids) {
         StringBuilder builder = new StringBuilder();
