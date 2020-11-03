@@ -15,6 +15,7 @@ import org.egov.lams.util.CommonUtils;
 import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.AuditDetails;
 import org.egov.lams.web.models.LamsRequest;
+import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,8 +46,10 @@ public class EnrichmentService {
 	        leaseRenewals.setFilestoreid(null);
 	        if (requestInfo.getUserInfo().getType().equalsIgnoreCase(LRConstants.ROLE_CITIZEN))
 	        	leaseRenewals.setAccountId(requestInfo.getUserInfo().getUuid());
-	        leaseRenewals.getLeaseDetails().setId(UUID.randomUUID().toString());
-	        leaseRenewals.getLeaseDetails().setSurveyNo(leaseRenewals.getSurveyNo());
+	        LeaseAgreementRenewalDetail detail = new LeaseAgreementRenewalDetail();
+	        detail.setId(UUID.randomUUID().toString());
+	        detail.setSurveyNo(leaseRenewals.getSurveyNo());
+	        leaseRenewals.setLeaseDetails(detail);
         });
         setIdgenIds(lamsRequset);
     }
