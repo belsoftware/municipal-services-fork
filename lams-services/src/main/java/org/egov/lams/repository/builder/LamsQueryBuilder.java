@@ -23,13 +23,20 @@ public class LamsQueryBuilder {
     }
 
     private static final String INNER_JOIN_STRING = " INNER JOIN ";
+    
+    private static final String LEFT_JOIN = " LEFT JOIN ";
 
-    private static final String QUERY = "SELECT renewal.*,renewaldetail.*,renewal.id as renewal_id,renewal.tenantid as renewal_tenantId,renewal.lastModifiedTime as " +
-            "renewal_lastModifiedTime,renewal.createdBy as renewal_createdBy,renewal.lastModifiedBy as renewal_lastModifiedBy,renewal.createdTime as " +
-            "renewal_createdTime,renewaldetail.id as renewaldetail_id," +
-            "renewal.accountId as uuid,renewal.description as description  FROM eg_lams_leaserenewal renewal"
-            +INNER_JOIN_STRING
-            +"eg_lams_leaserenewaldetail renewaldetail ON renewaldetail.leaserenewalid = renewal.id";
+    private static final String QUERY = "SELECT renewal.*,renewaldetail.*,renewal.id as renewal_id,renewal.tenantid as renewal_tenantId,"
+    		+ "renewal.lastModifiedTime as renewal_lastModifiedTime,renewal.createdBy as renewal_createdBy,"
+    		+ "renewal.lastModifiedBy as renewal_lastModifiedBy,renewal.createdTime as renewal_createdTime,"
+    		+ "renewaldetail.id as renewaldetail_id,renewaldetail.lastModifiedTime as renewaldetail_lastModifiedTime,"
+    		+ "renewaldetail.createdBy as renewaldetail_createdBy,renewaldetail.lastModifiedBy as renewaldetail_lastModifiedBy,"
+    		+ "renewaldetail.createdTime as renewaldetail_createdTime,renewaldetail.surveyno as renewal_surveyno,"
+    		+ "renewal.accountId as uuid  FROM eg_lams_leaserenewal renewal "
+    		+ LEFT_JOIN
+    		+ "eg_lams_leaserenewaldetail renewaldetail ON renewaldetail.leaserenewalid = renewal.id "
+    		+ INNER_JOIN_STRING 
+    		+ "eg_lams_survey_no_details surveydetail ON surveydetail.surveyno = renewaldetail.surveyno";
 
 
       private final String paginationWrapper = "SELECT * FROM " +

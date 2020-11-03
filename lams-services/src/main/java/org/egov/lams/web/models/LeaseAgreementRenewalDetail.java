@@ -46,8 +46,8 @@ public class LeaseAgreementRenewalDetail   {
         private String surveyNo;
 
         @Size(max=64)
-        @JsonProperty("termNo")
-        private String termNo;
+        @JsonProperty("termno")
+        private String termno;
 
         @NotNull
         @Size(max=256)

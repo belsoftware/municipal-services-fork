@@ -107,7 +107,7 @@ public class  LeaseAgreementRenewal   {
 
         @Valid
         @NotNull
-        @JsonProperty("leaseAgreementRenewalDetail")
+        @JsonProperty("leaseDetails")
         private LeaseAgreementRenewalDetail leaseDetails;
 
         @JsonProperty("auditDetails")
