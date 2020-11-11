@@ -79,7 +79,7 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
                 .build();
 		LeaseAgreementRenewalDetail detail = LeaseAgreementRenewalDetail.builder()
 				.annualRent((Double) rs.getObject("annualrent"))
-				.area((Double) rs.getObject("area"))
+				.area(((Float) rs.getObject("area")).doubleValue())
 				.auditDetails(auditDetails)
 				.id(renewalDtlId)
 				.lesseAsPerGLR(rs.getString("lesse"))
