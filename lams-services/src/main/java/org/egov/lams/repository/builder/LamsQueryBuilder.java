@@ -32,7 +32,7 @@ public class LamsQueryBuilder {
     		+ "renewaldetail.id as renewaldetail_id,renewaldetail.lastModifiedTime as renewaldetail_lastModifiedTime,"
     		+ "renewaldetail.createdBy as renewaldetail_createdBy,renewaldetail.lastModifiedBy as renewaldetail_lastModifiedBy,"
     		+ "renewaldetail.createdTime as renewaldetail_createdTime,renewaldetail.surveyno as renewal_surveyno,"
-    		+ "renewal.accountId as uuid  FROM eg_lams_leaserenewal renewal "
+    		+ "renewal.accountId as uuid ,surveydetail.area ,surveydetail.lesse  FROM eg_lams_leaserenewal renewal "
     		+ LEFT_JOIN
     		+ "eg_lams_leaserenewaldetail renewaldetail ON renewaldetail.leaserenewalid = renewal.id "
     		+ INNER_JOIN_STRING 
