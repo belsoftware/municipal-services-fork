@@ -54,7 +54,7 @@ public class LamsService {
 	        }
 	        criteria.setAccountId(userDetailResponse.getUser().get(0).getId().toString());
         }
-		repository.getLeaseRenewals(criteria);
+		leases = repository.getLeaseRenewals(criteria);
 		validator.validateUserwithOwnerDetail(requestInfo, leases);
 		return leases;
 	}
