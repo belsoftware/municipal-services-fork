@@ -52,10 +52,8 @@ public class EnrichmentService {
 	        leaseRenewals.setFilestoreid(null);
 	        if (requestInfo.getUserInfo().getType().equalsIgnoreCase(LRConstants.ROLE_CITIZEN))
 	        	leaseRenewals.setAccountId(requestInfo.getUserInfo().getUuid());
-	        LeaseAgreementRenewalDetail detail = new LeaseAgreementRenewalDetail();
 	        leaseRenewals.getLeaseDetails().setId(UUID.randomUUID().toString());
 	        leaseRenewals.getLeaseDetails().setSurveyNo(leaseRenewals.getSurveyNo());
-	        leaseRenewals.setLeaseDetails(detail);
         });
         setIdgenIds(lamsRequset);
     }
