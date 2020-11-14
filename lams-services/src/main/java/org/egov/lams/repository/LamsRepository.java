@@ -2,8 +2,11 @@ package org.egov.lams.repository;
 
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.config.LamsConfiguration;
 import org.egov.lams.model.SearchCriteria;
 import org.egov.lams.producer.Producer;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,17 +56,37 @@ public class LamsRepository {
         producer.push(config.getSaveLamsLRTopic(), lamsRequest);
     }
     
-    public void update(LamsRequest lamsRequest) {
-    	
-        producer.push(config.getUpdateLamsLRTopic(), lamsRequest);
+    public void update(LamsRequest lamsRequest, Map<String, Boolean> idToIsStateUpdatableMap) {
+    	RequestInfo requestInfo = lamsRequest.getRequestInfo();
+        List<LeaseAgreementRenewal> leases = lamsRequest.getLeases();
+
+        List<LeaseAgreementRenewal> leasesForStatusUpdate = new LinkedList<>();
+        List<LeaseAgreementRenewal> leasesForUpdate = new LinkedList<>();
+
+
+        for (LeaseAgreementRenewal lease : leases) {
+            if (idToIsStateUpdatableMap.get(lease.getId())) {
+                leasesForUpdate.add(lease);
+            }
+            else {
+                leasesForStatusUpdate.add(lease);
+            }
+        }
+        System.out.println("in update "+leasesForUpdate.size() +" - "+leasesForStatusUpdate.size());
+        if (!CollectionUtils.isEmpty(leasesForUpdate))
+            producer.push(config.getUpdateLamsLRTopic(), new LamsRequest(requestInfo, leasesForUpdate));
+
+        if (!CollectionUtils.isEmpty(leasesForStatusUpdate))
+            producer.push(config.getUpdateLamsLRWorkflowTopic(), new LamsRequest(requestInfo, leasesForStatusUpdate));
+
     }
     
     
     public List<LeaseAgreementRenewal> getLeaseRenewals(SearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getLeaseRenewalSearchQuery(criteria, preparedStmtList);
-        List<LeaseAgreementRenewal> challans =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-        return challans;
+        List<LeaseAgreementRenewal> leases =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+        return leases;
     }
     
 }

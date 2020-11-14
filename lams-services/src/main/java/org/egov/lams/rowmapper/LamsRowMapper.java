@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.AuditDetails;
+import org.egov.lams.web.models.Document;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
 import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
 import org.egov.tracer.model.CustomException;
@@ -59,6 +60,8 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
                 		//.filestoreid(rs.getString("filestoreid"))
                         .id(id)
                         .businessService(LRConstants.businessService_LAMS)
+                        .workflowCode(rs.getString("workflowCode"))
+                        .applicationType(LeaseAgreementRenewal.ApplicationTypeEnum.fromValue(rs.getString( "applicationType")))
                         .build();
                 leaseAgreementMap.put(id,currentRenewal);
             }
@@ -70,6 +73,7 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
 
 	private void addChildrenToProperty(ResultSet rs, LeaseAgreementRenewal currentRenewal) throws SQLException {
 		
+		String tenantId = currentRenewal.getTenantId();
 		String renewalDtlId=rs.getString("renewaldetail_id");
 		AuditDetails auditDetails = AuditDetails.builder()
                 .createdBy(rs.getString("renewaldetail_createdBy"))
@@ -85,7 +89,17 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
 				.lesseAsPerGLR(rs.getString("lesse"))
 				.surveyNo(rs.getString("surveyno"))
 				.termExpiryDate((Long) rs.getObject("termexpirydate"))
-				.termno(rs.getString("termno"))
+				.termNo(rs.getString("termno"))
 				.build();
+		if(rs.getString("lams_ap_doc_id")!=null && rs.getBoolean("lams_ap_doc_active")) {
+            Document applicationDocument = Document.builder()
+                    .documentType(rs.getString("lams_ap_doc_documenttype"))
+                    .fileStoreId(rs.getString("lams_ap_doc_filestoreid"))
+                    .id(rs.getString("lams_ap_doc_id"))
+                    .tenantId(tenantId)
+                    .active(rs.getBoolean("lams_ap_doc_active"))
+                    .build();
+            currentRenewal.getLeaseDetails().addApplicationDocumentsItem(applicationDocument);
+        }
 		currentRenewal.setLeaseDetails(detail);
 	}}

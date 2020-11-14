@@ -125,5 +125,8 @@ public class  LeaseAgreementRenewal   {
         
         @JsonProperty("accountId")
         private String accountId;
+
+        @JsonProperty("approvedDate")
+        private Long approvedDate = null;
 }
 

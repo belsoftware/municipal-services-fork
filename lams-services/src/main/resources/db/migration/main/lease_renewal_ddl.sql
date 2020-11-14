@@ -9,14 +9,14 @@ CREATE TABLE public.eg_lams_mst_office
     parentdeoid character varying(25) COLLATE pg_catalog."default",
     emailid character varying(25) COLLATE pg_catalog."default",
     CONSTRAINT eg_lams_mst_office_pkey PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE public.eg_lams_property_location
 (
     id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     location character varying(50) COLLATE pg_catalog."default",
     CONSTRAINT eg_lams_property_location_pkey PRIMARY KEY (id)
-)
+);
 
 
 CREATE TABLE public.eg_lams_survey_no_details
@@ -39,7 +39,7 @@ CREATE TABLE public.eg_lams_survey_no_details
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
+);
 
 
 CREATE TABLE public.eg_lams_leaserenewal
@@ -55,8 +55,33 @@ CREATE TABLE public.eg_lams_leaserenewal
     lastmodifiedby character varying(64) COLLATE pg_catalog."default",
     createdtime bigint,
     lastmodifiedtime bigint,
+    approveddate bigint,
+    applicationtype character varying(64) COLLATE pg_catalog."default",
+    workflowcode character varying(64) COLLATE pg_catalog."default",
+    businessservice character varying(64) COLLATE pg_catalog."default",
     CONSTRAINT eg_lams_leaserenewal_pkey PRIMARY KEY (id)
-)
+);
+
+
+
+CREATE TABLE public.eg_lams_leaserenewal_audit
+(
+    id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    accountid character varying(64) COLLATE pg_catalog."default",
+    tenantid character varying(64) COLLATE pg_catalog."default",
+    applicationnumber character varying(64) COLLATE pg_catalog."default",
+    applicationdate bigint,
+    action character varying(64) COLLATE pg_catalog."default",
+    status character varying(64) COLLATE pg_catalog."default",
+    createdby character varying(64) COLLATE pg_catalog."default",
+    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    createdtime bigint,
+    lastmodifiedtime bigint,
+    approveddate bigint,
+    applicationtype character varying(64) COLLATE pg_catalog."default",
+    workflowcode character varying(64) COLLATE pg_catalog."default",
+    businessservice character varying(64) COLLATE pg_catalog."default"
+);
 
 CREATE TABLE public.eg_lams_leaserenewaldetail
 (
@@ -75,6 +100,36 @@ CREATE TABLE public.eg_lams_leaserenewaldetail
         REFERENCES public.eg_lams_leaserenewal (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
+);
 
+CREATE TABLE public.eg_lams_leaserenewaldetail_audit
+(
+    id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    surveyno character varying(25) COLLATE pg_catalog."default",
+    termno character varying(25) COLLATE pg_catalog."default",
+    termexpirydate bigint,
+    annualrent real,
+    leaserenewalid character varying(64) COLLATE pg_catalog."default",
+    createdby character varying(64) COLLATE pg_catalog."default",
+    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    createdtime bigint,
+    lastmodifiedtime bigint
+);
 
+CREATE TABLE public.eg_lams_applicationdocument
+(
+    id character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    documenttype character varying(64) COLLATE pg_catalog."default",
+    filestoreid character varying(64) COLLATE pg_catalog."default",
+    leaserenewaldetailid character varying(64) COLLATE pg_catalog."default",
+    active boolean,
+    createdby character varying(64) COLLATE pg_catalog."default",
+    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    createdtime bigint,
+    lastmodifiedtime bigint,
+    CONSTRAINT uk_eg_lams_applicationdocument PRIMARY KEY (id),
+    CONSTRAINT fk_eg_lams_applicationdocument FOREIGN KEY (leaserenewaldetailid)
+        REFERENCES public.eg_lams_leaserenewaldetail (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);

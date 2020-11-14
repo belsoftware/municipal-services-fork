@@ -1,6 +1,7 @@
 package org.egov.lams.service;
 
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -15,7 +16,10 @@ import org.egov.lams.util.CommonUtils;
 import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.AuditDetails;
 import org.egov.lams.web.models.LamsRequest;
+import org.egov.lams.web.models.LeaseAgreementRenewal;
 import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
+import org.egov.lams.web.models.workflow.BusinessService;
+import org.egov.lams.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,8 @@ public class EnrichmentService {
     private UserService userService;
 	@Autowired
     private LamsRepository lamsRepository;
+	@Autowired
+	private WorkflowService workflowService;
 
     public void enrichCreateRequest(LamsRequest lamsRequset) {
         RequestInfo requestInfo = lamsRequset.getRequestInfo();
@@ -82,5 +88,62 @@ public class EnrichmentService {
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         }
 	}
+
+	public void enrichLamsUpdateRequest(LamsRequest lamsRequest, BusinessService businessService) {
+		RequestInfo requestInfo = lamsRequest.getRequestInfo();
+        AuditDetails auditDetails = commUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+        lamsRequest.getLeases().forEach(lease -> {
+            lease.setAuditDetails(auditDetails);
+            enrichAssignes(lease);
+            String nameOfBusinessService = lease.getBusinessService();
+            if(nameOfBusinessService==null){
+                nameOfBusinessService=LRConstants.businessService_LAMS;
+                lease.setBusinessService(nameOfBusinessService);
+            }
+            if (workflowService.isStateUpdatable(lease.getStatus(), businessService)) {
+                lease.getLeaseDetails().setAuditDetails(auditDetails);
+
+                if(!CollectionUtils.isEmpty(lease.getLeaseDetails().getApplicationDocuments())){
+                    lease.getLeaseDetails().getApplicationDocuments().forEach(document -> {
+                        if(document.getId()==null){
+                            document.setId(UUID.randomUUID().toString());
+                            document.setActive(true);
+                        }
+                    });
+                }
+            }
+            else {
+                if(!CollectionUtils.isEmpty(lease.getLeaseDetails().getVerificationDocuments())){
+                    lease.getLeaseDetails().getVerificationDocuments().forEach(document -> {
+                        if(document.getId()==null){
+                            document.setId(UUID.randomUUID().toString());
+                            document.setActive(true);
+                        }
+                    });
+                }
+            }
+        });
+		
+	}
+	
+	public void enrichAssignes(LeaseAgreementRenewal lease) {
+		if (lease.getAction().equalsIgnoreCase(LRConstants.CITIZEN_SENDBACK_ACTION)) {
+			List<String> assignes = new LinkedList<>();
+			if (lease.getAccountId() != null)
+				assignes.add(lease.getAccountId());
+			lease.setAssignee(assignes);
+		}
+	}
+
+	public void postStatusEnrichment(LamsRequest lamsRequest,List<String>endstates){
+        List<LeaseAgreementRenewal> leases = lamsRequest.getLeases();
+		for (int i = 0; i < leases.size(); i++) {
+            LeaseAgreementRenewal lease = leases.get(i);
+            if ((lease.getStatus() != null) && lease.getStatus().equalsIgnoreCase(endstates.get(i))) {
+                Long time = System.currentTimeMillis();
+                lease.setApprovedDate(time);
+            }
+        }
+    }
 
 }

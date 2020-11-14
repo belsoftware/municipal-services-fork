@@ -17,6 +17,8 @@ public class LRConstants {
     
     public static final String LR_APPLIED = "APPLIED";
     
+    public static final String ACTION_APPLY  = "APPLY";
+    
     public static final String LR_COUNTER_EMPLOYEE = "LR_CEMP";
     
     public static final String ROLE_CITIZEN = "CITIZEN";
@@ -36,4 +38,16 @@ public class LRConstants {
     public static final String MODULE = "rainmaker-lr";
     
     public static final List<String> NOTIFICATION_CODES = Collections.unmodifiableList(Arrays.asList(NOTIFICATION_APPLIED));
+
+	public static final String CITIZEN_SENDBACK_ACTION = "SENDBACK";
+	
+	public static final String STATUS_APPROVED  = "APPROVED";
+	
+	public static final String ACTION_APPROVE  = "APPROVE";
+	
+	public static final String STATUS_APPLIED  = "APPLIED";
+	
+	public static final String ACTION_REJECT  = "REJECT";
+	
+	public static final String STATUS_REJECTED  = "REJECTED";
 }

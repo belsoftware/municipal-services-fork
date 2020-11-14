@@ -80,6 +80,9 @@ public class LamsConfiguration {
 
     @Value("${persister.update.lamsLR.topic}")
     private String updateLamsLRTopic;
+    
+    @Value("${persister.update.lamsLR.workflow.topic}")
+    private String updateLamsLRWorkflowTopic;
 
 
     // Workflow
@@ -96,7 +99,9 @@ public class LamsConfiguration {
 
     @Value("${is.external.workflow.enabled}")
     private Boolean isExternalWorkFlowEnabled;
-
+    
+    @Value("${create.lams.workflow.name}")
+    private String lamsBusinessServiceValue;
 
     //Localization
     @Value("${egov.localization.host}")
