@@ -53,8 +53,8 @@ public class EnrichmentService {
 	        if (requestInfo.getUserInfo().getType().equalsIgnoreCase(LRConstants.ROLE_CITIZEN))
 	        	leaseRenewals.setAccountId(requestInfo.getUserInfo().getUuid());
 	        LeaseAgreementRenewalDetail detail = new LeaseAgreementRenewalDetail();
-	        detail.setId(UUID.randomUUID().toString());
-	        detail.setSurveyNo(leaseRenewals.getSurveyNo());
+	        leaseRenewals.getLeaseDetails().setId(UUID.randomUUID().toString());
+	        leaseRenewals.getLeaseDetails().setSurveyNo(leaseRenewals.getSurveyNo());
 	        leaseRenewals.setLeaseDetails(detail);
         });
         setIdgenIds(lamsRequset);
