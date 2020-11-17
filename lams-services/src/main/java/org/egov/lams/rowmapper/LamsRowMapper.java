@@ -75,22 +75,25 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
 		
 		String tenantId = currentRenewal.getTenantId();
 		String renewalDtlId=rs.getString("renewaldetail_id");
-		AuditDetails auditDetails = AuditDetails.builder()
-                .createdBy(rs.getString("renewaldetail_createdBy"))
-                .createdTime(rs.getLong("renewaldetail_createdTime"))
-                .lastModifiedBy(rs.getString("renewaldetail_lastModifiedBy"))
-                .lastModifiedTime(rs.getLong("renewaldetail_createdTime"))
-                .build();
-		LeaseAgreementRenewalDetail detail = LeaseAgreementRenewalDetail.builder()
-				.annualRent((Double) rs.getObject("annualrent"))
-				.area(((Float) rs.getObject("area")).doubleValue())
-				.auditDetails(auditDetails)
-				.id(renewalDtlId)
-				.lesseAsPerGLR(rs.getString("lesse"))
-				.surveyNo(rs.getString("surveyno"))
-				.termExpiryDate((Long) rs.getObject("termexpirydate"))
-				.termNo(rs.getString("termno"))
-				.build();
+		if(currentRenewal.getLeaseDetails()==null) {
+			AuditDetails auditDetails = AuditDetails.builder()
+	                .createdBy(rs.getString("renewaldetail_createdBy"))
+	                .createdTime(rs.getLong("renewaldetail_createdTime"))
+	                .lastModifiedBy(rs.getString("renewaldetail_lastModifiedBy"))
+	                .lastModifiedTime(rs.getLong("renewaldetail_createdTime"))
+	                .build();
+			LeaseAgreementRenewalDetail detail = LeaseAgreementRenewalDetail.builder()
+					.annualRent((Double) rs.getObject("annualrent"))
+					.area(((Float) rs.getObject("area")).doubleValue())
+					.auditDetails(auditDetails)
+					.id(renewalDtlId)
+					.lesseAsPerGLR(rs.getString("lesse"))
+					.surveyNo(rs.getString("surveyno"))
+					.termExpiryDate((Long) rs.getObject("termexpirydate"))
+					.termNo(rs.getString("termno"))
+					.build();
+			currentRenewal.setLeaseDetails(detail);
+		}
 		if(rs.getString("lams_ap_doc_id")!=null && rs.getBoolean("lams_ap_doc_active")) {
             Document applicationDocument = Document.builder()
                     .documentType(rs.getString("lams_ap_doc_documenttype"))
@@ -101,5 +104,4 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
                     .build();
             currentRenewal.getLeaseDetails().addApplicationDocumentsItem(applicationDocument);
         }
-		currentRenewal.setLeaseDetails(detail);
 	}}

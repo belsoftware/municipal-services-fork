@@ -59,12 +59,12 @@ public class LamsController {
     }
 	
 	@RequestMapping(value = { "/_update"}, method = RequestMethod.POST)
-    public ResponseEntity<LamsResponse> update(@Valid @RequestBody LamsRequest tradeLicenseRequest,
+    public ResponseEntity<LamsResponse> update( @RequestBody LamsRequest lamsRequest,
                                                        @PathVariable(required = false) String servicename) {
-        List<LeaseAgreementRenewal> licenses = lamsService.update(tradeLicenseRequest, servicename);
+        List<LeaseAgreementRenewal> licenses = lamsService.update(lamsRequest, servicename);
 
         LamsResponse response = LamsResponse.builder().leases(licenses).responseInfo(
-                responseInfoFactory.createResponseInfoFromRequestInfo(tradeLicenseRequest.getRequestInfo(), true))
+                responseInfoFactory.createResponseInfoFromRequestInfo(lamsRequest.getRequestInfo(), true))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
