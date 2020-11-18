@@ -7,7 +7,8 @@ CREATE TABLE public.eg_lams_mst_office
     shortname character varying(25) COLLATE pg_catalog."default",
     commandid character varying(25) COLLATE pg_catalog."default",
     parentdeoid character varying(25) COLLATE pg_catalog."default",
-    emailid character varying(25) COLLATE pg_catalog."default",
+    emailid character varying(64) COLLATE pg_catalog."default",
+    tenantid character varying(64) COLLATE pg_catalog."default",
     CONSTRAINT eg_lams_mst_office_pkey PRIMARY KEY (id)
 );
 

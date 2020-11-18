@@ -11,7 +11,9 @@ import org.egov.lams.config.LamsConfiguration;
 import org.egov.lams.model.SearchCriteria;
 import org.egov.lams.producer.Producer;
 import org.egov.lams.repository.builder.LamsQueryBuilder;
+import org.egov.lams.repository.builder.LamsQueryBuilderMaster;
 import org.egov.lams.rowmapper.LamsRowMapper;
+import org.egov.lams.rowmapper.LamsRowMapperMaster;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,19 +37,25 @@ public class LamsRepository {
     private JdbcTemplate jdbcTemplate;
 
     private LamsQueryBuilder queryBuilder;
+    
+    private LamsQueryBuilderMaster queryBuildermaster;
 
     private LamsRowMapper rowMapper;
+    
+    private LamsRowMapperMaster rowMapperMaster;
     
     private RestTemplate restTemplate;
 
     @Autowired
-    public LamsRepository(Producer producer, LamsConfiguration config,LamsQueryBuilder queryBuilder,
-    		JdbcTemplate jdbcTemplate,LamsRowMapper rowMapper,RestTemplate restTemplate) {
+    public LamsRepository(Producer producer, LamsConfiguration config,LamsQueryBuilder queryBuilder,LamsQueryBuilderMaster queryBuildermaster,
+    		JdbcTemplate jdbcTemplate,LamsRowMapper rowMapper,LamsRowMapperMaster rowMapperMaster ,RestTemplate restTemplate) {
         this.producer = producer;
         this.config = config;
         this.jdbcTemplate = jdbcTemplate;
         this.queryBuilder = queryBuilder ; 
+        this.queryBuildermaster = queryBuildermaster;
         this.rowMapper = rowMapper;
+        this.rowMapperMaster=rowMapperMaster;
         this.restTemplate = restTemplate;
     }
 
@@ -88,5 +96,14 @@ public class LamsRepository {
         List<LeaseAgreementRenewal> leases =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         return leases;
     }
+
+	public List<LeaseAgreementRenewal> getLeaseDetails(SearchCriteria criteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuildermaster.getLeaseDetails(criteria, preparedStmtList);
+        System.out.println("q "+query);
+        System.out.println("preparedStmtList "+preparedStmtList.size());
+        List<LeaseAgreementRenewal> leases =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapperMaster);
+        return leases;
+	}
     
 }

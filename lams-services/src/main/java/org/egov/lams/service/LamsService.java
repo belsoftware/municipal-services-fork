@@ -129,4 +129,12 @@ public class LamsService {
             return Collections.emptyList();
         return leases;
     }
+
+	public List<LeaseAgreementRenewal> getLeaseDetails(SearchCriteria criteria, RequestInfo requestInfo) {
+		List<LeaseAgreementRenewal> leases = null;
+		//if(criteria.isEmpty())
+            //criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+		leases = repository.getLeaseDetails(criteria);
+		return leases;
+	}
 }

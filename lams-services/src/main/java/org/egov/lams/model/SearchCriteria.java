@@ -56,7 +56,19 @@ public class SearchCriteria {
 
 	@JsonProperty("applicationType")
 	private String applicationType;
+	
+	@JsonProperty("located")
+	private String located;
 
+	@JsonProperty("type")
+	private String type;
+	
+	@JsonProperty("surveyNo")
+	private String surveyNo;
+	
+	@JsonProperty("termNo")
+	private String termNo;
+	
 	@Override
 	public String toString() {
 		return "SearchCriteria [tenantId=" + tenantId + ", ids=" + ids + ", applicationNumber=" + applicationNumber

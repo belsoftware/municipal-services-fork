@@ -69,4 +69,14 @@ public class LamsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+	@RequestMapping(value = { "/_getLeaseDetails"}, method = RequestMethod.POST)
+    public ResponseEntity<LamsResponse> getLeaseDetails(@RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                        @ModelAttribute SearchCriteria criteria
+            ) {
+        List<LeaseAgreementRenewal> leaseAgreements = lamsService.getLeaseDetails(criteria, requestInfoWrapper.getRequestInfo());
+        LamsResponse response = LamsResponse.builder().leases(leaseAgreements).responseInfo(
+                responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
