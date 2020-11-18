@@ -34,13 +34,15 @@ public class LamsQueryBuilder {
     		+ "renewaldetail.createdTime as renewaldetail_createdTime,renewaldetail.surveyno as renewal_surveyno,"
     		+ "renewal.accountId as uuid ,surveydetail.area ,surveydetail.lesse ,"
     		+ "lamsapldoc.id as lams_ap_doc_id,lamsapldoc.documenttype as lams_ap_doc_documenttype,"
-    		+ "lamsapldoc.filestoreid as lams_ap_doc_filestoreid,lamsapldoc.active as lams_ap_doc_active FROM eg_lams_leaserenewal renewal "
+    		+ "lamsapldoc.filestoreid as lams_ap_doc_filestoreid,lamsapldoc.active as lams_ap_doc_active, loc.location FROM eg_lams_leaserenewal renewal "
     		+ LEFT_JOIN
     		+ "eg_lams_leaserenewaldetail renewaldetail ON renewaldetail.leaserenewalid = renewal.id "
     		+ LEFT_JOIN
             + "eg_lams_applicationdocument lamsapldoc ON lamsapldoc.leaserenewaldetailid = renewaldetail.id"
     		+ INNER_JOIN_STRING 
-    		+ "eg_lams_survey_no_details surveydetail ON surveydetail.surveyno = renewaldetail.surveyno";
+    		+ "eg_lams_survey_no_details surveydetail ON surveydetail.surveyno = renewaldetail.surveyno"
+    		+ LEFT_JOIN
+    		+ "eg_lams_property_location loc ON loc.id= surveydetail.propertylocationid";
 
 
       private final String paginationWrapper = "SELECT * FROM " +

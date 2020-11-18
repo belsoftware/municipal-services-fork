@@ -48,6 +48,13 @@ public class LeaseAgreementRenewalDetail   {
         @Size(max=64)
         @JsonProperty("termNo")
         private String termNo;
+        
+        @JsonProperty("located")
+        private String located;
+        
+        @Size(max=64)
+        @JsonProperty("category")
+        private String category;
 
         @NotNull
         @Size(max=256)

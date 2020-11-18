@@ -16,6 +16,7 @@ import org.egov.lams.rowmapper.LamsRowMapper;
 import org.egov.lams.rowmapper.LamsRowMapperMaster;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
+import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -97,12 +98,10 @@ public class LamsRepository {
         return leases;
     }
 
-	public List<LeaseAgreementRenewal> getLeaseDetails(SearchCriteria criteria) {
+	public List<LeaseAgreementRenewalDetail> getLeaseDetails(SearchCriteria criteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuildermaster.getLeaseDetails(criteria, preparedStmtList);
-        System.out.println("q "+query);
-        System.out.println("preparedStmtList "+preparedStmtList.size());
-        List<LeaseAgreementRenewal> leases =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapperMaster);
+        List<LeaseAgreementRenewalDetail> leases =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapperMaster);
         return leases;
 	}
     

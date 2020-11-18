@@ -18,6 +18,7 @@ import org.egov.lams.util.LRConstants;
 import org.egov.lams.validator.LamsValidator;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
+import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
 import org.egov.lams.web.models.user.UserDetailResponse;
 import org.egov.lams.web.models.workflow.BusinessService;
 import org.egov.lams.workflow.ActionValidator;
@@ -142,8 +143,8 @@ public class LamsService {
         return leases;
     }
 
-	public List<LeaseAgreementRenewal> getLeaseDetails(SearchCriteria criteria, RequestInfo requestInfo) {
-		List<LeaseAgreementRenewal> leases = null;
+	public List<LeaseAgreementRenewalDetail> getLeaseDetails(SearchCriteria criteria, RequestInfo requestInfo) {
+		List<LeaseAgreementRenewalDetail> leases = null;
 		//if(criteria.isEmpty())
             //criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
 		leases = repository.getLeaseDetails(criteria);

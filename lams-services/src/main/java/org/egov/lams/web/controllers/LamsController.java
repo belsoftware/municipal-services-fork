@@ -9,7 +9,9 @@ import org.egov.lams.service.LamsService;
 import org.egov.lams.util.ResponseInfoFactory;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LamsResponse;
+import org.egov.lams.web.models.LamsResponseMaster;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
+import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
 import org.egov.lams.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -70,11 +72,11 @@ public class LamsController {
     }
 
 	@RequestMapping(value = { "/_getLeaseDetails"}, method = RequestMethod.POST)
-    public ResponseEntity<LamsResponse> getLeaseDetails(@RequestBody RequestInfoWrapper requestInfoWrapper,
+    public ResponseEntity<LamsResponseMaster> getLeaseDetails(@RequestBody RequestInfoWrapper requestInfoWrapper,
                                                         @ModelAttribute SearchCriteria criteria
             ) {
-        List<LeaseAgreementRenewal> leaseAgreements = lamsService.getLeaseDetails(criteria, requestInfoWrapper.getRequestInfo());
-        LamsResponse response = LamsResponse.builder().leases(leaseAgreements).responseInfo(
+        List<LeaseAgreementRenewalDetail> leaseAgreements = lamsService.getLeaseDetails(criteria, requestInfoWrapper.getRequestInfo());
+        LamsResponseMaster response = LamsResponseMaster.builder().leases(leaseAgreements).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);

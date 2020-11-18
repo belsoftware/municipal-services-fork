@@ -20,26 +20,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Component
-public class LamsRowMapperMaster  implements ResultSetExtractor<List<LeaseAgreementRenewal>> {
+public class LamsRowMapperMaster  implements ResultSetExtractor<List<LeaseAgreementRenewalDetail>> {
 	@Autowired
     private ObjectMapper mapper;
 	
 	@Override
-	public List<LeaseAgreementRenewal> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		Map<String, LeaseAgreementRenewal> leaseAgreementMap = new LinkedHashMap<>();
+	public List<LeaseAgreementRenewalDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		Map<String, LeaseAgreementRenewalDetail> leaseAgreementMap = new LinkedHashMap<>();
 		while (rs.next()) {
             String id = rs.getString("survey_id");
-            LeaseAgreementRenewal currentRenewal = leaseAgreementMap.get(id);
+            LeaseAgreementRenewalDetail currentRenewal = leaseAgreementMap.get(id);
 
             if(currentRenewal == null){
-                currentRenewal = LeaseAgreementRenewal.builder().build();
-                LeaseAgreementRenewalDetail detail = LeaseAgreementRenewalDetail.builder()
+                currentRenewal = LeaseAgreementRenewalDetail.builder()
     					.area(((Float) rs.getObject("area")).doubleValue())
     					.id(id)
     					.lesseAsPerGLR(rs.getString("lesse"))
     					.surveyNo(rs.getString("surveyno"))
     					.build();
-    			currentRenewal.setLeaseDetails(detail);
                 leaseAgreementMap.put(id,currentRenewal);
             }
 
