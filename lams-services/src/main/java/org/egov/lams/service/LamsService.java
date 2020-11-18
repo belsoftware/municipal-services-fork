@@ -1,5 +1,6 @@
 package org.egov.lams.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.config.LamsConfiguration;
 import org.egov.lams.model.SearchCriteria;
+import org.egov.lams.model.UserInfo;
 import org.egov.lams.repository.LamsRepository;
 import org.egov.lams.util.CommonUtils;
 import org.egov.lams.util.LRConstants;
@@ -84,6 +86,13 @@ public class LamsService {
 	        criteria.setAccountId(userDetailResponse.getUser().get(0).getId().toString());
         }*/
 		leases = repository.getLeaseRenewals(criteria);
+		leases.forEach(lease -> {
+			List<UserInfo> userDetails = new ArrayList<UserInfo>();
+			UserDetailResponse userDetailResponse = userService.getUserById(lease.getAccountId(), requestInfo);
+			System.out.println(userDetailResponse.getUser().get(0).getName());
+			userDetails.add(userDetailResponse.getUser().get(0));
+			lease.setUserDetails(userDetails);
+		});
 		validator.validateUserwithOwnerDetail(requestInfo, leases);
 		return leases;
 	}

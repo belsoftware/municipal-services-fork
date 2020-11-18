@@ -51,7 +51,7 @@ public class EnrichmentService {
 	        leaseRenewals.setStatus(LRConstants.LR_APPLIED);
 	        leaseRenewals.setFilestoreid(null);
 	        if (requestInfo.getUserInfo().getType().equalsIgnoreCase(LRConstants.ROLE_CITIZEN))
-	        	leaseRenewals.setAccountId(requestInfo.getUserInfo().getUuid());
+	        	leaseRenewals.setAccountId(requestInfo.getUserInfo().getId().toString());
 	        leaseRenewals.getLeaseDetails().setId(UUID.randomUUID().toString());
 	        leaseRenewals.getLeaseDetails().setSurveyNo(leaseRenewals.getSurveyNo());
 	        leaseRenewals.setApplicationDate(auditDetails.getCreatedTime());
@@ -86,7 +86,7 @@ public class EnrichmentService {
 
 	public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo, SearchCriteria criteria) {
 		if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
-            criteria.setAccountId(requestInfo.getUserInfo().getUuid());
+            criteria.setAccountId(requestInfo.getUserInfo().getId().toString());
             criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         }

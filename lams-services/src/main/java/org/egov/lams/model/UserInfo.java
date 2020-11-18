@@ -45,9 +45,9 @@ public class UserInfo extends User {
 
   private String uuid;
 
-  @JsonProperty("userName")
+  @JsonProperty("name")
 
-  private String userName;
+  private String name;
 
   @JsonProperty("password")
 
@@ -61,14 +61,22 @@ public class UserInfo extends User {
 
   private String mobileNumber;
 
-  @JsonProperty("email")
+  @JsonProperty("emailId")
 
-  private String email;
+  private String emailId;
 
   @JsonProperty("primaryrole")
 
   private List<Role> primaryrole = new ArrayList<Role>();
 
+  
+  @JsonProperty("aadhaarNumber")
+
+  private String aadhaarNumber;
+  
+  @JsonProperty("pan")
+
+  private String pan;
   public UserInfo tenantId(String tenantId) {
     this.tenantId = tenantId;
     return this;

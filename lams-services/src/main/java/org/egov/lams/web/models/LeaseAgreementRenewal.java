@@ -8,7 +8,9 @@ import javax.validation.constraints.Size;
 
 import lombok.*;
 
+import org.egov.common.contract.request.User;
 import org.egov.lams.model.Citizen;
+import org.egov.lams.model.UserInfo;
 import org.egov.lams.util.LRConstants;
 import org.springframework.validation.annotation.Validated;
 
@@ -128,5 +130,8 @@ public class  LeaseAgreementRenewal   {
 
         @JsonProperty("approvedDate")
         private Long approvedDate = null;
+        
+        @JsonProperty("userDetails")
+        private List<UserInfo> userDetails;
 }
 
