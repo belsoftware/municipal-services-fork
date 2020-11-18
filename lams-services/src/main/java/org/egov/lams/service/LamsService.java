@@ -73,13 +73,16 @@ public class LamsService {
 			HttpHeaders headers) {
 		List<LeaseAgreementRenewal> leases = null;
 		enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo, criteria);
-		if(criteria.getMobileNumber()!=null){
+		
+		// demo comment
+		//to be uncommented CEMP tries with mob number
+		/*if(criteria.getMobileNumber()!=null){
 			UserDetailResponse userDetailResponse = userService.getUser(criteria,requestInfo);
 	        if(userDetailResponse.getUser().size()==0){
 	            return Collections.emptyList();
 	        }
 	        criteria.setAccountId(userDetailResponse.getUser().get(0).getId().toString());
-        }
+        }*/
 		leases = repository.getLeaseRenewals(criteria);
 		validator.validateUserwithOwnerDetail(requestInfo, leases);
 		return leases;

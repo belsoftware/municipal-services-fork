@@ -68,6 +68,7 @@ public class LamsValidator {
         if (searchResult.size() != leases.size())
             throw new CustomException("INVALID UPDATE", "The lease to be updated is not in database");
         validateAllIds(searchResult, leases);
+        // demo comment
         //validateFields(request);
         validateDuplicateDocuments(request);
     }
