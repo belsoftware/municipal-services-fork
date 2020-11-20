@@ -2,6 +2,7 @@ package org.egov.lams.service;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -105,10 +106,8 @@ public class UserService {
     }
 	
 	public UserDetailResponse getUserByUUid(String accountId,RequestInfo requestInfo){
-        List<String> uuids = new ArrayList<String>();
-        uuids.add(accountId);
 		UserSearchRequest userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo)
-        		.uuid(uuids)
+        		.uuid(Arrays.asList(accountId))
         		.userType(LRConstants.ROLE_CITIZEN).build();
         StringBuilder url = new StringBuilder(userHost+userSearchEndpoint); 
         UserDetailResponse res = mapper.convertValue(serviceRequestRepository.fetchResult(url, userSearchRequest), UserDetailResponse.class);
