@@ -77,7 +77,7 @@ public class UserService {
 		if(CollectionUtils.isEmpty(res.getUser())) {
 			return null;
 		}
-		return res.getUser().get(0).getId().toString();
+		return res.getUser().get(0).getUuid().toString();
 	}
 
 	private String createUser(Citizen citizen, RequestInfo requestInfo, String tenantId) {
@@ -92,7 +92,7 @@ public class UserService {
 		StringBuilder url = new StringBuilder(userHost+userCreateEndpoint); 
 		CreateUserRequest req = CreateUserRequest.builder().citizen(citizen).requestInfo(requestInfo).build();
 		UserResponse res = mapper.convertValue(serviceRequestRepository.fetchResult(url, req), UserResponse.class);
-		return res.getUser().get(0).getId().toString();
+		return res.getUser().get(0).getUuid().toString();
 	}
 	
 	public UserDetailResponse getUser(SearchCriteria criteria,RequestInfo requestInfo){
