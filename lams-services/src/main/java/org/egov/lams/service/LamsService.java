@@ -89,7 +89,7 @@ public class LamsService {
 		leases = repository.getLeaseRenewals(criteria);
 		leases.forEach(lease -> {
 			List<UserInfo> userDetails = new ArrayList<UserInfo>();
-			UserDetailResponse userDetailResponse = userService.getUserById(lease.getAccountId(), requestInfo);
+			UserDetailResponse userDetailResponse = userService.getUserByUUid(lease.getAccountId(), requestInfo);
 			System.out.println(userDetailResponse.getUser().get(0).getName());
 			userDetails.add(userDetailResponse.getUser().get(0));
 			lease.setUserDetails(userDetails);

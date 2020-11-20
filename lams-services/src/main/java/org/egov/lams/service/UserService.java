@@ -104,12 +104,11 @@ public class UserService {
         return res;
     }
 	
-	public UserDetailResponse getUserById(String accountId,RequestInfo requestInfo){
-        List<Long> id = new ArrayList<Long>();
-        id.add(Long.parseLong(accountId));
-        System.out.println("acc "+accountId);
+	public UserDetailResponse getUserByUUid(String accountId,RequestInfo requestInfo){
+        List<String> uuids = new ArrayList<String>();
+        uuids.add(accountId);
 		UserSearchRequest userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo)
-        		.id(id)
+        		.uuid(uuids)
         		.userType(LRConstants.ROLE_CITIZEN).build();
         StringBuilder url = new StringBuilder(userHost+userSearchEndpoint); 
         UserDetailResponse res = mapper.convertValue(serviceRequestRepository.fetchResult(url, userSearchRequest), UserDetailResponse.class);
