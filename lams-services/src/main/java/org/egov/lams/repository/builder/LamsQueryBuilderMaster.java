@@ -40,7 +40,7 @@ public class LamsQueryBuilderMaster {
 
     private String addPaginationWrapper(String query,List<Object> preparedStmtList,
                                       SearchCriteria criteria ){
-        int limit = config.getDefaulLamsimit();
+        int limit = config.getDefaultLamsLimit();
         int offset = config.getDefaultOffset();
         String finalQuery = paginationWrapperMaster.replace("{}",query);
 

@@ -77,15 +77,13 @@ public class LamsService {
 		List<LeaseAgreementRenewal> leases = null;
 		enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo, criteria);
 		
-		// demo comment
-		//to be uncommented CEMP tries with mob number
-		/*if(criteria.getMobileNumber()!=null){
+		if(criteria.getMobileNumber()!=null){
 			UserDetailResponse userDetailResponse = userService.getUser(criteria,requestInfo);
 	        if(userDetailResponse.getUser().size()==0){
 	            return Collections.emptyList();
 	        }
-	        criteria.setAccountId(userDetailResponse.getUser().get(0).getId().toString());
-        }*/
+	        criteria.setAccountId(userDetailResponse.getUser().get(0).getUuid().toString());
+        }
 		leases = repository.getLeaseRenewals(criteria);
 		leases.forEach(lease -> {
 			List<UserInfo> userDetails = new ArrayList<UserInfo>();
@@ -106,9 +104,9 @@ public class LamsService {
         String businessServiceName = config.getLamsBusinessServiceValue();
         BusinessService businessService = workflowService.getBusinessService(lamsRequest.getLeases().get(0).getTenantId(), 
         		lamsRequest.getRequestInfo(), businessServiceName);
-        List<LeaseAgreementRenewal> searchResult = getLeasesWithInfo(lamsRequest);
         actionValidator.validateUpdateRequest(lamsRequest, businessService);
         enrichmentService.enrichLamsUpdateRequest(lamsRequest, businessService);
+        List<LeaseAgreementRenewal> searchResult = getLeasesWithInfo(lamsRequest);
         validator.validateUpdate(lamsRequest, searchResult);
         
         Map<String, Boolean> idToIsStateUpdatableMap = util.getIdToIsStateUpdatableMap(businessService, searchResult);

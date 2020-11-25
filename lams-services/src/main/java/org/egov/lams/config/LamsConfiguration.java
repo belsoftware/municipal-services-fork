@@ -124,7 +124,7 @@ public class LamsConfiguration {
     private String mdmsEndPoint;
 
     @Value("${egov.lams.default.limit}")
-    private Integer defaulLamsimit;
+    private Integer defaultLamsLimit;
 
     @Value("${egov.lams.default.offset}")
     private Integer defaultOffset;

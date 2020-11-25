@@ -1,10 +1,13 @@
 package org.egov.lams.repository;
 
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.config.LamsConfiguration;
@@ -20,6 +23,8 @@ import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -36,7 +41,9 @@ public class LamsRepository {
     private LamsConfiguration config;
 
     private JdbcTemplate jdbcTemplate;
-
+    
+    private NamedParameterJdbcTemplate parameterJdbcTemplate;
+    
     private LamsQueryBuilder queryBuilder;
     
     private LamsQueryBuilderMaster queryBuildermaster;
@@ -49,12 +56,14 @@ public class LamsRepository {
 
     @Autowired
     public LamsRepository(Producer producer, LamsConfiguration config,LamsQueryBuilder queryBuilder,LamsQueryBuilderMaster queryBuildermaster,
-    		JdbcTemplate jdbcTemplate,LamsRowMapper rowMapper,LamsRowMapperMaster rowMapperMaster ,RestTemplate restTemplate) {
+    		JdbcTemplate jdbcTemplate,LamsRowMapper rowMapper,LamsRowMapperMaster rowMapperMaster ,RestTemplate restTemplate,
+    		NamedParameterJdbcTemplate parameterJdbcTemplate) {
         this.producer = producer;
         this.config = config;
         this.jdbcTemplate = jdbcTemplate;
         this.queryBuilder = queryBuilder ; 
         this.queryBuildermaster = queryBuildermaster;
+        this.parameterJdbcTemplate = parameterJdbcTemplate;
         this.rowMapper = rowMapper;
         this.rowMapperMaster=rowMapperMaster;
         this.restTemplate = restTemplate;
@@ -103,6 +112,12 @@ public class LamsRepository {
         String query = queryBuildermaster.getLeaseDetails(criteria, preparedStmtList);
         List<LeaseAgreementRenewalDetail> leases =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapperMaster);
         return leases;
+	}
+
+	public void deleteApplDocs(List<String> docIdsStored) {
+        String query = queryBuilder.deleteApplDocs();
+        Map namedParameters = Collections.singletonMap("ids", docIdsStored);
+        parameterJdbcTemplate.update(query, namedParameters);
 	}
     
 }

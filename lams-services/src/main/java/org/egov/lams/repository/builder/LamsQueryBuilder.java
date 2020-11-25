@@ -2,6 +2,7 @@ package org.egov.lams.repository.builder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.lams.config.LamsConfiguration;
 import org.egov.lams.model.SearchCriteria;
@@ -51,6 +52,7 @@ public class LamsQueryBuilder {
               " result) result_offset " +
               "WHERE offset_ > ? AND offset_ <= ?";
 
+     private final String QUERY_DELETE_APPDOC= "Delete from eg_lams_applicationdocument where id IN (:ids)" ;
 
     public String getLeaseRenewalSearchQuery(SearchCriteria criteria, List<Object> preparedStmtList) {
 
@@ -121,7 +123,7 @@ public class LamsQueryBuilder {
 
     private String addPaginationWrapper(String query,List<Object> preparedStmtList,
                                       SearchCriteria criteria){
-        int limit = config.getDefaulLamsimit();
+        int limit = config.getDefaultLamsLimit();
         int offset = config.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}",query);
 
@@ -150,7 +152,9 @@ public class LamsQueryBuilder {
     }
 
 
-
-
+	public String deleteApplDocs() {
+		StringBuilder builder = new StringBuilder(QUERY_DELETE_APPDOC);
+		return builder.toString();
+	}
 
 }
