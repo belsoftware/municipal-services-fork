@@ -58,6 +58,38 @@ public class NotificationUtil {
 			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_APPLIED, localizationMessage);
 			message = getAppliedMsg(leaseRenewal, messageTemplate);
 			break;
+		case LRConstants.ACTION_STATUS_CITIZENREVIEW:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_CITIZENREVIEW, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_APPROVED:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_APPROVED, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_REJECTED:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_REJECTED, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_CEOEXAMINATION:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_CEOEXAMINATION, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_DEOEXAMINATION:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_DEOEXAMINATION, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_PDDEEXAMINATION:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_PDDEEXAMINATION, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_DGDEEXAMINATION:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_DGDEEXAMINATION, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
+		case LRConstants.ACTION_STATUS_MODEXAMINATION:
+			messageTemplate = getMessageTemplate(LRConstants.NOTIFICATION_MODEXAMINATION, localizationMessage);
+			message = getAppliedMsg(leaseRenewal, messageTemplate);
+			break;
 		}
 
 		return message;
