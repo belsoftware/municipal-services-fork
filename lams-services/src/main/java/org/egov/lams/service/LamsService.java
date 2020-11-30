@@ -88,7 +88,6 @@ public class LamsService {
 		leases.forEach(lease -> {
 			List<UserInfo> userDetails = new ArrayList<UserInfo>();
 			UserDetailResponse userDetailResponse = userService.getUserByUUid(lease.getAccountId(), requestInfo);
-			System.out.println(userDetailResponse.getUser().get(0).getName());
 			userDetails.add(userDetailResponse.getUser().get(0));
 			lease.setUserDetails(userDetails);
 		});

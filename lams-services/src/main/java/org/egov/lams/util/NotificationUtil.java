@@ -91,7 +91,6 @@ public class NotificationUtil {
 			message = getAppliedMsg(leaseRenewal, messageTemplate);
 			break;
 		}
-		log.info("action_status : "+ACTION_STATUS+" .. message : "+message );
 		return message;
 	}
 
@@ -105,7 +104,6 @@ public class NotificationUtil {
 		} catch (Exception e) {
 			log.warn("Fetching from localization failed", e);
 		}
-		log.info("template "+message);
 		return message;
 	}
 

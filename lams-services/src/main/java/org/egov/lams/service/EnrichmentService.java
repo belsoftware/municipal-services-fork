@@ -88,7 +88,7 @@ public class EnrichmentService {
 
 	public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo, SearchCriteria criteria) {
 		if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
-            criteria.setAccountId(requestInfo.getUserInfo().getId().toString());
+            criteria.setAccountId(requestInfo.getUserInfo().getUuid().toString());
             criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         }
