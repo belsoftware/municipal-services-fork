@@ -40,6 +40,6 @@
 
 package org.egov.lams.web.models.user;
 
-public enum UserType {
+/*public enum UserType {
     CITIZEN, EMPLOYEE, SYSTEM, BUSINESS;
-}
+}*/

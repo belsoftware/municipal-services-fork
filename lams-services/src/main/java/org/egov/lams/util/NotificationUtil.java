@@ -111,7 +111,7 @@ public class NotificationUtil {
 
 
 	private String getAppliedMsg(LeaseAgreementRenewal lease, String message) {
-		message = message.replace("<2>", lease.getSurveyNo());
+		message = message.replace("<2>", lease.getLeaseDetails().getSurveyNo());
 		message = message.replace("<3>", lease.getApplicationNumber());
 
 		return message;

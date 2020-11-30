@@ -23,6 +23,7 @@ import org.egov.common.contract.request.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,49 +38,60 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserInfo extends User {
 
-  @JsonProperty("tenantId")
+  //@JsonProperty("tenantId")
 
-  private String tenantId;
+  //private String tenantId;
 
-  @JsonProperty("uuid")
+  //@JsonProperty("uuid")
 
-  private String uuid;
+  //private String uuid;
 
-  @JsonProperty("name")
+  //@JsonProperty("name")
 
-  private String name;
+  //private String name;
 
-  @JsonProperty("password")
+  //@JsonProperty("password")
 
-  private String password;
+  //private String password;
 
-  @JsonProperty("idToken")
+  //@JsonProperty("idToken")
 
-  private String idToken;
+  //private String idToken;
 
-  @JsonProperty("mobileNumber")
+  //@JsonProperty("mobileNumber")
 
-  private String mobileNumber;
+  //private String mobileNumber;
 
-  @JsonProperty("emailId")
+  //@JsonProperty("emailId")
 
-  private String emailId;
+  //private String emailId;
 
-  @JsonProperty("primaryrole")
+  //@JsonProperty("primaryrole")
 
-  private List<Role> primaryrole = new ArrayList<Role>();
+  //private List<Role> primaryrole = new ArrayList<Role>();
 
   
   @JsonProperty("aadhaarNumber")
-
   private String aadhaarNumber;
   
   @JsonProperty("pan")
-
   private String pan;
-  public UserInfo tenantId(String tenantId) {
-    this.tenantId = tenantId;
-    return this;
-  }
+  
+  @JsonProperty("roles")
+  private List<Role> roles;
+  
+  private Boolean active;
+  //private Gender gender;
+  
+  public void addUserDetail(User user){
+      this.setId(user.getId());
+      this.setUserName(user.getUserName());
+      this.setName(user.getName());
+      this.setMobileNumber(user.getMobileNumber());
+      this.setEmailId(user.getEmailId());
+      this.setType(user.getType());
+      this.setRoles(user.getRoles());
+      this.setTenantId(user.getTenantId());
+}
 
 }

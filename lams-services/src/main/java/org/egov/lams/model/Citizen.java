@@ -1,6 +1,6 @@
 package org.egov.lams.model;
 
-import java.util.List;
+/*import java.util.List;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -50,4 +50,4 @@ public class Citizen {
 	
 	@JsonProperty("roles")
     private List<Role> roles;
-}
+}*/

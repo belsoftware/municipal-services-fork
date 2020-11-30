@@ -40,7 +40,7 @@
 
 package org.egov.lams.model;
 
-public enum Gender {
+/*public enum Gender {
     //This order should not be interrupted
     FEMALE, MALE, OTHERS;
-}
+}*/

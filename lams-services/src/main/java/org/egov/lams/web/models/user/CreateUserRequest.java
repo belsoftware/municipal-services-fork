@@ -1,7 +1,7 @@
 package org.egov.lams.web.models.user;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.lams.model.Citizen;
+import org.egov.lams.model.UserInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,7 +19,7 @@ public class CreateUserRequest {
 	private RequestInfo requestInfo;
 	
 	@JsonProperty("user")
-    private Citizen citizen;
+    private UserInfo userInfo;
 }
 
 

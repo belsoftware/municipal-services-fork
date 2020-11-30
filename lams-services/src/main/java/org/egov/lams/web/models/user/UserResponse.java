@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.lams.model.Citizen;
+import org.egov.lams.model.UserInfo;
 
 import java.util.List;
 
@@ -20,5 +20,5 @@ public class UserResponse {
 	ResponseInfo responseInfo;
 
     @JsonProperty("user")
-    List<Citizen> user;
+    List<UserInfo> user;
 }

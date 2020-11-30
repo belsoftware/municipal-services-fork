@@ -62,18 +62,16 @@ public class LAMSNotificationService {
 			String message = null;
 			String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 			message = util.getCustomizedMsg(request.getRequestInfo(), leaseRenewal, localizationMessages);
-
 			if (message == null)
 				continue;
 
 			Map<String, String> mobileNumberToOwner = new HashMap<>();
-
-			if (leaseRenewal.getCitizen() != null)
-				mobileNumberToOwner.put(leaseRenewal.getCitizen().getMobileNumber(),
-						leaseRenewal.getCitizen().getName());
-			else
-				mobileNumberToOwner.put(request.getRequestInfo().getUserInfo().getMobileNumber(), 
-						request.getRequestInfo().getUserInfo().getName());
+			
+			leaseRenewal.getUserDetails().forEach(userdetail->{
+				if(userdetail.getMobileNumber()!= null)
+					mobileNumberToOwner.put(userdetail.getMobileNumber(),
+						userdetail.getName());
+			});
 			smsRequests.addAll(util.createSMSRequest(message, mobileNumberToOwner));
 		}
 	}

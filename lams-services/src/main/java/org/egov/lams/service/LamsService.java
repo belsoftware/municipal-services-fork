@@ -118,7 +118,7 @@ public class LamsService {
             lamsWorkflowService.updateStatus(lamsRequest);
         }
         enrichmentService.postStatusEnrichment(lamsRequest,endStates);
-        userService.createUser(lamsRequest);
+        //userService.createUser(lamsRequest);
         repository.update(lamsRequest, idToIsStateUpdatableMap );
         leaseResponse=  lamsRequest.getLeases();
 		return leaseResponse;
