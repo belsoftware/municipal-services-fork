@@ -155,7 +155,7 @@ public class UserService {
         UserSearchRequest userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo)
         		.tenantId(criteria.getTenantId()).mobileNumber(criteria.getMobileNumber()).active(true)
         		.userType(LRConstants.ROLE_CITIZEN).build();
-        StringBuilder url = new StringBuilder(userHost+userContextPath+userSearchEndpoint); 
+        StringBuilder url = new StringBuilder(userHost+userSearchEndpoint); 
         UserDetailResponse res = mapper.convertValue(serviceRequestRepository.fetchResult(url, userSearchRequest), UserDetailResponse.class);
         return res;
     }
