@@ -69,6 +69,12 @@ public class SearchCriteria {
 	@JsonProperty("termNo")
 	private String termNo;
 	
+	@JsonProperty("fromDate")
+    private Long fromDate = null;
+
+    @JsonProperty("toDate")
+    private Long toDate = null;
+	
 	@Override
 	public String toString() {
 		return "SearchCriteria [tenantId=" + tenantId + ", ids=" + ids + ", applicationNumber=" + applicationNumber

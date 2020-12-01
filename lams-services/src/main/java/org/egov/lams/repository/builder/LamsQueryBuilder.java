@@ -80,16 +80,30 @@ public class LamsQueryBuilder {
                 builder.append(" renewal.id IN (").append(createQuery(ids)).append(")");
                 addToPreparedStatement(preparedStmtList, ids);
             }
-
             if (criteria.getApplicationNumber()!= null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  renewal.applicationnumber = ? ");
+                builder.append(" renewal.applicationnumber = ? ");
                 preparedStmtList.add(criteria.getApplicationNumber());
             }
             if (criteria.getStatus() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append("  renewal.status = ? ");
+                builder.append(" renewal.status = ? ");
                 preparedStmtList.add(criteria.getStatus());
+            }
+            if (criteria.getFromDate() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" renewal.applicationDate >= ? ");
+                preparedStmtList.add(criteria.getFromDate());
+            }
+            if (criteria.getToDate() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" renewal.applicationDate <= ? ");
+                preparedStmtList.add(criteria.getToDate());
+            }
+            if (criteria.getSurveyNo() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" renewaldetail.surveyno = ? ");
+                preparedStmtList.add(criteria.getToDate());
             }
         }
         return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);

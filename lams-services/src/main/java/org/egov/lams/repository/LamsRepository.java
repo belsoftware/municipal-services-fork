@@ -90,7 +90,6 @@ public class LamsRepository {
                 leasesForStatusUpdate.add(lease);
             }
         }
-        System.out.println("in update "+leasesForUpdate.size() +" - "+leasesForStatusUpdate.size());
         if (!CollectionUtils.isEmpty(leasesForUpdate))
             producer.push(config.getUpdateLamsLRTopic(), new LamsRequest(requestInfo, leasesForUpdate));
 

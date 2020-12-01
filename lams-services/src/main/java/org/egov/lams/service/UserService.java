@@ -63,6 +63,8 @@ public class UserService {
 
 					if (userDetail.getUuid() == null)
 						leaseRenewal.setAccountId(createUser(userDetail, requestInfo, leaseRenewal.getTenantId()));
+					else
+						leaseRenewal.setAccountId(userDetail.getUuid());
 				});
 			} else if (requestInfo.getUserInfo().getType().equalsIgnoreCase(LRConstants.ROLE_CITIZEN)) {
 				List<UserInfo> userDetails = new ArrayList<UserInfo>();
@@ -88,7 +90,7 @@ public class UserService {
 	private String createUser(UserInfo userInfo, RequestInfo requestInfo, String tenantId) {
 		userInfo.setUserName(UUID.randomUUID().toString());
 		userInfo.setActive(true);
-		userInfo.setTenantId(tenantId);
+		userInfo.setTenantId(tenantId.split("\\.")[0]);
 		userInfo.setType(LRConstants.ROLE_CITIZEN);
 		userInfo.setRoles(
 				Collections.singletonList(Role.builder().code(LRConstants.ROLE_CITIZEN).name("Citizen").build()));
