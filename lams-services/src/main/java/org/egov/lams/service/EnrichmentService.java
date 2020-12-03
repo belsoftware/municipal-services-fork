@@ -2,10 +2,8 @@ package org.egov.lams.service;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,6 +16,7 @@ import org.egov.lams.repository.LamsRepository;
 import org.egov.lams.util.CommonUtils;
 import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.AuditDetails;
+import org.egov.lams.web.models.Document;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
 import org.egov.lams.web.models.workflow.BusinessService;
@@ -109,8 +108,8 @@ public class EnrichmentService {
                 lease.getLeaseDetails().setAuditDetails(auditDetails);
 
                 if(!CollectionUtils.isEmpty(lease.getLeaseDetails().getApplicationDocuments())){
-                	//List<String> docIdsStored =new ArrayList<String>();
-                	List<String> docIdsRecived =new ArrayList<String>();
+                	List<String> docIdstoDelete =new ArrayList<String>();
+                	List<Document> docsToDelete =new ArrayList<Document>();
                 	/*SearchCriteria criteria = new SearchCriteria();
                 	criteria.setApplicationNumber(lease.getApplicationNumber());
                 	criteria.setTenantId(lease.getTenantId());
@@ -126,13 +125,15 @@ public class EnrichmentService {
                             document.setActive(true);
                         }
                         else if(!document.getActive()){
-                        	docIdsRecived.add(document.getId());
-                        	lease.getLeaseDetails().getApplicationDocuments().remove(document);
+                        	docsToDelete.add(document);
+                        	docIdstoDelete.add(document.getId());
                         }
                     });
                     //docIdsStored.removeAll(docIdsRecived);
-                    if(docIdsRecived.size()>0)
-                    	lamsRepository.deleteApplDocs(docIdsRecived);
+                    if(docsToDelete.size()>0) {
+                    	lamsRepository.deleteApplDocs(docIdstoDelete);
+                    	lease.getLeaseDetails().getApplicationDocuments().removeAll(docsToDelete);
+                    }
                 }
             }
             else {
