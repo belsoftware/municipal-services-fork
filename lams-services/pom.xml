@@ -141,7 +141,6 @@
         <configuration>
           <jsonLibrary>jackson2</jsonLibrary>
           <classes>
-            <class>org.egov.lams.model.Citizen</class>
             <class>org.egov.lams.model.Error</class>
             <class>org.egov.lams.model.ErrorRes</class>
             <class>org.egov.lams.web.models.LeaseAgreementRenewal</class>

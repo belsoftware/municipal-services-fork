@@ -127,6 +127,7 @@ public class EnrichmentService {
                         }
                         else if(!document.getActive()){
                         	docIdsRecived.add(document.getId());
+                        	lease.getLeaseDetails().getApplicationDocuments().remove(document);
                         }
                     });
                     //docIdsStored.removeAll(docIdsRecived);
