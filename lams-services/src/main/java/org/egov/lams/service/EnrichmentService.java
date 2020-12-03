@@ -109,9 +109,9 @@ public class EnrichmentService {
                 lease.getLeaseDetails().setAuditDetails(auditDetails);
 
                 if(!CollectionUtils.isEmpty(lease.getLeaseDetails().getApplicationDocuments())){
-                	List<String> docIdsStored =new ArrayList<String>();
+                	//List<String> docIdsStored =new ArrayList<String>();
                 	List<String> docIdsRecived =new ArrayList<String>();
-                	SearchCriteria criteria = new SearchCriteria();
+                	/*SearchCriteria criteria = new SearchCriteria();
                 	criteria.setApplicationNumber(lease.getApplicationNumber());
                 	criteria.setTenantId(lease.getTenantId());
 					List<LeaseAgreementRenewal> leasesStored = lamsRepository.getLeaseRenewals(criteria );
@@ -119,19 +119,19 @@ public class EnrichmentService {
 						leaseStored.getLeaseDetails().getApplicationDocuments().forEach(documentStored -> {
 							docIdsStored.add(documentStored.getId());
 						});
-					});
+					});*/
                     lease.getLeaseDetails().getApplicationDocuments().forEach(document -> {
                         if(document.getId()==null){
                             document.setId(UUID.randomUUID().toString());
                             document.setActive(true);
                         }
-                        else {
+                        else if(!document.getActive()){
                         	docIdsRecived.add(document.getId());
                         }
                     });
-                    docIdsStored.removeAll(docIdsRecived);
-                    if(docIdsStored.size()>0)
-                    	lamsRepository.deleteApplDocs(docIdsStored);
+                    //docIdsStored.removeAll(docIdsRecived);
+                    if(docIdsRecived.size()>0)
+                    	lamsRepository.deleteApplDocs(docIdsRecived);
                 }
             }
             else {
