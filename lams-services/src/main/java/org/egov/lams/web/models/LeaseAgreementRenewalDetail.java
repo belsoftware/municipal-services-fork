@@ -70,7 +70,13 @@ public class LeaseAgreementRenewalDetail   {
 
         @JsonProperty("termExpiryDate")
         private Long termExpiryDate;
+        
+        @JsonProperty("finalTermExpiryDate")
+        private Long finalTermExpiryDate;
 
+        @JsonProperty("surveyId")
+        private String surveyId;
+        
         @JsonProperty("applicationDocuments")
         @Valid
         private List<Document> applicationDocuments = null;

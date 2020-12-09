@@ -91,8 +91,10 @@ public class LamsRowMapper  implements ResultSetExtractor<List<LeaseAgreementRen
 					.auditDetails(auditDetails)
 					.id(renewalDtlId)
 					.lesseAsPerGLR(rs.getString("lesse"))
+					.surveyId(rs.getString("survey_id"))
 					.surveyNo(rs.getString("surveyno"))
 					.termExpiryDate((Long) rs.getObject("termexpirydate"))
+					.finalTermExpiryDate((Long) rs.getObject("finaltermexpirydate"))
 					.termNo(rs.getString("termno"))
 					.located(rs.getString("location"))
 					.build();

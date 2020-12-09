@@ -12,6 +12,8 @@ public class LRConstants {
 	public static  final String businessService_LAMS = "LAMS";
 	
     public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
+    
+    public static final String APPLICATION_TYPE_EXTENSION = "EXTENSION";
 
     public static final String APPLICATION_TYPE_NEW = "NEW";
     

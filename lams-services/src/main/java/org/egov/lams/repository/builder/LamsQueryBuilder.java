@@ -33,7 +33,7 @@ public class LamsQueryBuilder {
     		+ "renewaldetail.id as renewaldetail_id,renewaldetail.lastModifiedTime as renewaldetail_lastModifiedTime,"
     		+ "renewaldetail.createdBy as renewaldetail_createdBy,renewaldetail.lastModifiedBy as renewaldetail_lastModifiedBy,"
     		+ "renewaldetail.createdTime as renewaldetail_createdTime,renewaldetail.surveyno as renewal_surveyno,"
-    		+ "renewal.accountId as uuid ,surveydetail.area ,surveydetail.lesse ,"
+    		+ "renewal.accountId as uuid ,surveydetail.id as survey_id ,surveydetail.area ,surveydetail.lesse ,surveydetail.finaltermexpirydate ,"
     		+ "lamsapldoc.id as lams_ap_doc_id,lamsapldoc.documenttype as lams_ap_doc_documenttype,"
     		+ "lamsapldoc.filestoreid as lams_ap_doc_filestoreid,lamsapldoc.active as lams_ap_doc_active, loc.location FROM eg_lams_leaserenewal renewal "
     		+ LEFT_JOIN
@@ -67,7 +67,6 @@ public class LamsQueryBuilder {
             preparedStmtList.add(criteria.getAccountId());
 
         }
-        else {
 
             if (criteria.getTenantId() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
@@ -100,12 +99,16 @@ public class LamsQueryBuilder {
                 builder.append(" renewal.applicationDate <= ? ");
                 preparedStmtList.add(criteria.getToDate());
             }
-            if (criteria.getSurveyNo() != null) {
+            if (criteria.getSurveyNo() != null && (!criteria.getSurveyNo().isEmpty())) {
                 addClauseIfRequired(preparedStmtList, builder);
                 builder.append(" renewaldetail.surveyno = ? ");
-                preparedStmtList.add(criteria.getToDate());
+                preparedStmtList.add(criteria.getSurveyNo());
             }
-        }
+            if (criteria.getApplicationType() != null && (!criteria.getApplicationType().isEmpty())) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" renewal.applicationtype = ? ");
+                preparedStmtList.add(criteria.getApplicationType());
+            }
         return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
     }
 

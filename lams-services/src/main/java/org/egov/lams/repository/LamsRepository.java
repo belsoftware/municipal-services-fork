@@ -17,6 +17,7 @@ import org.egov.lams.repository.builder.LamsQueryBuilder;
 import org.egov.lams.repository.builder.LamsQueryBuilderMaster;
 import org.egov.lams.rowmapper.LamsRowMapper;
 import org.egov.lams.rowmapper.LamsRowMapperMaster;
+import org.egov.lams.util.LRConstants;
 import org.egov.lams.web.models.LamsRequest;
 import org.egov.lams.web.models.LeaseAgreementRenewal;
 import org.egov.lams.web.models.LeaseAgreementRenewalDetail;
@@ -83,6 +84,10 @@ public class LamsRepository {
 
 
         for (LeaseAgreementRenewal lease : leases) {
+        	if(LRConstants.APPLICATION_TYPE_EXTENSION.equals(String.valueOf(lease.getApplicationType())) && 
+        			LRConstants.ACTION_APPROVE.equals(lease.getStatus())) {
+        		producer.push(config.getUpdateLamsSurveyTopic(), lamsRequest);
+        	}
             if (idToIsStateUpdatableMap.get(lease.getId())) {
                 leasesForUpdate.add(lease);
             }

@@ -84,6 +84,8 @@ public class LamsConfiguration {
     @Value("${persister.update.lamsLR.workflow.topic}")
     private String updateLamsLRWorkflowTopic;
 
+    @Value("${persister.update.lamssurvey.topic}")
+    private String updateLamsSurveyTopic;
 
     // Workflow
     

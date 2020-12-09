@@ -34,9 +34,10 @@ public class LamsRowMapperMaster  implements ResultSetExtractor<List<LeaseAgreem
             if(currentRenewal == null){
                 currentRenewal = LeaseAgreementRenewalDetail.builder()
     					.area(((Float) rs.getObject("area")).doubleValue())
-    					.id(id)
+    					.surveyId(id)
     					.lesseAsPerGLR(rs.getString("lesse"))
     					.surveyNo(rs.getString("surveyno"))
+    					.finalTermExpiryDate((Long) rs.getObject("termexpirydate"))
     					.build();
                 leaseAgreementMap.put(id,currentRenewal);
             }
