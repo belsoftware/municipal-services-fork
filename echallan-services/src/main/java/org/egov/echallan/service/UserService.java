@@ -64,6 +64,7 @@ public class UserService {
 		
 		
 		if(challan.getAccountId()==null) {
+		//if(challan.getAccountId()==null) {
 			addUserDefaultFields(challan.getTenantId(), role, userInfo);
             StringBuilder uri = new StringBuilder(userHost)
                     .append(userContextPath)
@@ -77,6 +78,7 @@ public class UserService {
             }
             setOwnerFields(userInfo, userDetailResponse, requestInfo);
 		}
+		/*}
 		else {
             UserDetailResponse userDetailResponse = userExists(userInfo,challan,requestInfo);
             if(userDetailResponse.getUser().isEmpty())
@@ -84,6 +86,7 @@ public class UserService {
            //update needs to be added
             setOwnerFields(userInfo,userDetailResponse,requestInfo);
         }
+        }*/
 
 	}
 	
