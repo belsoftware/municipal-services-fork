@@ -84,6 +84,9 @@ public class LamsService {
 	        }
 	        criteria.setAccountId(userDetailResponse.getUser().get(0).getUuid().toString());
         }
+		
+		if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN"))
+			criteria.setTenantId(null);
 		leases = repository.getLeaseRenewals(criteria);
 		leases.forEach(lease -> {
 			List<UserInfo> userDetails = new ArrayList<UserInfo>();
