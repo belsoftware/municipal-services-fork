@@ -16,10 +16,14 @@ import org.egov.echallan.web.models.collection.PaymentDetail;
 import org.egov.echallan.web.models.collection.PaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class PaymentUpdateService {
 	
 	@Autowired
@@ -56,16 +60,18 @@ public class PaymentUpdateService {
 				criteria.setChallanNo(paymentDetail.getBill().getConsumerCode());
 				criteria.setBusinessService(paymentDetail.getBusinessService());
 				List<Challan> challans = challanService.search(criteria, requestInfo);
-				String uuid = requestInfo.getUserInfo().getUuid();
-			    AuditDetails auditDetails = commUtils.getAuditDetails(uuid, true);
-				challans.forEach(challan -> challan.setApplicationStatus(STATUS_PAID));
-				challans.get(0).setAuditDetails(auditDetails);
-				ChallanRequest request = ChallanRequest.builder().requestInfo(requestInfo).challan(challans.get(0)).build();
-				producer.push(config.getUpdateChallanTopic(), request);
+				if(!CollectionUtils.isEmpty(challans) ) {
+					String uuid = requestInfo.getUserInfo().getUuid();
+				    AuditDetails auditDetails = commUtils.getAuditDetails(uuid, true);
+					challans.forEach(challan -> challan.setApplicationStatus(STATUS_PAID));
+					challans.get(0).setAuditDetails(auditDetails);
+					ChallanRequest request = ChallanRequest.builder().requestInfo(requestInfo).challan(challans.get(0)).build();
+					producer.push(config.getUpdateChallanTopic(), request);
+				}
 				
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception while processing payment update: "+e);
 		}
 
 	}
