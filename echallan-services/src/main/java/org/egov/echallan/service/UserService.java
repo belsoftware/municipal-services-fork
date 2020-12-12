@@ -63,7 +63,6 @@ public class UserService {
 				.build();
 		
 		
-		if(challan.getAccountId()==null) {
 		//if(challan.getAccountId()==null) {
 			addUserDefaultFields(challan.getTenantId(), role, userInfo);
             StringBuilder uri = new StringBuilder(userHost)
@@ -77,7 +76,6 @@ public class UserService {
                 throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
             }
             setOwnerFields(userInfo, userDetailResponse, requestInfo);
-		}
 		/*}
 		else {
             UserDetailResponse userDetailResponse = userExists(userInfo,challan,requestInfo);
