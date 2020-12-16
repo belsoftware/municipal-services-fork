@@ -81,4 +81,12 @@ public class LamsController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+	
+	@RequestMapping(value = { "/_migrate"}, method = RequestMethod.POST)
+    public String migrate(@RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                        @ModelAttribute SearchCriteria criteria
+            ) {
+        String response = lamsService.migrate(criteria, requestInfoWrapper);
+        return response;
+    }
 }
