@@ -3,9 +3,13 @@ package org.egov.lams.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import java.util.Set;
+
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.config.LamsConfiguration;
@@ -33,6 +37,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import org.springframework.util.CollectionUtils;
+
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -43,6 +50,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+
 
 @Service
 public class LamsService {
@@ -80,6 +88,8 @@ public class LamsService {
 	@Autowired
 	private RestTemplate rest;
 	
+	
+	
 	public List<LeaseAgreementRenewal> create(LamsRequest request) {
 		validator.validateFields(request);
 		validator.validateBusinessService(request);
@@ -102,11 +112,17 @@ public class LamsService {
 	        if(userDetailResponse.getUser().size()==0){
 	            return Collections.emptyList();
 	        }
-	        criteria.setAccountId(userDetailResponse.getUser().get(0).getUuid().toString());
+	        //criteria.setAccountId(userDetailResponse.getUser().get(0).getUuid().toString());
+			/*
+			 * if(CollectionUtils.isEmpty(criteria.getUserIds())){ Set<String> ownerids =
+			 * new HashSet<>(); userDetailResponse.getUser().forEach(owner ->
+			 * ownerids.add(owner.getUuid())); criteria.setUserIds(new
+			 * ArrayList<>(ownerids)); }
+			 */
         }
 		
-		if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN"))
-			criteria.setTenantId(null);
+		//if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN"))
+			//criteria.setTenantId(null);
 		leases = repository.getLeaseRenewals(criteria);
 		leases.forEach(lease -> {
 			List<UserInfo> userDetails = new ArrayList<UserInfo>();
@@ -173,12 +189,24 @@ public class LamsService {
 	
 	final List<String> allTenants1 = Arrays.asList(new String[]{"pb.agra","pb.delhi","pb","pb.lucknow","pb.pune","pb.secunderabad","pb.testing","pb.ambala","pb.bareilly","pb.mathura","pb.allahabad","pb.meerut","pb.mhow","pb.kasauli","pb.lebong","pb.jammu","pb.jalandhar","pb.danapur","pb.dagshai","pb.roorkee","pb.pachmarhi","pb.nasirabad","pb.deolali","pb.dehuroad","pb.ahmednagar","pb.amritsar","pb.ramgarh","pb.jalapahar","pb.wellington","pb.subathu","pb.almora","pb.chakrata","pb.clementtown","pb.dehradun","pb.faizabad","pb.fatehgarh","pb.jabalpur","pb.kanpur","pb.landour","pb.lansdowne","pb.khasyol","pb.jutogh","pb.shahjahanpur","pb.varanasi","pb.ferozepur","pb.dalhousie","pb.shillong","pb.badamibagh","pb.ajmer","pb.aurangabad","pb.babina","pb.belgaum","pb.cannanore","pb.bakloh","pb.stm","pb.saugor","pb.jhansi","pb.kamptee","pb.kirkee","pb.morar","pb.ahmedabad","pb.barrackpore","pb.ranikhet","pb.nainital"});
 	final List<String> allTenants = Arrays.asList(new String[]{"pb.agra","pb.delhi","pb.lucknow","pb.pune","pb.secunderabad","pb.testing"});
-	final int collectionsBreakingLimit = 60;
-	final int tlBreakingLimit = 60;
-	final int offset = 0;
-	final int limit = 50;
 	
+	int collectionsBreakingLimit; // = config.getCollectionsBreakingLimit();
+	int tlBreakingLimit ;//= config.getTlBreakingLimit();
+	int offset;// = config.getDssSearchOffset();
+	int limit;// = config.getDssSearchLimit();
+
+
+	public void setthevalues() {
+		collectionsBreakingLimit = config.getCollectionsBreakingLimit();
+		tlBreakingLimit = config.getTlBreakingLimit();
+		offset = config.getDssSearchOffset();
+		limit = config.getDssSearchLimit();
+		return;
+	}
+		
 	public String migrate(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
+		
+		setthevalues();
 		
 		migratePayments(criteria,requestInfo);
 		
@@ -194,7 +222,7 @@ public class LamsService {
 		for(int j=offset; j<collectionsBreakingLimit; j+=limit)
 		{
 			System.out.println("Fetching records from range: "+j+" - "+(j+limit));
-			String collectionUrl =  "http://localhost:8090/collection-services/payments/_search?&offset="+j+"&limit="+limit;
+			String collectionUrl =  config.getCollectionserviceHost() + "collection-services/payments/_search?&offset="+j+"&limit="+limit;
 			
 			System.out.println(requestInfo);
 			ResponseEntity<String> response = rest.postForEntity(collectionUrl, requestInfo, String.class);
@@ -318,7 +346,7 @@ public class LamsService {
 			for(int j=0; j<tlBreakingLimit; j+=limit)
 			{
 				System.out.println("Fetching records from range: "+j+" - "+(j+limit));
-				String tlUrl = "http://localhost:8091/tl-services/v1/_search?tenantId="+tenantId+
+				String tlUrl = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+
 						"&fromDate=1576468207000&toDate=1608090607000&offset="+j+"&limit="+limit;
 				ResponseEntity<String> tlResponse = rest.postForEntity(tlUrl, requestInfo, String.class);
 				String tlResponseStr = tlResponse.getBody();
@@ -388,7 +416,7 @@ public class LamsService {
 	public String putToElasticSearch(String indexName, String type, String identifier,  JsonObject jsonObject)
 	{
 		
-		String url = "http://localhost:9200/"+indexName+"/"+type+"/"+identifier;
+		String url = config.getElasticSearch()+indexName+"/"+type+"/"+identifier;
 		try {
 			
 			
@@ -443,7 +471,7 @@ public class LamsService {
 	
 	public JsonObject getTLDetails(String applicationNumber, String tenantId , RequestInfoWrapper requestInfo)
 	{
-		String url = "http://localhost:8091/tl-services/v1/_search?tenantId="+tenantId+"&applicationNumber="+applicationNumber;
+		String url = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+"&applicationNumber="+applicationNumber;
 		ResponseEntity<String> response = rest.postForEntity(url, requestInfo, String.class);
 		String responseStr = response.getBody();
 		final JsonParser parser = new JsonParser();

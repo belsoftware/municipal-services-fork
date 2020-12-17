@@ -59,9 +59,29 @@ public class LamsConfiguration {
     @Value("${egov.user.username.prefix}")
     private String usernamePrefix;
 
+    @Value("${egov.collectionservice.host}")
+    private String collectionserviceHost;
+    
+    @Value("${egov.tlservice.path}")
+    private String tlserviceHost;
+    
+    @Value("${egov.dss.limit}")
+    private Integer dssSearchLimit;
+    
+    @Value("${egov.dss.offset}")
+    private Integer dssSearchOffset;
+    
+    @Value("${egov.dss.collectionsBreakingLimit}")
+    private Integer collectionsBreakingLimit;
+    
+    @Value("${egov.dss.tlBreakingLimit}")
+    private Integer tlBreakingLimit;
+    
+    @Value("${egov.elasticSearch.path}")
+    private String elasticSearch;
 
     //org.egov.lams.models.Idgen Config
-    @Value("${egov.idgen.host}")
+    @Value("${egov.idgen.host}") 
     private String idGenHost;
 
     @Value("${egov.idgen.path}")
