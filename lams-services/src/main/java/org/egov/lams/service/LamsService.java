@@ -347,7 +347,7 @@ public class LamsService {
 			{
 				System.out.println("Fetching records from range: "+j+" - "+(j+limit));
 				String tlUrl = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+
-						"&fromDate=1576468207000&toDate=1608090607000&offset="+j+"&limit="+limit;
+						"&fromDate=1576468207000&offset="+j+"&limit="+limit;
 				ResponseEntity<String> tlResponse = rest.postForEntity(tlUrl, requestInfo, String.class);
 				String tlResponseStr = tlResponse.getBody();
 				JsonElement tlObj = parser.parse(tlResponseStr);
