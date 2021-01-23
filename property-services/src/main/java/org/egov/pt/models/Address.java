@@ -39,6 +39,9 @@ public class Address {
 
 	@JsonProperty("city")
 	private String city;
+	
+	@JsonProperty("location")
+	private String location;
 
 	@JsonProperty("district")
 	private String district;
