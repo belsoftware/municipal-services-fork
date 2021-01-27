@@ -141,6 +141,7 @@ public class OpenPropertyRowMapper implements ResultSetExtractor<List<Property>>
 		.id(rs.getString("addressid"))
 		.state(rs.getString("state"))
 		.city(rs.getString("city"))
+		.location(rs.getString("location"))
 		.geoLocation(geoLocation)
 		.locality(locality)
 		.tenantId(tenanId)
