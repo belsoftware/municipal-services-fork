@@ -25,6 +25,7 @@ import org.egov.wscalculation.web.models.Slab;
 import org.egov.wscalculation.web.models.TaxHeadEstimate;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterConnectionRequest;
+import org.egov.wscalculation.web.models.WsTaxHeads;
 import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.util.WSCalculationUtil;
 import org.egov.wscalculation.util.WaterCessUtil;
@@ -354,7 +355,8 @@ public class EstimationService {
 		}
 		ArrayList<String> billingSlabIds = new ArrayList<>();
 		billingSlabIds.add("");
-		List<TaxHeadEstimate> taxHeadEstimates = getTaxHeadForFeeEstimation(criteria, masterData, requestInfo);
+		//List<TaxHeadEstimate> taxHeadEstimates = getTaxHeadForFeeEstimation(criteria, masterData, requestInfo);
+		List<TaxHeadEstimate> taxHeadEstimates = getTaxHeadForFeeEstimation1(criteria, requestInfo);
 		Map<String, List> estimatesAndBillingSlabs = new HashMap<>();
 		estimatesAndBillingSlabs.put("estimates", taxHeadEstimates);
 		// //Billing slab id
@@ -362,6 +364,22 @@ public class EstimationService {
 		return estimatesAndBillingSlabs;
 	}
 	
+	
+	private List<TaxHeadEstimate> getTaxHeadForFeeEstimation1(CalculationCriteria criteria,
+			RequestInfo requestInfo) {
+		List<TaxHeadEstimate> estimates = new ArrayList<>();
+		WaterConnection connection = criteria.getWaterConnection();
+		if(connection.getWsTaxHeads()!=null && connection.getWsTaxHeads().size()!=0) {
+			for (WsTaxHeads taxHeadEstimate : connection.getWsTaxHeads()) {
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(taxHeadEstimate.getTaxHeadCode())
+						.estimateAmount(taxHeadEstimate.getAmount().setScale(2, 2)).build());
+			}
+			
+		}
+		
+		addAdhocPenaltyAndRebate(estimates, criteria.getWaterConnection());
+		return estimates;
+	}
 	
 	/**
 	 * 
