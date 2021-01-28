@@ -10,6 +10,7 @@ import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.service.MeterInfoValidator;
 import org.egov.waterconnection.service.PropertyValidator;
 import org.egov.waterconnection.service.WaterFieldValidator;
+import org.egov.waterconnection.web.models.RoadTypeEst;
 import org.egov.waterconnection.web.models.ValidatorResult;
 import org.egov.waterconnection.web.models.WaterConnection;
 import org.egov.waterconnection.web.models.WaterConnectionRequest;
@@ -128,5 +129,22 @@ public class WaterConnectionValidator {
 		if (reqType == WCConstants.UPDATE_APPLICATION) {
 			request.getWaterConnection().setConnectionNo(searchResult.getConnectionNo());
 		}
+	}
+
+	public void validateCalcAttr(WaterConnectionRequest waterConnectionRequest) {
+		WaterConnection connection = waterConnectionRequest.getWaterConnection();
+		if(connection.getRoadTypeEst()!=null) {
+			for (RoadTypeEst roadTypeEst : connection.getRoadTypeEst()) {
+				if(roadTypeEst.getRoadType()==null || roadTypeEst.getRoadType().trim().length()==0) {
+					throw new CustomException("ROADTYPE_REQUIRED",
+							"Road Type cannot be null");
+				}
+				if(roadTypeEst.getDepth()==null || roadTypeEst.getBreadth()==null || roadTypeEst.getLength()==null || roadTypeEst.getRate()==null) {
+					throw new CustomException("Calculationa_attr",
+							"Please enter all the parameter(length,breadth,depth & rate) to calculate road cutting charges");
+				}
+			}
+		}
+		
 	}
 }

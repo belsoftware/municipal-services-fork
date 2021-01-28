@@ -36,7 +36,7 @@ public class WsQueryBuilder {
     private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
 
     
-	private static final String WATER_SEARCH_QUERY = "SELECT conn.*, wc.*, document.*, plumber.*, wc.connectionCategory, wc.connectionType, wc.waterSource,"
+	private static final String WATER_SEARCH_QUERY = "SELECT conn.*, wc.*, document.*, plumber.*,taxhead.*,roadtype.*, wc.connectionCategory, wc.connectionType, wc.waterSource,"
 			+ " wc.meterId, wc.meterInstallationDate, wc.pipeSize, wc.noOfTaps, wc.proposedPipeSize, wc.proposedTaps, wc.connection_id as connection_Id, wc.connectionExecutionDate, wc.initialmeterreading, wc.appCreatedDate,"
 			+ " wc.detailsprovidedby, wc.estimationfileStoreId , wc.sanctionfileStoreId , wc.estimationLetterDate,"
 			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id, conn.roadcuttingarea,"
@@ -44,6 +44,8 @@ public class WsQueryBuilder {
 			+ " conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.createdBy as ws_createdBy, conn.lastModifiedBy as ws_lastModifiedBy,"
 			+ " conn.createdTime as ws_createdTime, conn.lastModifiedTime as ws_lastModifiedTime, "
 			+ " conn.locality, conn.isoldapplication, conn.roadtype, document.id as doc_Id, document.documenttype, document.filestoreid, document.active as doc_active, plumber.id as plumber_id,"
+			+ " taxhead.id as taxhead_id,taxhead.taxhead as taxhead,taxhead.amount as taxhead_amt, taxhead.active as taxhead_active,"
+			+ " roadtype.id as roadtype_id, roadtype.roadtype as roadtype1, roadtype.length as roadtype_length, roadtype.depth as roadtype_depth, roadtype.breadth as roadtype_breadth, roadtype.rate as roadtype_rate, roadtype.active as roadtype_active,"
 			+ " plumber.name as plumber_name, plumber.licenseno,"
 			+ " plumber.mobilenumber as plumber_mobileNumber, plumber.gender as plumber_gender, plumber.fatherorhusbandname, plumber.correspondenceaddress,"
 			+ " plumber.relationship, " + holderSelectValues
@@ -54,6 +56,10 @@ public class WsQueryBuilder {
 			+ "eg_ws_applicationdocument document ON document.wsid = conn.id" 
 			+  LEFT_OUTER_JOIN_STRING
 			+ "eg_ws_plumberinfo plumber ON plumber.wsid = conn.id"
+			+  LEFT_OUTER_JOIN_STRING
+			+ "eg_ws_connection_taxhead taxhead ON taxhead.connection_id = conn.id"
+			+  LEFT_OUTER_JOIN_STRING
+			+ "eg_ws_connection_roadtype roadtype ON roadtype.connection_id = conn.id"
 		    +  LEFT_OUTER_JOIN_STRING
 		    + "eg_ws_connectionholder connectionholder ON connectionholder.connectionid = conn.id";
 

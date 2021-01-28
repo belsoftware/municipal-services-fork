@@ -376,4 +376,49 @@ public class EnrichmentService {
 		return new ArrayList(connectionHashMap.values());
 	}
 
+	public void enrichWithCalculationAttr(WaterConnectionRequest waterConnectionRequest) {
+		WaterConnection connection = waterConnectionRequest.getWaterConnection();
+
+		if (connection.getRoadTypeEst() != null && connection.getRoadTypeEst().size() != 0) {
+			BigDecimal totalAmount = BigDecimal.ZERO;
+			WsTaxHeads taxHead = new WsTaxHeads();
+			for (RoadTypeEst est : connection.getRoadTypeEst()) {
+				BigDecimal length = est.getLength();
+				BigDecimal breadth = est.getBreadth();
+				BigDecimal depth = est.getDepth();
+				BigDecimal rate = est.getRate();
+				BigDecimal roadCuttingCharges = length.multiply(breadth).multiply(depth).multiply(rate).setScale(2, 2);
+				totalAmount = totalAmount.add(roadCuttingCharges);
+				if (est.getId() == null) {
+					est.setId(UUID.randomUUID().toString());
+					est.setActive(true);
+				}
+			}
+
+			if (connection.getWsTaxHeads() != null) {
+				boolean flag = false;
+				for (WsTaxHeads taxhead : connection.getWsTaxHeads()) {
+					if (taxhead.getId() == null) {
+
+						taxhead.setId(UUID.randomUUID().toString());
+						taxhead.setActive(true);
+					}
+					if (taxhead.getTaxHeadCode().equalsIgnoreCase("WS_ROAD_CUTTING_CHARGE")) {
+						taxhead.setAmount(totalAmount.setScale(2, 2));
+						flag = true;
+					}
+				}
+				if (!flag) {
+					taxHead.setId(UUID.randomUUID().toString());
+					taxHead.setActive(true);
+					taxHead.setTaxHeadCode("WS_ROAD_CUTTING_CHARGE");
+					taxHead.setAmount(totalAmount.setScale(2, 2));
+					connection.getWsTaxHeads().add(taxHead);
+				}
+			}
+
+		}
+
+	}
+
 }
