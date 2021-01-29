@@ -138,6 +138,9 @@ public class PropertyDetail {
 
     @JsonProperty("noOfFloors")
     private Long noOfFloors;
+    
+    @JsonProperty("noOfFlats")
+    private Long noOfFlats;
 
     @JsonProperty("landArea")
     private Float landArea;

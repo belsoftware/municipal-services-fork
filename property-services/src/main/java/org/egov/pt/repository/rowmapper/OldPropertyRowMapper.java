@@ -159,6 +159,10 @@ public class OldPropertyRowMapper implements ResultSetExtractor<List<OldProperty
 			if (rs.wasNull()) {
 				noOfFloors = null;
 			}
+			Long noOfFlats = rs.getLong("noOfFlats");
+			if (rs.wasNull()) {
+				noOfFlats = null;
+			}
 
 
 			detail = PropertyDetail.builder()
@@ -166,6 +170,7 @@ public class OldPropertyRowMapper implements ResultSetExtractor<List<OldProperty
 					.landArea(landArea)
 					.channel(PropertyDetail.ChannelEnum.fromValue(rs.getString("channel")))
 					.noOfFloors(noOfFloors).source(PropertyDetail.SourceEnum.fromValue(rs.getString("source")))
+					.noOfFlats(noOfFlats).source(PropertyDetail.SourceEnum.fromValue(rs.getString("source")))
 					.usage(rs.getString("usage")).assessmentDate(rs.getLong("assessmentDate"))
 					.assessmentNumber(rs.getString("assessmentNumber")).financialYear(rs.getString("financialYear"))
 					.propertyType(rs.getString("propertyType")).propertySubType(rs.getString("propertySubType"))
