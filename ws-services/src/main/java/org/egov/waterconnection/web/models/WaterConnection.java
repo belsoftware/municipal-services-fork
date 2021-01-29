@@ -39,8 +39,17 @@ public class WaterConnection extends Connection {
 
 	@JsonProperty("noOfTaps")
 	private Integer noOfTaps = null;
+	
 
+	@JsonProperty("motorInfo")
+	private String motorInfo = null;
 
+	@JsonProperty("propertyOwnership")
+	private String propertyOwnership = null;
+	
+	@JsonProperty("authorizedConnection")
+	private String authorizedConnection = null;
+	
 	public WaterConnection waterSource(String waterSource) {
 		this.waterSource = waterSource;
 		return this;
@@ -120,6 +129,48 @@ public class WaterConnection extends Connection {
 
 	public void setNoOfTaps(Integer noOfTaps) {
 		this.noOfTaps = noOfTaps;
+	}
+	
+	
+	/**
+	 * Motor Info for non-metered calculation attribute.
+	 * 
+	 * @return motorInfo
+	 **/
+	@ApiModelProperty(value = "No of taps for non-metered calculation attribute.")
+
+	public String getMotorInfo() {
+		return motorInfo;
+	}
+
+	public void setMotorInfo(String motorInfo) {
+		this.motorInfo = motorInfo;
+	}
+	/**
+	 * Property Ownership info for non-metered calculation attribute.
+	 * 
+	 * @return propertyOwnership
+	 **/
+	@ApiModelProperty(value = "No of taps for non-metered calculation attribute.")
+	public String getPropertyOwnership() {
+		return propertyOwnership;
+	}
+
+	public void setPropertyOwnership(String propertyOwnership) {
+		this.propertyOwnership = propertyOwnership;
+	}
+	/**
+	 * Connection authorization detail for non-metered calculation attribute.
+	 * 
+	 * @return noOfTaps
+	 **/
+	@ApiModelProperty(value = "No of taps for non-metered calculation attribute.")
+	public String getAuthorizedConnection() {
+		return authorizedConnection;
+	}
+
+	public void setAuthorizedConnection(String authorizedConnection) {
+		this.authorizedConnection = authorizedConnection;
 	}
 
 	/**
