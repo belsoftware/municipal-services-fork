@@ -63,6 +63,10 @@ public class Property extends PropertyInfo {
 	@Max(value = 500)
 	@JsonProperty("noOfFloors")
 	private Long noOfFloors;
+	
+	@Max(value = 500)
+	@JsonProperty("noOfFlats")
+	private Long noOfFlats;
 
 	@Digits(integer = 8, fraction = 2)
 	@JsonProperty("landArea")
@@ -100,7 +104,7 @@ public class Property extends PropertyInfo {
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
 			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
 			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
-			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
+			CreationReason creationReason, String usageCategory, Long noOfFloors,Long noOfFlats, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
 			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
@@ -112,6 +116,7 @@ public class Property extends PropertyInfo {
 		this.creationReason = creationReason;
 		this.usageCategory = usageCategory;
 		this.noOfFloors = noOfFloors;
+		this.noOfFlats = noOfFlats;
 		this.landArea = landArea;
 		this.superBuiltUpArea = superBuiltUpArea;
 		this.source = source;
