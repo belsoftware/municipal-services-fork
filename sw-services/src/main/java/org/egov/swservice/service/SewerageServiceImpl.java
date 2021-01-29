@@ -30,10 +30,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import static org.egov.swservice.util.SWConstants.APPROVE_CONNECTION;
 
 @Component
@@ -151,8 +147,6 @@ public class SewerageServiceImpl implements SewerageService {
 	 *            updated
 	 * @return List of SewerageConnection after update
 	 */
-	@Autowired
-	private ObjectMapper mapper;
 	@Override
 	public List<SewerageConnection> updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		if(sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)){
@@ -162,17 +156,17 @@ public class SewerageServiceImpl implements SewerageService {
 		mDMSValidator.validateMasterData(sewerageConnectionRequest, SWConstants.UPDATE_APPLICATION);
 		Property property = validateProperty.getOrValidateProperty(sewerageConnectionRequest);
 		validateProperty.validatePropertyFields(property,sewerageConnectionRequest.getRequestInfo());
-//		String previousApplicationStatus = workflowService.getApplicationStatus(
-//				sewerageConnectionRequest.getRequestInfo(),
-//				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
-//				sewerageConnectionRequest.getSewerageConnection().getTenantId(), config.getBusinessServiceValue());
-//		BusinessService businessService = workflowService.getBusinessService(config.getBusinessServiceValue(),
-//				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
-//				sewerageConnectionRequest.getRequestInfo());
+		String previousApplicationStatus = workflowService.getApplicationStatus(
+				sewerageConnectionRequest.getRequestInfo(),
+				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(), config.getBusinessServiceValue());
+		BusinessService businessService = workflowService.getBusinessService(config.getBusinessServiceValue(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
+				sewerageConnectionRequest.getRequestInfo());
 		SewerageConnection searchResult = getConnectionForUpdateRequest(
 				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
 		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
-//		actionValidator.validateUpdateRequest(sewerageConnectionRequest, businessService, previousApplicationStatus);
+		actionValidator.validateUpdateRequest(sewerageConnectionRequest, businessService, previousApplicationStatus);
 		sewerageConnectionValidator.validateUpdate(sewerageConnectionRequest, searchResult);
 		calculationService.calculateFeeAndGenerateDemand(sewerageConnectionRequest, property);
 		sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest);
@@ -180,16 +174,10 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichFileStoreIds(sewerageConnectionRequest);
 		userService.updateUser(sewerageConnectionRequest, searchResult);
 		// Call workflow
-		//wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
+		wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
 		enrichmentService.postStatusEnrichment(sewerageConnectionRequest);
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		try {
-			logger.info(mapper.writeValueAsString(sewerageConnectionRequest));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		sewerageDao.updateSewerageConnection(sewerageConnectionRequest,true);
+		sewerageDao.updateSewerageConnection(sewerageConnectionRequest,
+				sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus));
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
 
