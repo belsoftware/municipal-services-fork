@@ -133,10 +133,10 @@ public class WaterConnectionValidator {
 	}
 	
 	private boolean isZero(BigDecimal fld) {
-		return fld!=null && fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
+		return fld==null || fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
 	}
 	private boolean isNotZero(BigDecimal fld) {
-		return fld!=null && fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
+		return fld!=null && fld.compareTo(BigDecimal.ZERO)!=0 ? true : false;
 	}
 	
 	public void validateCalcAttr(WaterConnectionRequest waterConnectionRequest) {
@@ -147,8 +147,8 @@ public class WaterConnectionValidator {
 					throw new CustomException("ROADTYPE_REQUIRED",
 							"Road Type cannot be null");
 				}
-				if(isNotZero(roadTypeEst.getDepth())|| isNotZero(roadTypeEst.getBreadth())  && isNotZero(roadTypeEst.getLength())  && isNotZero(roadTypeEst.getRate())) {
-					if(isZero(roadTypeEst.getDepth())|| isZero(roadTypeEst.getBreadth())  && isZero(roadTypeEst.getLength())  && isZero(roadTypeEst.getRate()))
+				if(isNotZero(roadTypeEst.getDepth())|| isNotZero(roadTypeEst.getBreadth())  || isNotZero(roadTypeEst.getLength())  || isNotZero(roadTypeEst.getRate())) {
+					if(isZero(roadTypeEst.getDepth()) || isZero(roadTypeEst.getBreadth())  || isZero(roadTypeEst.getLength())  || isZero(roadTypeEst.getRate()))
 						throw new CustomException("Calculationa_attr",
 								"Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
 				
