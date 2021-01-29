@@ -1,0 +1,1 @@
+ALTER TABLE eg_sw_service_audit ADD COLUMN IF NOT EXISTS proposeddrainagesize decimal;

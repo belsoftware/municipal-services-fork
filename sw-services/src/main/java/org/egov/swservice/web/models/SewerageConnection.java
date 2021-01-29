@@ -3,7 +3,7 @@ package org.egov.swservice.web.models;
 import java.util.Objects;
 
 import javax.validation.Valid;
-
+ 
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,6 +27,14 @@ public class SewerageConnection extends Connection {
 
 	@JsonProperty("noOfToilets")
 	private Integer noOfToilets = null;
+
+
+	@JsonProperty("proposedDrainageSize")
+	private Double proposedDrainageSize = null;
+	
+
+	@JsonProperty("drainageSize")
+	private Double drainageSize = null;
 
 	public SewerageConnection noOfWaterClosets(Integer noOfWaterClosets) {
 		this.noOfWaterClosets = noOfWaterClosets;
@@ -97,6 +105,45 @@ public class SewerageConnection extends Connection {
 	}
 
 	/**
+	 * Proposed Drainage size for non-metered calculation attribute.
+	 * 
+	 * @return Drainage
+	 **/
+	@ApiModelProperty(value = "No of proposed Drainage size is citizen input")
+
+	public Double getProposedDrainageSize() {
+		return proposedDrainageSize;
+	}
+
+	public void setProposedDrainageSize(Double proposedDrainageSize) {
+		this.proposedDrainageSize = proposedDrainageSize;
+	}
+
+	public SewerageConnection proposedDrainageSize(Double proposedDrainageSize) {
+		this.proposedDrainageSize = proposedDrainageSize;
+		return this;
+	}
+
+	public SewerageConnection drainageSize(Double drainageSize) {
+		this.drainageSize = drainageSize;
+		return this;
+	}
+
+	/**
+	 * Drainage size for non-metered calulation attribute.
+	 * 
+	 * @return Drainage
+	 **/
+	@ApiModelProperty(value = "Drainage size for non-metered calulation attribute.")
+
+	public Double getDrainageSize() {
+		return drainageSize;
+	}
+
+	public void setDrainageSize(Double drainageSize) {
+		this.drainageSize = drainageSize;
+	}
+	/**
 	 * Get proposedToilets
 	 * 
 	 * @return proposedToilets
@@ -124,7 +171,9 @@ public class SewerageConnection extends Connection {
 		return Objects.equals(this.noOfWaterClosets, sewerageConnection.noOfWaterClosets)
 				&& Objects.equals(this.proposedWaterClosets, sewerageConnection.proposedWaterClosets)
 				&& Objects.equals(this.noOfToilets, sewerageConnection.noOfToilets)
-				&& Objects.equals(this.proposedToilets, sewerageConnection.proposedToilets) && super.equals(o);
+				&& Objects.equals(this.proposedToilets, sewerageConnection.proposedToilets) 
+				&& Objects.equals(this.proposedDrainageSize, sewerageConnection.proposedDrainageSize) 
+				&& Objects.equals(this.drainageSize, sewerageConnection.drainageSize) && super.equals(o);
 	}
 
 	@Override
@@ -141,6 +190,8 @@ public class SewerageConnection extends Connection {
 		sb.append("    proposedWaterClosets: ").append(toIndentedString(proposedWaterClosets)).append("\n");
 		sb.append("    noOfToilets: ").append(toIndentedString(noOfToilets)).append("\n");
 		sb.append("    proposedToilets: ").append(toIndentedString(proposedToilets)).append("\n");
+		sb.append("    proposedDrainageSize: ").append(toIndentedString(proposedDrainageSize)).append("\n");
+		sb.append("    drainageSize: ").append(toIndentedString(drainageSize)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
