@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -20,6 +21,7 @@ import org.egov.wscalculation.web.models.BillingSlab;
 import org.egov.wscalculation.web.models.CalculationCriteria;
 import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
+import org.egov.wscalculation.web.models.RoadTypeEst;
 import org.egov.wscalculation.web.models.SearchCriteria;
 import org.egov.wscalculation.web.models.Slab;
 import org.egov.wscalculation.web.models.TaxHeadEstimate;
@@ -369,10 +371,40 @@ public class EstimationService {
 			RequestInfo requestInfo) {
 		List<TaxHeadEstimate> estimates = new ArrayList<>();
 		WaterConnection connection = criteria.getWaterConnection();
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		if (connection.getRoadTypeEst() != null && connection.getRoadTypeEst().size() != 0) {
+			for (RoadTypeEst est : connection.getRoadTypeEst()) {
+				BigDecimal length = est.getLength();
+				BigDecimal breadth = est.getBreadth();
+				BigDecimal depth = est.getDepth();
+				BigDecimal rate = est.getRate();
+				if(length.compareTo(BigDecimal.ZERO)!=0 || breadth.compareTo(BigDecimal.ZERO)!=0  || depth.compareTo(BigDecimal.ZERO)!=0  || depth.compareTo(BigDecimal.ZERO)!=0 ) {
+					if(length.compareTo(BigDecimal.ZERO)==0 || breadth.compareTo(BigDecimal.ZERO)==0  || depth.compareTo(BigDecimal.ZERO)==0  || depth.compareTo(BigDecimal.ZERO)==0 )
+						throw new CustomException("Calculationa_attr",
+								"Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
+				
+				}
+				BigDecimal roadCuttingCharges = length.multiply(breadth).multiply(depth).multiply(rate).setScale(2, 2);
+				totalAmount = totalAmount.add(roadCuttingCharges);
+			}
+		}
 		if(connection.getWsTaxHeads()!=null && connection.getWsTaxHeads().size()!=0) {
+			boolean flag = false;
 			for (WsTaxHeads taxHeadEstimate : connection.getWsTaxHeads()) {
+				if (taxHeadEstimate.getTaxHeadCode().equalsIgnoreCase("WS_ROAD_CUTTING_CHARGE")) {
+					taxHeadEstimate.setAmount(totalAmount.setScale(2, 2));
+					flag = true;
+				}
+				
+				if(taxHeadEstimate.getAmount()!=null) {
 				estimates.add(TaxHeadEstimate.builder().taxHeadCode(taxHeadEstimate.getTaxHeadCode())
 						.estimateAmount(taxHeadEstimate.getAmount().setScale(2, 2)).build());
+				}
+				
+			}
+			if(!flag) {
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode("WS_ROAD_CUTTING_CHARGE")
+						.estimateAmount(totalAmount.setScale(2, 2)).build());
 			}
 			
 		}
