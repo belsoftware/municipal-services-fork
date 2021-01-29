@@ -131,7 +131,14 @@ public class WaterConnectionValidator {
 			request.getWaterConnection().setConnectionNo(searchResult.getConnectionNo());
 		}
 	}
-
+	
+	private boolean isZero(BigDecimal fld) {
+		return fld!=null && fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
+	}
+	private boolean isNotZero(BigDecimal fld) {
+		return fld!=null && fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
+	}
+	
 	public void validateCalcAttr(WaterConnectionRequest waterConnectionRequest) {
 		WaterConnection connection = waterConnectionRequest.getWaterConnection();
 		if(connection.getRoadTypeEst()!=null) {
@@ -140,11 +147,16 @@ public class WaterConnectionValidator {
 					throw new CustomException("ROADTYPE_REQUIRED",
 							"Road Type cannot be null");
 				}
-				if(roadTypeEst.getDepth().compareTo(BigDecimal.ZERO)!=0 || roadTypeEst.getBreadth().compareTo(BigDecimal.ZERO)!=0  || roadTypeEst.getLength().compareTo(BigDecimal.ZERO)!=0  || roadTypeEst.getRate().compareTo(BigDecimal.ZERO)!=0 ) {
-					if(roadTypeEst.getDepth().compareTo(BigDecimal.ZERO)==0 || roadTypeEst.getBreadth().compareTo(BigDecimal.ZERO)==0  || roadTypeEst.getLength().compareTo(BigDecimal.ZERO)==0  || roadTypeEst.getRate().compareTo(BigDecimal.ZERO)==0 )
+				if(isNotZero(roadTypeEst.getDepth())|| isNotZero(roadTypeEst.getBreadth())  && isNotZero(roadTypeEst.getLength())  && isNotZero(roadTypeEst.getRate())) {
+					if(isZero(roadTypeEst.getDepth())|| isZero(roadTypeEst.getBreadth())  && isZero(roadTypeEst.getLength())  && isZero(roadTypeEst.getRate()))
 						throw new CustomException("Calculationa_attr",
 								"Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
 				
+				}else { 
+					roadTypeEst.setDepth(new BigDecimal(0));
+					roadTypeEst.setBreadth(new BigDecimal(0));
+					roadTypeEst.setLength(new BigDecimal(0));
+					roadTypeEst.setRate(new BigDecimal(0));
 				}
 				
 			}
