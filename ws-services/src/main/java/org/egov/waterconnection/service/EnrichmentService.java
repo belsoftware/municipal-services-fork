@@ -378,10 +378,10 @@ public class EnrichmentService {
 
 	public void enrichWithCalculationAttr(WaterConnectionRequest waterConnectionRequest) {
 		WaterConnection connection = waterConnectionRequest.getWaterConnection();
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		WsTaxHeads roadTaxHead = new WsTaxHeads();
 
 		if (connection.getRoadTypeEst() != null && connection.getRoadTypeEst().size() != 0) {
-			BigDecimal totalAmount = BigDecimal.ZERO;
-			WsTaxHeads taxHead = new WsTaxHeads();
 			for (RoadTypeEst est : connection.getRoadTypeEst()) {
 				BigDecimal length = est.getLength();
 				BigDecimal breadth = est.getBreadth();
@@ -394,6 +394,7 @@ public class EnrichmentService {
 					est.setActive(true);
 				}
 			}
+		}
 
 			if (connection.getWsTaxHeads() != null) {
 				boolean flag = false;
@@ -409,15 +410,15 @@ public class EnrichmentService {
 					}
 				}
 				if (!flag) {
-					taxHead.setId(UUID.randomUUID().toString());
-					taxHead.setActive(true);
-					taxHead.setTaxHeadCode("WS_ROAD_CUTTING_CHARGE");
-					taxHead.setAmount(totalAmount.setScale(2, 2));
-					connection.getWsTaxHeads().add(taxHead);
+					roadTaxHead.setId(UUID.randomUUID().toString());
+					roadTaxHead.setActive(true);
+					roadTaxHead.setTaxHeadCode("WS_ROAD_CUTTING_CHARGE");
+					roadTaxHead.setAmount(totalAmount.setScale(2, 2));
+					connection.getWsTaxHeads().add(roadTaxHead);
 				}
 			}
 
-		}
+		
 
 	}
 

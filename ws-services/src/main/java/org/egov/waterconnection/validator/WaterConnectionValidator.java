@@ -1,5 +1,6 @@
 package org.egov.waterconnection.validator;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -139,12 +140,15 @@ public class WaterConnectionValidator {
 					throw new CustomException("ROADTYPE_REQUIRED",
 							"Road Type cannot be null");
 				}
-				if(roadTypeEst.getDepth()==null || roadTypeEst.getBreadth()==null || roadTypeEst.getLength()==null || roadTypeEst.getRate()==null) {
-					throw new CustomException("Calculationa_attr",
-							"Please enter all the parameter(length,breadth,depth & rate) to calculate road cutting charges");
+				if(roadTypeEst.getDepth().compareTo(BigDecimal.ZERO)!=0 || roadTypeEst.getBreadth().compareTo(BigDecimal.ZERO)!=0  || roadTypeEst.getLength().compareTo(BigDecimal.ZERO)!=0  || roadTypeEst.getRate().compareTo(BigDecimal.ZERO)!=0 ) {
+					if(roadTypeEst.getDepth().compareTo(BigDecimal.ZERO)==0 || roadTypeEst.getBreadth().compareTo(BigDecimal.ZERO)==0  || roadTypeEst.getLength().compareTo(BigDecimal.ZERO)==0  || roadTypeEst.getRate().compareTo(BigDecimal.ZERO)==0 )
+						throw new CustomException("Calculationa_attr",
+								"Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
+				
 				}
+				
 			}
-		}
+			}
 		
 	}
 }
