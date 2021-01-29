@@ -47,6 +47,7 @@ public class SewerageRowMapper implements ResultSetExtractor<List<SewerageConnec
                 sewarageConnection.setRoadCuttingArea(rs.getFloat("roadcuttingarea"));
                 sewarageConnection.setRoadType(rs.getString("roadtype"));
                 sewarageConnection.setOldApplication(rs.getBoolean("isoldapplication"));
+                sewarageConnection.setPropertyOwnership(rs.getString("propertyownership"));
                 // get property id and get property object
                 HashMap<String, Object> addtionalDetails = new HashMap<>();
                 addtionalDetails.put(SWConstants.ADHOC_PENALTY, rs.getBigDecimal("adhocpenalty"));

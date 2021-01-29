@@ -37,6 +37,7 @@ public class OpenSewerageRowMapper implements ResultSetExtractor<List<SewerageCo
                 sewarageConnection.setConnectionNo(rs.getString("connectionNo"));
                 sewarageConnection.setOldConnectionNo(rs.getString("oldConnectionNo"));
                 sewarageConnection.setOldApplication(rs.getBoolean("isoldapplication"));
+                sewarageConnection.setPropertyOwnership(rs.getString("propertyownership"));
                 // get property id and get property object
                 HashMap<String, Object> addtionalDetails = new HashMap<>();
                 addtionalDetails.put(SWConstants.APP_CREATED_DATE, rs.getBigDecimal("appCreatedDate"));

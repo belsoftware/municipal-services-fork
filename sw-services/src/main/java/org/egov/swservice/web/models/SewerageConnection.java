@@ -35,6 +35,10 @@ public class SewerageConnection extends Connection {
 
 	@JsonProperty("drainageSize")
 	private Double drainageSize = null;
+	
+
+	@JsonProperty("propertyOwnership")
+	private String propertyOwnership = null;
 
 	public SewerageConnection noOfWaterClosets(Integer noOfWaterClosets) {
 		this.noOfWaterClosets = noOfWaterClosets;
@@ -143,6 +147,17 @@ public class SewerageConnection extends Connection {
 	public void setDrainageSize(Double drainageSize) {
 		this.drainageSize = drainageSize;
 	}
+	
+	@ApiModelProperty(value = "Property Ownership  info for non-metered calulation attribute.")
+	
+	public String getPropertyOwnership() {
+		return propertyOwnership;
+	}
+
+	public void setPropertyOwnership(String propertyOwnership) {
+		this.propertyOwnership = propertyOwnership;
+	}
+
 	/**
 	 * Get proposedToilets
 	 * 
