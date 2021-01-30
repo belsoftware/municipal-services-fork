@@ -168,6 +168,8 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
 		actionValidator.validateUpdateRequest(sewerageConnectionRequest, businessService, previousApplicationStatus);
 		sewerageConnectionValidator.validateUpdate(sewerageConnectionRequest, searchResult);
+		sewerageConnectionValidator.validateCalcAttr(sewerageConnectionRequest);
+		enrichmentService.enrichWithCalculationAttr(sewerageConnectionRequest);
 		calculationService.calculateFeeAndGenerateDemand(sewerageConnectionRequest, property);
 		sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest);
 		// Enrich file store Id After payment

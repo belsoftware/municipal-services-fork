@@ -1,10 +1,12 @@
 package org.egov.swservice.validator;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.swservice.web.models.RoadTypeEst;
 import org.egov.swservice.web.models.SewerageConnection;
 import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.egov.swservice.web.models.ValidatorResult;
@@ -107,5 +109,36 @@ public class SewerageConnectionValidator {
 	 */
 	private void setFieldsFromSearch(SewerageConnectionRequest request, SewerageConnection searchResult) {
 		request.getSewerageConnection().setConnectionNo(searchResult.getConnectionNo());
+	}
+	
+	private boolean isZero(BigDecimal fld) {
+		return fld==null || fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
+	}
+	private boolean isNotZero(BigDecimal fld) {
+		return fld!=null && fld.compareTo(BigDecimal.ZERO)!=0 ? true : false;
+	}
+
+	public void validateCalcAttr(SewerageConnectionRequest sewerageConnectionRequest) {
+		SewerageConnection connection = sewerageConnectionRequest.getSewerageConnection();
+		if(connection.getRoadTypeEst()!=null) {
+			for (RoadTypeEst roadTypeEst : connection.getRoadTypeEst()) {
+				if(roadTypeEst.getRoadType()==null || roadTypeEst.getRoadType().trim().length()==0) {
+					throw new CustomException("ROADTYPE_REQUIRED",
+							"Road Type cannot be null");
+				}
+				if(isNotZero(roadTypeEst.getDepth())|| isNotZero(roadTypeEst.getBreadth())  || isNotZero(roadTypeEst.getLength())  || isNotZero(roadTypeEst.getRate())) {
+					if(isZero(roadTypeEst.getDepth()) || isZero(roadTypeEst.getBreadth())  || isZero(roadTypeEst.getLength())  || isZero(roadTypeEst.getRate()))
+						throw new CustomException("Calculationa_attr","Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
+				
+				}else { 
+					roadTypeEst.setDepth(new BigDecimal(0));
+					roadTypeEst.setBreadth(new BigDecimal(0));
+					roadTypeEst.setLength(new BigDecimal(0));
+					roadTypeEst.setRate(new BigDecimal(0));
+				}
+				
+			}
+			}
+		
 	}
 }

@@ -40,7 +40,7 @@ public class SewerageFieldValidator implements SewerageActionValidator {
 				errorMap.put("INVALID_CONNECTION_EXECUTION_DATE", "Connection execution date should not be empty");
 			}
 		}
-		if (SWConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(
+		/*if (SWConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(
 				sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction())) {
 			if (StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getRoadType())) {
 				errorMap.put("INVALID_ROAD_TYPE", "Road type should not be empty");
@@ -48,7 +48,7 @@ public class SewerageFieldValidator implements SewerageActionValidator {
 			if (StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getRoadCuttingArea())) {
 				errorMap.put("INVALID_ROAD_CUTTING_AREA", "Road cutting area should not be empty");
 			}
-		}
+		}*/
 	}
 
 	public void validateModifyRequest(SewerageConnectionRequest sewerageConnectionRequest, Map<String, String> errorMap) {

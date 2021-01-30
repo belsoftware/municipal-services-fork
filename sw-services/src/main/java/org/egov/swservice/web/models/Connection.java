@@ -127,6 +127,14 @@ public class Connection {
 
 	@JsonProperty("oldApplication")
 	private Boolean oldApplication = false;
+	
+	@JsonProperty("wsTaxHeads")
+	@Valid
+	private List<WsTaxHeads> wsTaxHeads = new ArrayList<>();
+	
+	@JsonProperty("roadTypeEst")
+	@Valid
+	private List<RoadTypeEst> roadTypeEst = new ArrayList<>();
 
 	public Connection id(String id) {
 		this.id = id;
@@ -515,6 +523,24 @@ public class Connection {
 			this.connectionHolders.add(connectionHolderInfo);
 		return this;
 	}
+	
+	public Connection addRoadTypeEst(RoadTypeEst roadTypeEst) {
+		if (this.roadTypeEst == null) {
+			this.roadTypeEst = new ArrayList<RoadTypeEst>();
+		}
+		if (!this.roadTypeEst.contains(roadTypeEst))
+			this.roadTypeEst.add(roadTypeEst);
+		return this;
+	}
+	
+	public Connection addWsTaxHead(WsTaxHeads taxHead) {
+		if (this.wsTaxHeads == null) {
+			this.wsTaxHeads = new ArrayList<WsTaxHeads>();
+		}
+		if (!this.wsTaxHeads.contains(taxHead))
+			this.wsTaxHeads.add(taxHead);
+		return this;
+	}
 
 	@ApiModelProperty(value = "The connection holder info will enter by employee or citizen")
 	@Valid
@@ -529,6 +555,26 @@ public class Connection {
 	public Connection dateEffectiveFrom(Long dateEffectiveFrom) {
 		this.dateEffectiveFrom = dateEffectiveFrom;
 		return this;
+	}
+	
+	@ApiModelProperty(value = "Tax head details")
+	@Valid
+	public List<WsTaxHeads> getWsTaxHeads() {
+		return wsTaxHeads;
+	}
+
+	public void setWsTaxHead(List<WsTaxHeads> wsTaxHeads) {
+		this.wsTaxHeads = wsTaxHeads;
+	}
+	
+	@ApiModelProperty(value = "Road type details")
+	@Valid
+	public List<RoadTypeEst> getRoadTypeEst() {
+		return roadTypeEst;
+	}
+
+	public void setRoadTypeEst(List<RoadTypeEst> roadTypeEst) {
+		this.roadTypeEst = roadTypeEst;
 	}
 
 	/**
@@ -593,7 +639,9 @@ public class Connection {
 				&& Objects.equals(this.connectionHolders, connection.connectionHolders)
 				&& Objects.equals(this.applicationType, connection.applicationType)
 				&& Objects.equals(this.dateEffectiveFrom, connection.dateEffectiveFrom)
-				&& Objects.equals(this.oldApplication, connection.oldApplication);
+				&& Objects.equals(this.oldApplication, connection.oldApplication)
+				&& Objects.equals(this.roadTypeEst, connection.roadTypeEst)
+				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads);
 	}
 
 	@Override
@@ -601,7 +649,7 @@ public class Connection {
 		return Objects.hash(id, tenantId, propertyId, applicationNo, applicationStatus, status, connectionNo,
 				oldConnectionNo, documents, plumberInfo, roadType, roadCuttingArea, connectionExecutionDate,
 				connectionCategory, connectionType, additionalDetails, auditDetails, connectionHolders,
-				applicationType, dateEffectiveFrom, oldApplication);
+				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads);
 	}
 
 	@Override
@@ -630,6 +678,8 @@ public class Connection {
 		sb.append("    applicationType: ").append(toIndentedString(applicationType)).append("\n");
 		sb.append("	   dateEffectiveFrom: ").append(toIndentedString(dateEffectiveFrom)).append("\n");
 		sb.append("	   oldApplication: ").append(toIndentedString(oldApplication)).append("\n");
+		sb.append("	   roadTypeEst: ").append(toIndentedString(roadTypeEst)).append("\n");
+		sb.append("	   wsTaxHeads: ").append(toIndentedString(wsTaxHeads)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}

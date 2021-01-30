@@ -34,7 +34,7 @@ public class SWQueryBuilder {
 	
 	private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime, connectionholder.propertyownership as propertyownership ";
 	
-	private final static String SEWERAGE_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*, sc.connectionExecutionDate,"
+	private final static String SEWERAGE_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*,taxhead.*,roadtype.*, sc.connectionExecutionDate,"
 			+ "sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets,sc.drainageSize, sc.proposedDrainageSize, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate,"
 			+ "  sc.detailsprovidedby, sc.estimationfileStoreId , sc.sanctionfileStoreId , sc.estimationLetterDate,"
 			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id,"
@@ -42,6 +42,8 @@ public class SWQueryBuilder {
 			+ " conn.lastModifiedBy as sw_lastModifiedBy, conn.createdTime as sw_createdTime, conn.lastModifiedTime as sw_lastModifiedTime, "
 			+ " conn.adhocpenaltyreason, conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.applicationType, conn.dateEffectiveFrom,"
 			+ " conn.locality, conn.isoldapplication, conn.roadtype, document.id as doc_Id, document.documenttype, document.filestoreid, document.active as doc_active, plumber.id as plumber_id, plumber.name as plumber_name, plumber.licenseno,"
+			+ " taxhead.id as taxhead_id,taxhead.taxhead as taxhead,taxhead.amount as taxhead_amt, taxhead.active as taxhead_active,"
+			+ " roadtype.id as roadtype_id, roadtype.roadtype as roadtype1, roadtype.length as roadtype_length, roadtype.depth as roadtype_depth, roadtype.breadth as roadtype_breadth, roadtype.rate as roadtype_rate, roadtype.active as roadtype_active,"
 			+ " plumber.mobilenumber as plumber_mobileNumber, plumber.gender as plumber_gender, plumber.fatherorhusbandname, plumber.correspondenceaddress, plumber.relationship, " + holderSelectValues +
 			" FROM eg_sw_connection conn "
 	+  INNER_JOIN_STRING 
@@ -50,6 +52,10 @@ public class SWQueryBuilder {
 	+ "eg_sw_applicationdocument document ON document.swid = conn.id" 
 	+  LEFT_OUTER_JOIN_STRING
 	+ "eg_sw_plumberinfo plumber ON plumber.swid = conn.id"
+	+  LEFT_OUTER_JOIN_STRING
+	+ "eg_sw_connection_taxhead taxhead ON taxhead.connection_id = conn.id"
+	+  LEFT_OUTER_JOIN_STRING
+	+ "eg_sw_connection_roadtype roadtype ON roadtype.connection_id = conn.id"
 	+ LEFT_OUTER_JOIN_STRING
     + "eg_sw_connectionholder connectionholder ON connectionholder.connectionid = conn.id";
 

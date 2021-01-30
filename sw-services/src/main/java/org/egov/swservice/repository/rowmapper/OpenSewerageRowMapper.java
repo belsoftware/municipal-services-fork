@@ -61,6 +61,7 @@ public class OpenSewerageRowMapper implements ResultSetExtractor<List<SewerageCo
             }
 
 			addHoldersDeatilsToSewerageConnection(rs, sewarageConnection);
+			addTaxHeadRaoadTypeDetailsToSewerageConnection(rs, sewarageConnection);
         }
         return new ArrayList<>(connectionListMap.values());
     }
@@ -93,4 +94,29 @@ public class OpenSewerageRowMapper implements ResultSetExtractor<List<SewerageCo
             sewerageConnection.addConnectionHolderInfo(connectionHolderInfo);
         }
     }
+    
+    private void addTaxHeadRaoadTypeDetailsToSewerageConnection(ResultSet rs, SewerageConnection sewerageConnection) throws SQLException {
+   	 if(rs.getString("taxhead_id")!=null && rs.getBoolean("taxhead_active")){
+            WsTaxHeads wsTaxHeads = WsTaxHeads.builder()
+                    .taxHeadCode(rs.getString("taxhead"))
+                    .amount(rs.getBigDecimal("taxhead_amt"))
+                    .id(rs.getString("taxhead_id"))
+                    .active(rs.getBoolean("taxhead_active"))
+                    .build();
+            sewerageConnection.addWsTaxHead(wsTaxHeads);
+        }
+   	 
+   	 if(rs.getString("roadtype_id")!=null && rs.getBoolean("roadtype_active")){
+            RoadTypeEst roadTypeEst = RoadTypeEst.builder()
+                    .roadType(rs.getString("roadtype1"))
+                    .length(rs.getBigDecimal("roadtype_length"))
+                    .breadth(rs.getBigDecimal("roadtype_breadth"))
+                    .depth(rs.getBigDecimal("roadtype_depth"))
+                    .rate(rs.getBigDecimal("roadtype_rate"))
+                    .id(rs.getString("roadtype_id"))
+                    .active(rs.getBoolean("roadtype_active"))
+                    .build();
+            sewerageConnection.addRoadTypeEst(roadTypeEst);
+        }
+   }
 }
