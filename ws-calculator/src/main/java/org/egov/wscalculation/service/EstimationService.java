@@ -366,6 +366,12 @@ public class EstimationService {
 		return estimatesAndBillingSlabs;
 	}
 	
+	private boolean isZero(BigDecimal fld) {
+		return fld==null || fld.compareTo(BigDecimal.ZERO)==0 ? true : false;
+	}
+	private boolean isNotZero(BigDecimal fld) {
+		return fld!=null && fld.compareTo(BigDecimal.ZERO)!=0 ? true : false;
+	}
 	
 	private List<TaxHeadEstimate> getTaxHeadForFeeEstimation1(CalculationCriteria criteria,
 			RequestInfo requestInfo) {
@@ -378,11 +384,14 @@ public class EstimationService {
 				BigDecimal breadth = est.getBreadth();
 				BigDecimal depth = est.getDepth();
 				BigDecimal rate = est.getRate();
-				if(length.compareTo(BigDecimal.ZERO)!=0 || breadth.compareTo(BigDecimal.ZERO)!=0  || depth.compareTo(BigDecimal.ZERO)!=0  || depth.compareTo(BigDecimal.ZERO)!=0 ) {
-					if(length.compareTo(BigDecimal.ZERO)==0 || breadth.compareTo(BigDecimal.ZERO)==0  || depth.compareTo(BigDecimal.ZERO)==0  || depth.compareTo(BigDecimal.ZERO)==0 )
-						throw new CustomException("Calculationa_attr",
-								"Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
-				
+				if(isNotZero(depth)|| isNotZero(breadth)  || isNotZero(length)  || isNotZero(rate)) {
+					if(isZero(depth) || isZero(breadth)  || isZero(length)  || isZero(rate))
+						throw new CustomException("Calculationa_attr","Please enter all the parameter(Length,Breadth,Depth & Rate) to calculate road cutting charges");
+				}else { 
+					length = BigDecimal.ZERO;
+					breadth = BigDecimal.ZERO;
+					depth = BigDecimal.ZERO;
+					rate = BigDecimal.ZERO;
 				}
 				BigDecimal roadCuttingCharges = length.multiply(breadth).multiply(depth).multiply(rate).setScale(2, 2);
 				totalAmount = totalAmount.add(roadCuttingCharges);
