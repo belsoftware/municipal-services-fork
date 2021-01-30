@@ -31,6 +31,7 @@ public class OpenWaterRowMapper implements ResultSetExtractor<List<WaterConnecti
                 currentWaterConnection.setConnectionCategory(rs.getString("connectionCategory"));
                 currentWaterConnection.setConnectionType(rs.getString("connectionType"));
                 currentWaterConnection.setWaterSource(rs.getString("waterSource"));
+                currentWaterConnection.setSourceInfo(rs.getString("sourceInfo"));
                 currentWaterConnection.setMeterId(rs.getString("meterId"));
                 currentWaterConnection.setMeterInstallationDate(rs.getLong("meterInstallationDate"));
                 currentWaterConnection.setId(rs.getString("connection_Id"));

@@ -21,6 +21,9 @@ public class WaterConnection extends Connection {
 
 	@JsonProperty("waterSource")
 	private String waterSource = null;
+	
+	@JsonProperty("sourceInfo")
+	private String sourceInfo = null;
 
 	@JsonProperty("meterId")
 	private String meterId = null;
@@ -70,6 +73,16 @@ public class WaterConnection extends Connection {
 		this.waterSource = waterSource;
 	}
 
+	@ApiModelProperty(required = true, value = "It is source info for type other")
+	@Size(min = 2, max = 64)
+	public String getSourceInfo() {
+		return sourceInfo;
+	}
+
+	public void setSourceInfo(String sourceInfo) {
+		this.sourceInfo = sourceInfo;
+	}
+	
 	public WaterConnection meterId(String meterId) {
 		this.meterId = meterId;
 		return this;
