@@ -154,7 +154,7 @@ public class WaterRowMapper implements ResultSetExtractor<List<WaterConnection>>
     }
     
     private void addTaxHeadRaoadTypeDetailsToWaterConnection(ResultSet rs, WaterConnection waterConnection) throws SQLException {
-   	 if(rs.getString("taxhead_id")!=null && rs.getBoolean("taxhead_active")){
+   	 if(rs.getString("taxhead_id")!=null){
             WsTaxHeads wsTaxHeads = WsTaxHeads.builder()
                     .taxHeadCode(rs.getString("taxhead"))
                     .amount(rs.getBigDecimal("taxhead_amt"))
@@ -164,7 +164,7 @@ public class WaterRowMapper implements ResultSetExtractor<List<WaterConnection>>
             waterConnection.addWsTaxHead(wsTaxHeads);
         }
    	 
-   	 if(rs.getString("roadtype_id")!=null && rs.getBoolean("roadtype_active")){
+   	 if(rs.getString("roadtype_id")!=null){
             RoadTypeEst roadTypeEst = RoadTypeEst.builder()
                     .roadType(rs.getString("roadtype1"))
                     .length(rs.getBigDecimal("roadtype_length"))
