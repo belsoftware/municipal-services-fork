@@ -386,7 +386,7 @@ public class EnrichmentService {
 					flag = true;
 				}
 			}
-			if (!flag) {
+			if (!flag && totalAmount.compareTo(BigDecimal.ZERO)!=0) {
 				roadTaxHead.setId(UUID.randomUUID().toString());
 				roadTaxHead.setActive(true);
 				roadTaxHead.setTaxHeadCode("SW_ROAD_CUTTING_CHARGE");
