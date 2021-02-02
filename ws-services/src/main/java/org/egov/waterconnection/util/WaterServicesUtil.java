@@ -11,6 +11,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.egov.waterconnection.config.WSConfiguration;
+import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.web.models.AuditDetails;
 import org.egov.waterconnection.web.models.Property;
 import org.egov.waterconnection.web.models.PropertyCriteria;
@@ -28,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import net.minidev.json.JSONObject;
 
@@ -50,6 +52,12 @@ public class WaterServicesUtil {
 
 	@Value("${egov.property.searchendpoint}")
 	private String searchPropertyEndPoint;
+	
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndpoint;
 	
 
 	@Autowired
@@ -300,5 +308,27 @@ public class WaterServicesUtil {
 		StringBuilder builder = new StringBuilder();
 		return builder.append(config.getCollectionHost()).append(config.getPaymentSearch());
 	}
+	
+	public List<String> getApplicableTenants(RequestInfo requestInfo,String serviceName){
+         
+    	
+        List<MasterDetail> cityMasterDetails = new ArrayList<>();
+        List<ModuleDetail> cityModuleDetails = new ArrayList<>();
+        
+        final String filter = "$.[?(@.module=='"+serviceName+"')]";
+
+        cityMasterDetails.add(MasterDetail.builder().name(WCConstants.MDMS_CITYMODULE_CODE).filter(filter).build());
+
+        cityModuleDetails.add( ModuleDetail.builder().masterDetails(cityMasterDetails)
+                .moduleName(WCConstants.MDMS_TENANT_MODULE).build());
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(cityModuleDetails).tenantId(requestInfo.getUserInfo().getTenantId()) 
+                .build();
+        StringBuilder uri = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+    	Object result = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
+    	List<String> res=JsonPath.read(result, WCConstants.MDMS_MODULE_TENANT_CODE);
+        return res;
+    }
 
 }

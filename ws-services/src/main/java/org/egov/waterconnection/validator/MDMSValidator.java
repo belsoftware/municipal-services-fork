@@ -154,6 +154,7 @@ public class MDMSValidator {
 	 * @param request waterconnection request
 	 */
 	public void validateMasterForCreateRequest(WaterConnectionRequest request) {
+		validateServiceAvailability(request);
 		// calling property related master
 		List<String> propertyModuleMasters = new ArrayList<>(Arrays.asList(WCConstants.PROPERTY_OWNERTYPE));
 		Map<String, List<String>> codesFromPropetyMasters = getAttributeValues(request.getWaterConnection().getTenantId(),
@@ -163,6 +164,17 @@ public class MDMSValidator {
 		String[] finalmasterNames = {WCConstants.PROPERTY_OWNERTYPE};
 		validateMDMSData(finalmasterNames, codesFromPropetyMasters);
 		validateCodesForCreateRequest(request, codesFromPropetyMasters);
+	}
+
+	private void validateServiceAvailability(WaterConnectionRequest request) {
+		Map<String, String> errorMap = new HashMap<>();
+		WaterConnection connection = request.getWaterConnection();
+		List<String>  applicableTenants = waterServicesUtil.getApplicableTenants(request.getRequestInfo(), WCConstants.SERVICE_FIELD_VALUE_WS);
+		if(!applicableTenants.contains(connection.getTenantId())) {
+			errorMap.put("CITY_MODULE_NOT_FOUND ", "Selected CB does not provide Water Connection ");
+		}
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
 	}
 
 	/**

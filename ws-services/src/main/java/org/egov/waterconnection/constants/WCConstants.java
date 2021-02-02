@@ -108,6 +108,12 @@ public class WCConstants {
 	public static final String SUBMIT_APPLICATION_STATUS_CODE = "SUBMIT_APPLICATION_PENDING_FOR_APPROVAL";
 
 	public static final String APPROVE_CONNECTION_STATUS_CODE = "APPROVE_CONNECTION_APPROVED";
+	
+    public static final String MDMS_TENANT_MODULE = "tenant";
+
+    public static final String MDMS_CITYMODULE_CODE="citymodule";
+
+    public static final String MDMS_MODULE_TENANT_CODE = "$.MdmsRes.tenant.citymodule.*.tenants.*.code";
 
 	public static final List<String> NOTIFICATION_ENABLE_FOR_STATUS = Collections
 			.unmodifiableList(Arrays.asList(INITIATE_INITIATED, REJECT_REJECTED,
