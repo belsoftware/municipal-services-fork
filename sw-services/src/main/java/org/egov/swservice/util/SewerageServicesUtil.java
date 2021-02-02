@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import net.minidev.json.JSONObject;
 
@@ -47,6 +48,12 @@ public class SewerageServicesUtil {
 
 	@Value("${egov.property.searchendpoint}")
 	private String searchPropertyEndPoint;
+	
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndpoint;
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -289,4 +296,25 @@ public class SewerageServicesUtil {
 		return builder.append(config.getCollectionHost()).append(config.getPaymentSearch());
 	}
 
+	public List<String> getApplicableTenants(RequestInfo requestInfo,String serviceName){
+         
+    	
+        List<MasterDetail> cityMasterDetails = new ArrayList<>();
+        List<ModuleDetail> cityModuleDetails = new ArrayList<>();
+        
+        final String filter = "$.[?(@.module=='"+serviceName+"')]";
+
+        cityMasterDetails.add(MasterDetail.builder().name(SWConstants.MDMS_CITYMODULE_CODE).filter(filter).build());
+
+        cityModuleDetails.add( ModuleDetail.builder().masterDetails(cityMasterDetails)
+                .moduleName(SWConstants.MDMS_TENANT_MODULE).build());
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(cityModuleDetails).tenantId(requestInfo.getUserInfo().getTenantId()) 
+                .build();
+        StringBuilder uri = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+    	Object result = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
+    	List<String> res=JsonPath.read(result, SWConstants.MDMS_MODULE_TENANT_CODE);
+        return res;
+    }
 }

@@ -218,5 +218,11 @@ public class SWConstants {
 			.unmodifiableList(Arrays.asList(MODIFIED_FINAL_STATE, STATUS_APPROVED));
 
 	public static final String SEARCH_TYPE_CONNECTION = "CONNECTION";
+	
+    public static final String MDMS_TENANT_MODULE = "tenant";
+
+    public static final String MDMS_CITYMODULE_CODE="citymodule";
+
+    public static final String MDMS_MODULE_TENANT_CODE = "$.MdmsRes.tenant.citymodule.*.tenants.*.code";
 
 }

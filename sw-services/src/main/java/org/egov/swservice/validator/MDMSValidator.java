@@ -105,6 +105,7 @@ public class MDMSValidator {
 	 * @param request sewerage connection request
 	 */
 	public void validateMasterForCreateRequest(SewerageConnectionRequest request) {
+		validateServiceAvailability(request);
 		// calling property related master
 		List<String> propertyModuleMasters = new ArrayList<>(Arrays.asList(SWConstants.PROPERTY_OWNERTYPE));
 		Map<String, List<String>> codesFromPropetyMasters = getAttributeValues(request.getSewerageConnection().getTenantId(),
@@ -114,6 +115,19 @@ public class MDMSValidator {
 		String[] finalmasterNames = {SWConstants.PROPERTY_OWNERTYPE};
 		validateMDMSData(finalmasterNames, codesFromPropetyMasters);
 		validateCodesForCreateRequest(request, codesFromPropetyMasters);
+	}
+	
+	private void validateServiceAvailability(SewerageConnectionRequest request) {
+		Map<String, String> errorMap = new HashMap<>();
+		SewerageConnection connection = request.getSewerageConnection();
+		List<String>  applicableTenants = sewerageServicesUtil.getApplicableTenants(request.getRequestInfo(), SWConstants.SERVICE_FIELD_VALUE_SW);
+		if(!applicableTenants.contains(connection.getTenantId())) {
+			errorMap.put("CITY_MODULE_NOT_FOUND ", "Selected CB does not provide Sewerage Connection ");
+		}
+		
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
+		
 	}
 
 	/**
