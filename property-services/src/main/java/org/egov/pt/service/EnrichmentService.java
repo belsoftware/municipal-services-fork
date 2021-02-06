@@ -69,8 +69,10 @@ public class EnrichmentService {
 		property.getAddress().setTenantId(property.getTenantId());
 		property.getAddress().setId(UUID.randomUUID().toString());
 
-		if (!ObjectUtils.isEmpty(property.getInstitution()))
+		if (!ObjectUtils.isEmpty(property.getInstitution())) {
 			property.getInstitution().setId(UUID.randomUUID().toString());
+			property.getInstitution().setNameOfAuthorizedPerson(property.getOwners().get(0).getName());
+		}
 
 		property.setAuditDetails(propertyAuditDetails);
 		
