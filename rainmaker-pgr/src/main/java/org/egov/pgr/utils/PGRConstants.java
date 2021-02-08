@@ -76,6 +76,11 @@ public class PGRConstants {
 	
 	public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
 	public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+	public static final String LOCALIZATION_TMPLTID_JSONPATH = "$.messages.*.templateId";
+	public static final String LOCALIZATION_LOCALE_JSONPATH = "$.messages.*.locale";
+	public static final String LOCALIZATION_MODULE_JSONPATH = "$.messages.*.module";
+	public static final String LOCALIZATION_FULL_OBJECT = "$.messages.*";
+
 	
 	public static final String LOCATION__BOUNDARY_NAMES_JSONPATH = "$.TenantBoundary.*.boundary.*.name";
 	public static final String LOCATION__BOUNDARY_CODES_JSONPATH = "$.TenantBoundary.*.boundary.*.code";
@@ -98,6 +103,7 @@ public class PGRConstants {
 	public static final String SMS_NOTIFICATION_ADDITIONAL_COMMENT_KEY = "<additional_comments>";
 	public static final String SMS_NOTIFICATION_APP_LINK_KEY = "<app_link>";
 	public static final String SMS_NOTIFICATION_APP_DOWNLOAD_LINK_KEY = "<download_link>";
+	public static final String SMS_NOTIFICATION_WEB_PORTAL_LINK_KEY = "<web_portal_link>";
 	public static final String SMS_NOTIFICATION_AO_DESIGNATION = "<ao_designation>";
 	public static final String SMS_NOTIFICATION_ULB_NAME = "<ulb>";
 	public static final String SMS_NOTIFICATION_SLA_NAME = "<sla>";

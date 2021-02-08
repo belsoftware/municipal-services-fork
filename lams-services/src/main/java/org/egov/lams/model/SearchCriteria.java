@@ -24,6 +24,20 @@ import lombok.Setter;
 @Builder
 public class SearchCriteria {
 
+	//Parameters for DSS sycning.
+	@JsonProperty("tenantIds")
+	private List<String> tenantIds;
+	
+	@JsonProperty("module")
+	private List<String> modules;
+	
+	@JsonProperty("fromDate")
+    private Long fromDate = null;
+
+    @JsonProperty("toDate")
+    private Long toDate = null;
+    //Parameters for DSS syncing end.
+	
 	@JsonProperty("tenantId")
 	private String tenantId;
 
@@ -69,11 +83,6 @@ public class SearchCriteria {
 	@JsonProperty("termNo")
 	private String termNo;
 	
-	@JsonProperty("fromDate")
-    private Long fromDate = null;
-
-    @JsonProperty("toDate")
-    private Long toDate = null;
 	
 	@Override
 	public String toString() {

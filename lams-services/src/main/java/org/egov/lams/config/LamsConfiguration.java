@@ -65,6 +65,9 @@ public class LamsConfiguration {
     @Value("${egov.tlservice.path}")
     private String tlserviceHost;
     
+    @Value("${egov.waterService.host}")
+    private String waterServiceHost;
+    
     @Value("${egov.dss.limit}")
     private Integer dssSearchLimit;
     
@@ -76,6 +79,15 @@ public class LamsConfiguration {
     
     @Value("${egov.dss.tlBreakingLimit}")
     private Integer tlBreakingLimit;
+    
+    @Value("${egov.dss.waterBreakingLimit}")
+    private Integer waterBreakingLimit;
+    
+    @Value("${egov.dss.sewerageBreakingLimit}")
+    private Integer sewerageBreakingLimit;
+    
+    @Value("${egov.dss.leaseBreakingLimit}")
+    private Integer leaseBreakingLimit;
     
     @Value("${egov.elasticSearch.path}")
     private String elasticSearch;
@@ -160,4 +172,36 @@ public class LamsConfiguration {
     @Value("${notification.sms.enabled}")
     private Boolean isSMSEnabled;
     
+    @Value("${egov.propertyService.host}")
+    private String propertyServiceHost;
+    
+    @Value("${egov.locationService.host}")
+    private String locationServiceHost;
+    
+    
+    @Value("${egov.dss.pgrServiceSearchLimit}")
+    private Integer pgrServiceSearchLimit;
+    
+    @Value("${egov.dss.pgrBreakingLimit}")
+    private Integer pgrBreakingLimit;
+    
+    @Value("${egov.dss.leaseServiceSearchLimit}")
+    private Integer leaseServiceSearchLimit;
+    
+    @Value("${egov.dss.sewerageServiceSearchLimit}")
+    private Integer sewerageServiceSearchLimit;
+    
+    @Value("${egov.dss.waterServiceSearchLimit}")
+    private Integer waterServiceSearchLimit;
+    
+    @Value("${egov.dss.collectionsServiceSearchLimit}")
+    private Integer collectionsServiceSearchLimit;
+    
+    @Value("${egov.dss.tlServiceSearchLimit}")
+    private Integer tlServiceSearchLimit;
+    
+    @Value("${egov.sewerageService.host}")
+    private String sewerageServiceHost;
+    
+  
 }

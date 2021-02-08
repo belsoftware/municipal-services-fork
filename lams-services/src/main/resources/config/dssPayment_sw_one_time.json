@@ -1,0 +1,27 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "tenantId": "tenantId",
+      "applicationNo": "applicationNo",
+      "connectionNo": "connectionNo",
+      "applicationStatus": "applicationStatus",
+      "propertyId": "propertyId",
+      "connectionType": "connectionType",
+      "status": "status",
+      "oldConnectionNo": "oldConnectionNo",
+      "appCreatedDate": "additionalDetails.appCreatedDate",
+      "applicationType": "applicationType",
+      "waterSource": "waterSource",
+      "ward": "ward",
+      "additionalDetails": {
+        "appCreatedDate": "appCreatedDate"
+      },
+      "propertyDetails": {
+        "usageCategory": "usageCategory",
+        "propertyType": "propertyType",
+        "channel": "channel"
+      }
+    }
+  }
+]

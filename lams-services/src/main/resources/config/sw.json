@@ -1,0 +1,26 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "*":"&"
+    }
+  },
+  {
+    "operation": "remove",
+    "spec": {
+      "documents":""
+    }
+  },
+  {
+    "operation": "remove",
+    "spec": {
+      "auditDetails":""
+    }
+  },
+  {
+    "operation": "remove",
+    "spec": {
+      "processInstance":""
+    }
+  }
+]

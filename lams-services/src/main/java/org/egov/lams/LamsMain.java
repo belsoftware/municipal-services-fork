@@ -1,9 +1,8 @@
 package org.egov.lams;
 
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.TimeZone;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -11,9 +10,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
 
-import java.util.TimeZone;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication(scanBasePackages = "org.egov.lams")
 @EnableAutoConfiguration
@@ -34,6 +34,8 @@ public class LamsMain {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(LamsMain.class, args);
+        
+       
     }
 
 }

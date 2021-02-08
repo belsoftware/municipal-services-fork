@@ -3,13 +3,11 @@ package org.egov.lams.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import java.util.Set;
-
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.lams.config.LamsConfiguration;
@@ -29,6 +27,7 @@ import org.egov.lams.workflow.ActionValidator;
 import org.egov.lams.workflow.LamsWorkflowService;
 import org.egov.lams.workflow.WorkflowIntegrator;
 import org.egov.lams.workflow.WorkflowService;
+import org.hibernate.validator.internal.metadata.location.GetterConstraintLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,14 +36,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import org.springframework.util.CollectionUtils;
-
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.gson.Gson;
+import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.JsonUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -187,138 +182,294 @@ public class LamsService {
 		return leases;
 	}
 	
-	final List<String> allTenants1 = Arrays.asList(new String[]{"pb.agra","pb.delhi","pb","pb.lucknow","pb.pune","pb.secunderabad","pb.testing","pb.ambala","pb.bareilly","pb.mathura","pb.allahabad","pb.meerut","pb.mhow","pb.kasauli","pb.lebong","pb.jammu","pb.jalandhar","pb.danapur","pb.dagshai","pb.roorkee","pb.pachmarhi","pb.nasirabad","pb.deolali","pb.dehuroad","pb.ahmednagar","pb.amritsar","pb.ramgarh","pb.jalapahar","pb.wellington","pb.subathu","pb.almora","pb.chakrata","pb.clementtown","pb.dehradun","pb.faizabad","pb.fatehgarh","pb.jabalpur","pb.kanpur","pb.landour","pb.lansdowne","pb.khasyol","pb.jutogh","pb.shahjahanpur","pb.varanasi","pb.ferozepur","pb.dalhousie","pb.shillong","pb.badamibagh","pb.ajmer","pb.aurangabad","pb.babina","pb.belgaum","pb.cannanore","pb.bakloh","pb.stm","pb.saugor","pb.jhansi","pb.kamptee","pb.kirkee","pb.morar","pb.ahmedabad","pb.barrackpore","pb.ranikhet","pb.nainital"});
-	final List<String> allTenants = Arrays.asList(new String[]{"pb.agra","pb.delhi","pb.lucknow","pb.pune","pb.secunderabad","pb.testing"});
+	final List<String> allTenants = Arrays.asList(new String[]{"pb.agra","pb.delhi","pb.lucknow","pb.pune","pb.secunderabad","pb.testing","pb.ambala","pb.bareilly","pb.mathura","pb.allahabad","pb.meerut","pb.mhow","pb.kasauli","pb.lebong","pb.jammu","pb.jalandhar","pb.danapur","pb.dagshai","pb.roorkee","pb.pachmarhi","pb.nasirabad","pb.deolali","pb.dehuroad","pb.ahmednagar","pb.amritsar","pb.ramgarh","pb.jalapahar","pb.wellington","pb.subathu","pb.almora","pb.chakrata","pb.clementtown","pb.dehradun","pb.faizabad","pb.fatehgarh","pb.jabalpur","pb.kanpur","pb.landour","pb.lansdowne","pb.khasyol","pb.jutogh","pb.shahjahanpur","pb.varanasi","pb.ferozepur","pb.dalhousie","pb.shillong","pb.badamibagh","pb.ajmer","pb.aurangabad","pb.babina","pb.belgaum","pb.cannanore","pb.bakloh","pb.stm","pb.saugor","pb.jhansi","pb.kamptee","pb.kirkee","pb.morar","pb.ahmedabad","pb.barrackpore","pb.ranikhet","pb.nainital"});
+	//final List<String> allTenants = Arrays.asList(new String[]{"pb.testing"});//Arrays.asList(new String[]{"pb.agra","pb.delhi","pb.lucknow","pb.pune","pb.secunderabad","pb.testing"});
+	final List<String> moduleMaster =  Arrays.asList(new String[]{"Payments","TL","WS","SW","PGR","LAMS"});
+	final Map<String, String> indexMapping = Stream.of(new String[][] {
+		  { "paymentsindex-v1", "paymentsindex-v1" }, 
+		  { "dss-payment_v2", "dss-payment_v2" }, 
+		}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+	
+	final JsonParser parser = new JsonParser();
 	
 	int collectionsBreakingLimit; // = config.getCollectionsBreakingLimit();
+	int collectionsServiceSearchLimit;
 	int tlBreakingLimit ;//= config.getTlBreakingLimit();
-	int offset;// = config.getDssSearchOffset();
-	int limit;// = config.getDssSearchLimit();
+	int tlServicesSearchLimit;
+	int waterBreakingLimit;
+	int waterServiceSearchLimit;
+	int sewerageBreakingLimit;
+	int sewerageServiceSearchLimit;
+	int leaseBreakingLimit;
+	//int offset;// = config.getDssSearchOffset();
+	//int limit;// = config.getDssSearchLimit();
+
+	private Object JsonElement;
 
 
 	public void setthevalues() {
 		collectionsBreakingLimit = config.getCollectionsBreakingLimit();
+		collectionsServiceSearchLimit = config.getCollectionsServiceSearchLimit();
 		tlBreakingLimit = config.getTlBreakingLimit();
-		offset = config.getDssSearchOffset();
-		limit = config.getDssSearchLimit();
+		tlServicesSearchLimit = config.getTlServiceSearchLimit();
+		waterBreakingLimit =config.getWaterBreakingLimit();
+		waterServiceSearchLimit = config.getWaterServiceSearchLimit();
+		sewerageBreakingLimit = config.getSewerageBreakingLimit();
+		sewerageServiceSearchLimit = config.getSewerageServiceSearchLimit();
+		leaseBreakingLimit = config.getLeaseBreakingLimit();
+		//offset = config.getDssSearchOffset();
+		//limit = config.getDssSearchLimit();
 		return;
 	}
+	
+	public String getIndexName(String indexName, RequestInfoWrapper requestInfo)
+	{
+		if(requestInfo.getMigrationParams().getUseRealIndex())
+		{
+			return indexName;
+		}
+		else
+		{
+			if(requestInfo.getMigrationParams().getIndexSuffix()!= null && !requestInfo.getMigrationParams().getIndexSuffix().isEmpty())
+				return indexName + requestInfo.getMigrationParams().getIndexSuffix();
+			else
+				return indexName + "_migration"; 
+		}
+	}
 		
+	public boolean checkRequestSanity(SearchCriteria criteria, RequestInfoWrapper requestInfo) throws Exception
+	{
+		System.out.println("Migration Params Recieved are: ");
+		System.out.println("TenantIds: "+requestInfo.getMigrationParams().getTenantIds());
+		System.out.println("Modules: "+requestInfo.getMigrationParams().getModules());
+		System.out.println("FromDate "+requestInfo.getMigrationParams().getFromDate());
+		System.out.println("ToDate "+requestInfo.getMigrationParams().getToDate());
+		
+		if(requestInfo.getMigrationParams()!=null )
+		{
+			if(!requestInfo.getMigrationParams().getUseRealIndex())
+			{
+				if(requestInfo.getMigrationParams().getIndexSuffix() == null || 
+					(requestInfo.getMigrationParams().getIndexSuffix()!=null && requestInfo.getMigrationParams().getIndexSuffix().isEmpty()))
+				{
+					throw new Exception("Please provide indexSuffix value"); 
+				}		
+			}
+			if(requestInfo.getMigrationParams().getTenantIds()!=null)
+			{
+				if(requestInfo.getMigrationParams().getTenantIds().size() == 0)
+				{
+					
+				}
+				for (String tenant : requestInfo.getMigrationParams().getTenantIds()) {
+					if(!allTenants.contains(tenant))
+					{
+						throw new Exception("Invalid tenant: "+tenant);
+					}
+				}
+			}
+			if(requestInfo.getMigrationParams().getModules()!=null && requestInfo.getMigrationParams().getModules().size() > 0 )
+			{
+				for (String module: requestInfo.getMigrationParams().getModules()) {
+					if(!moduleMaster.contains(module))
+					{
+						throw new Exception("Invalid module: "+module);
+					}
+				}
+			}
+			else
+			{
+				throw new Exception("Provide at least one module. ");
+			}
+			if(requestInfo.getMigrationParams().getFromDate() == null || requestInfo.getMigrationParams().getToDate() == null)
+				throw new Exception("Provide from date and to date");
+			if(requestInfo.getMigrationParams().getFromDate() > requestInfo.getMigrationParams().getToDate())
+				throw new Exception("From date cant be greater than to date");
+		}
+		else
+		{
+			throw new Exception("migrationParams missing.");
+		}
+		
+		return true;
+	}
+	
 	public String migrate(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
 		
 		setthevalues();
-		
-		migratePayments(criteria,requestInfo);
-		
-		migrateTLIndex(criteria, requestInfo);
-		
-		//createTargetCurlCalls();
-		
-		return "success";
-	}
-	public String migratePayments(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
-
-		
-		for(int j=offset; j<collectionsBreakingLimit; j+=limit)
-		{
-			System.out.println("Fetching records from range: "+j+" - "+(j+limit));
-			String collectionUrl =  config.getCollectionserviceHost() + "collection-services/payments/_search?&offset="+j+"&limit="+limit;
-			
-			System.out.println(requestInfo);
-			ResponseEntity<String> response = rest.postForEntity(collectionUrl, requestInfo, String.class);
-			String responseStr = response.getBody();
-			Gson gson = new Gson();
-			
-			//JsonObject jObj = gson.toJsonTree(responseStr).getAsJsonObject();
-			
-			final JsonParser parser = new JsonParser();
-			String responseJson = "{\"hello\":0,\"world\":\"0\"}";
-			JsonElement json = parser.parse(responseStr); 
-			System.out.println(json.getAsJsonObject().get("Payments").getAsJsonArray().size());
-			
-			int i=0;
-			if(json!=null && json.getAsJsonObject().get("Payments")!=null &&
-					json.getAsJsonObject().get("Payments").getAsJsonArray()!=null)
+		JsonObject returnResp = new JsonObject();
+		try {
+			if(checkRequestSanity(criteria, requestInfo))
 			{
-				for (JsonElement jsonElement : json.getAsJsonObject().get("Payments").getAsJsonArray()) {
-					//System.out.println(jsonElement);
-					JsonObject domainObject = null;
+				for (String module : requestInfo.getMigrationParams().getModules()) {
 					
-					String identifier = null; 
-							
-					if(jsonElement.getAsJsonObject().get("paymentDetails")!=null && 
-							jsonElement.getAsJsonObject().get("paymentDetails").getAsJsonArray() != null)
-					{
-						JsonArray paymentDetails = jsonElement.getAsJsonObject().get("paymentDetails").getAsJsonArray();
-						//System.out.println("Payment Details : "+paymentDetails);;
-						for (JsonElement jsonElement2 : paymentDetails) {
-							//System.out.println("BusinessService : "+jsonElement2.getAsJsonObject().get("businessService").getAsString());
+					switch(module) {
+					
+						case "Payments":
+							JsonObject resp = migratePayments(criteria,requestInfo);
+							returnResp.add("Payments", resp);
+							break;
+						case "TL":
+							returnResp.add("TL", migrateTLIndex(criteria, requestInfo));
+							break;
+						case "WS":
+							returnResp.add("WS", migrateWaterIndex(criteria,requestInfo));
+							break;
+						case "SW":
+							returnResp.add("SW",migrateSewerageIndex(criteria,requestInfo));
+							break;
+						case "PGR":
+							returnResp.add("PGR",migratePGRIndex(criteria,requestInfo));
+							break;
+						case "LAMS":
+							returnResp.add("LAMS",migratLeaseIndex(criteria,requestInfo));
+							break;
+						default:
+							break;
+					}
+				}
+				//createTargetCurlCalls();
+			}
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		
+		return returnResp.toString();
+	}
+	public JsonObject migratePayments(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
 	
-							if(jsonElement2.getAsJsonObject().get("bill") != null) 
-							{		
-								if(jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("consumerCode") != null
-										&& jsonElement2.getAsJsonObject().get("businessService").getAsString().equalsIgnoreCase("TL"))  // Build domain object only for TL
-								{
-									String consumerCode  =jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("consumerCode").getAsString();
-									String tenantId  =jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("tenantId").getAsString();
-									
-									domainObject = getTLDetails(consumerCode, tenantId, requestInfo);
-								}
+		List<String> reqTenants = requestInfo.getMigrationParams().getTenantIds().size() > 0 ? requestInfo.getMigrationParams().getTenantIds() : allTenants;
+		int totalCounter = 0;
+		JsonObject returnRespObj = new JsonObject();
+		for(String tenant: reqTenants)
+		{
+			System.out.println("Migrating for tenant: "+tenant);
+			for(int j=0; j<collectionsBreakingLimit; j+=collectionsServiceSearchLimit)
+			{
+				System.out.println("Fetching records from range: "+j+" - "+(j+collectionsServiceSearchLimit));
+				String collectionUrl =  config.getCollectionserviceHost() + "collection-services/payments/_search?&offset="+j+"&limit="+collectionsServiceSearchLimit+
+					"&fromDate="+requestInfo.getMigrationParams().getFromDate()+"&toDate="+requestInfo.getMigrationParams().getToDate()+"&tenantId="+tenant;
+						//"&tenantId=pb.testing&transactionNumber=CB_PG_2021_02_05_001937_82";
+				
+				System.out.println(requestInfo);
+				ResponseEntity<String> response = rest.postForEntity(collectionUrl, requestInfo, String.class);
+				String responseStr = response.getBody();
+				
+				//JsonObject jObj = gson.toJsonTree(responseStr).getAsJsonObject();
+				
+				JsonElement json = parser.parse(responseStr); 
+				
+				int i=0;
+				if(json!=null && json.getAsJsonObject().get("Payments")!=null &&
+						json.getAsJsonObject().get("Payments").getAsJsonArray()!=null)
+				{
+					for (JsonElement jsonElement : json.getAsJsonObject().get("Payments").getAsJsonArray()) {
+						//System.out.println(jsonElement);
+						JsonObject domainObject = null;
+						
+						String identifier = null; 
 								
-								if(jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("billDetails")!=null &&
-										jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("billDetails").getAsJsonArray().size()>0)
-								{
-									JsonObject billDetail = (JsonObject) jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("billDetails").getAsJsonArray().get(0);
-									identifier = billDetail.getAsJsonObject().get("id").getAsString();
-									
-									if(billDetail.getAsJsonObject().get("id") != null && !billDetail.getAsJsonObject().get("id").isJsonNull())
+						if(jsonElement.getAsJsonObject().get("paymentDetails")!=null && 
+								jsonElement.getAsJsonObject().get("paymentDetails").getAsJsonArray() != null)
+						{
+							JsonArray paymentDetails = jsonElement.getAsJsonObject().get("paymentDetails").getAsJsonArray();
+							//System.out.println("Payment Details : "+paymentDetails);;
+							for (JsonElement jsonElement2 : paymentDetails) {
+								//System.out.println("BusinessService : "+jsonElement2.getAsJsonObject().get("businessService").getAsString());
+		
+								if(jsonElement2.getAsJsonObject().get("bill") != null) 
+								{		
+									if(jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("consumerCode") != null)  // Build domain object only for TL
 									{
-										identifier = billDetail.getAsJsonObject().get("id").getAsString();
+										String consumerCode  =jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("consumerCode").getAsString();
+										String tenantId  =jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("tenantId").getAsString();
+										
+										String businessService = jsonElement2.getAsJsonObject().get("businessService").getAsString();
+										switch(businessService) {
+											case "TL":
+												domainObject = getTLDetails(consumerCode, tenantId, requestInfo);
+												break;
+											case "WS.ONE_TIME_FEE":
+												domainObject = getWsDetails(consumerCode, tenantId, requestInfo);
+												break;
+											case "SW.ONE_TIME_FEE":
+												domainObject = getSwDetails(consumerCode, tenantId, requestInfo);
+												break;
+											/*
+											case "WS":
+												domainObject = getWsDetails(consumerCode, tenantId, requestInfo);
+												break;
+											case "SW":
+												domainObject = getSwDetails(consumerCode, tenantId, requestInfo);
+												break; */
+											default:
+												domainObject = null;
+										}
 									}
-									i++;
+									
+									if(jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("billDetails")!=null &&
+											jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("billDetails").getAsJsonArray().size()>0)
+									{
+										JsonObject billDetail = (JsonObject) jsonElement2.getAsJsonObject().get("bill").getAsJsonObject().get("billDetails").getAsJsonArray().get(0);
+										identifier = billDetail.getAsJsonObject().get("id").getAsString();
+										
+										if(billDetail.getAsJsonObject().get("id") != null && !billDetail.getAsJsonObject().get("id").isJsonNull())
+										{
+											identifier = billDetail.getAsJsonObject().get("id").getAsString();
+										}
+										i++;
+									}
+									else
+									{
+										System.out.println("Hey bill not there ");
+									}
+									
 								}
-								else
-								{
-									System.out.println("Hey bill not there ");
-								}
-								
 							}
 						}
-					}
-					
-					JsonObject enrichedObject = new JsonObject();
-					JsonObject paymentsIndexObject = new JsonObject();
-					paymentsIndexObject.add("Data", jsonElement.deepCopy().getAsJsonObject());
-					
-					JsonObject dataObject = transformDataObject(jsonElement);
-					
-					
-					enrichedObject.add("dataObject", dataObject);
-					enrichedObject.add("dataContext", new JsonPrimitive("collection"));
-					enrichedObject.add("dataContextVersion", new JsonPrimitive("v1"));
-					enrichedObject.add("identifier", new JsonPrimitive(identifier));
-					
-					if(domainObject != null)
-					{
-						enrichedObject.add("domainObject", domainObject);
 						
+						JsonObject enrichedObject = new JsonObject();
+						JsonObject paymentsIndexObject = new JsonObject();
+						paymentsIndexObject.add("Data", jsonElement.deepCopy().getAsJsonObject());
+						
+						JsonObject dataObject = transformDataObject(jsonElement);
+						
+						
+						enrichedObject.add("dataObject", dataObject);
+						enrichedObject.add("dataContext", new JsonPrimitive("collection"));
+						enrichedObject.add("dataContextVersion", new JsonPrimitive("v1"));
+						enrichedObject.add("identifier", new JsonPrimitive(identifier));
+						
+						if(domainObject != null)
+						{
+							enrichedObject.add("domainObject", domainObject);
+						}
+						
+						putToElasticSearch( getIndexName("dss-payment_v2",requestInfo), "general", identifier, enrichedObject);
+						putToElasticSearch( getIndexName("paymentsindex-v1",requestInfo), "payments", identifier, paymentsIndexObject);
+						System.out.println("Check the final enriched Object: "+enrichedObject);
 					}
 					
-					putToElasticSearch( "dss-payment_v2_migration", "general", identifier, enrichedObject);
-					putToElasticSearch( "paymentsindex-v1_migration", "payments", identifier, paymentsIndexObject);
-					//System.out.println("Check the enriched Object: "+enrichedObject);
 				}
 				
+				System.out.println("Total Entities Recieved: "+json.getAsJsonObject().get("Payments").getAsJsonArray().size() + " for "+tenant);
+				System.out.println("Total Entities Created:  "+i+" for "+tenant);;
+				totalCounter = totalCounter+i;
+				returnRespObj.add(tenant, new JsonPrimitive(i));
+				
+				if(json.getAsJsonObject().get("Payments").getAsJsonArray().size() < collectionsServiceSearchLimit)
+					break;
 			}
-			
-			System.out.println("Total Entities Recieved: "+json.getAsJsonObject().get("Payments").getAsJsonArray().size());
-			System.out.println("Total Entities Created:  "+i);;
 		}
+		
+		returnRespObj.add("Total", new JsonPrimitive(totalCounter));
 		//System.out.println("The response is "+responseStr);
-		return "success";
+		return returnRespObj;
 	}
 	
-	public String migrateTLIndex (SearchCriteria criteria, RequestInfoWrapper requestInfo)
+	public JsonObject migrateTLIndex (SearchCriteria criteria, RequestInfoWrapper requestInfo)
 	{
 //		String mdmsUrl = "http://localhost:8081/egov-mdms-service/v1/_search?tenantId=pb";
 //		System.out.println("Request info is "+requestInfo.getRequestInfo());
@@ -338,16 +489,18 @@ public class LamsService {
 //			}
 //		}
 		
-		final JsonParser parser = new JsonParser();
-		System.out.println("Migrating TL Data of "+allTenants.size() + " tenants");
+		JsonObject returnRespObj = new JsonObject();
 		int totalCounter = 0;
-		for (String tenantId : allTenants) {
-			
-			for(int j=0; j<tlBreakingLimit; j+=limit)
+		List<String> reqTenants = requestInfo.getMigrationParams().getTenantIds().size() > 0 ? requestInfo.getMigrationParams().getTenantIds() : allTenants;
+		System.out.println("Migrating TL Data of "+reqTenants.size() + " tenants");
+		for (String tenantId : reqTenants) {
+			int tenantWiseCounter = 0;
+			for(int j=0; j<tlBreakingLimit; j+=tlServicesSearchLimit)
 			{
-				System.out.println("Fetching records from range: "+j+" - "+(j+limit));
-				String tlUrl = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+
-						"&fromDate=1576468207000&offset="+j+"&limit="+limit;
+				System.out.println("Fetching records from range: "+j+" - "+(j+tlServicesSearchLimit));
+				String tlUrl = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+"&offset="+j+"&limit="+tlServicesSearchLimit+
+						"&fromDate="+requestInfo.getMigrationParams().getFromDate()+"&toDate="+requestInfo.getMigrationParams().getToDate();
+				
 				ResponseEntity<String> tlResponse = rest.postForEntity(tlUrl, requestInfo, String.class);
 				String tlResponseStr = tlResponse.getBody();
 				JsonElement tlObj = parser.parse(tlResponseStr);
@@ -371,22 +524,215 @@ public class LamsService {
 						JsonObject tenantData = new JsonObject();
 						tenantData.add("code", new JsonPrimitive(tenantId));
 						enrichedTlObject.get("Data").getAsJsonObject().add("tenantData",tenantData);
-						putToElasticSearch( "tlindex-v1_migration", "licenses", identifier+tenantId, enrichedTlObject);
+						putToElasticSearch( getIndexName("tlindex-v1",requestInfo), "licenses", identifier+tenantId, enrichedTlObject);
 						totalCounter++;
 
 					}
 					
 					System.out.println("Migrated "+ tlObj.getAsJsonObject().get("Licenses").getAsJsonArray().size() +" tl records - "+tenantId);
+					tenantWiseCounter = tenantWiseCounter + tlObj.getAsJsonObject().get("Licenses").getAsJsonArray().size();
 				}
 				else
 				{
 					System.out.println("No TL Records for "+tenantId);
 				}
+				
+				if(tlObj.getAsJsonObject().get("Licenses").getAsJsonArray().size() < tlServicesSearchLimit)
+					break;
+			}
+			returnRespObj.add(tenantId, new JsonPrimitive(tenantWiseCounter));
+		}
+		System.out.println("Migrated "+totalCounter+" for "+reqTenants.size()+" tenants");	
+		returnRespObj.add("total", new JsonPrimitive(totalCounter));
+		return returnRespObj;
+	}
+	
+	/**
+	 * Difference:
+	 * 		Extra info from WS Service:
+	 * 			sourceInfo,roadTypeEst,wsTaxHeads,oldApplication,motorInfo,propertyOwnership,authorizedConnection
+	 * 		Extra in ES:
+	 * 			-
+	 * @param criteria
+	 * @param requestInfo
+	 * @return
+	 */
+	public JsonObject migrateWaterIndex(SearchCriteria criteria, RequestInfoWrapper requestInfo)
+	{
+		int totalCounter = 0;
+		JsonObject retRespJson = new JsonObject();
+		List<String> reqTenants = requestInfo.getMigrationParams().getTenantIds().size() > 0 ? requestInfo.getMigrationParams().getTenantIds() : allTenants;
+		System.out.println("Migrating Water Data of "+reqTenants.size() + " tenants");
+		for (String tenantId : reqTenants) {
+			int tenantWiseCounter = 0; 
+			for(int j=0; j<waterBreakingLimit; j+=waterServiceSearchLimit)
+			{
+				System.out.println("Fetching records from range: "+j+" - "+(j+waterServiceSearchLimit));
+				String tlUrl = config.getWaterServiceHost()+"ws-services/wc/_search?tenantId="+tenantId+
+						"&offset="+j+"&limit="+waterServiceSearchLimit +   //"&applicationNumber=WS-AP-TEST/2021-02-05/000453"; //&fromDate=1609459200000
+						"&fromDate="+requestInfo.getMigrationParams().getFromDate()+"&toDate="+requestInfo.getMigrationParams().getToDate();
+				
+				ResponseEntity<String> tlResponse = rest.postForEntity(tlUrl, requestInfo, String.class);
+				String tlResponseStr = tlResponse.getBody();
+				//System.out.println("Response is : "+tlResponseStr);
+				
+				
+				JsonElement tlObj = parser.parse(tlResponseStr);
+				JsonArray jsonArray = tlObj.getAsJsonObject().get("WaterConnection").getAsJsonArray();
+				System.out.println("Returned size is : "+jsonArray.size());
+				for(int k=0; k<=jsonArray.size()-1; k++)
+				{
+					JsonElement transformedJson = buildWaterObj(requestInfo, jsonArray.get(k).getAsJsonObject());
+					JsonObject enrichedWsObject = new JsonObject();
+					enrichedWsObject.add("Data", transformedJson);
+					String identifier = jsonArray.get(k).getAsJsonObject().get("id").getAsString();
+					String tId = !jsonArray.get(k).getAsJsonObject().get("tenantId").isJsonNull() ?  jsonArray.get(k).getAsJsonObject().get("tenantId").getAsString(): "";
+					putToElasticSearch( getIndexName("water-services",requestInfo), "general", identifier+tId, enrichedWsObject);
+					totalCounter++;
+					//System.out.println("Done "+k);
+				}
+
+				tenantWiseCounter+=jsonArray.size();
+				//System.out.println("Donee "+j);
+				if(jsonArray.size() < waterServiceSearchLimit)
+					break;
+				
+				//Working code for testing JOLT Transform:
+				/*
+				Object testInputJson = JsonUtils.filepathToObject("E:\\SrikanthsGitRepo\\municipal-services\\lams-services\\src\\main\\resources\\config\\testInput.json");
+				List testSpecJson= JsonUtils.filepathToList("E:\\SrikanthsGitRepo\\municipal-services\\lams-services\\src\\main\\resources\\config\\testSpec.json");
+				Chainr chainr = Chainr.fromSpec(testSpecJson);
+				Object inputJSON = testInputJson;
+				System.out.println("Input json is : "+inputJSON);
+				Object transformedOutput = chainr.transform(inputJSON);
+				System.out.println("Transformed JSON is :" + JsonUtils.toJsonString(transformedOutput));
+				*/
+			}
+			retRespJson.add(tenantId, new JsonPrimitive(tenantWiseCounter));
+		}
+		retRespJson.add("total", new JsonPrimitive(totalCounter));
+		System.out.println("Water: Migrated successfully: "+totalCounter+" records. For "+reqTenants.size()+" tenants");	
+		
+		return retRespJson;
+	}
+	
+	
+	
+	/**
+	 * Difference:
+	 * 		Extra info from WS Service:
+	 * 			sourceInfo,roadTypeEst,wsTaxHeads,oldApplication,motorInfo,propertyOwnership,authorizedConnection
+	 * 		Extra in ES:
+	 * 			-
+	 * @param criteria
+	 * @param requestInfo
+	 * @return
+	 */
+	public JsonObject migrateSewerageIndex(SearchCriteria criteria, RequestInfoWrapper requestInfo)
+	{
+		JsonObject retRespJson = new JsonObject();
+		int totalCounter = 0;
+		List<String> reqTenants = requestInfo.getMigrationParams().getTenantIds().size() > 0 ? requestInfo.getMigrationParams().getTenantIds() : allTenants;
+		System.out.println("Migrating Sewerage Data of "+reqTenants.size() + " tenants");
+		for (String tenantId : reqTenants) {
+			int tenantWiseCounter = 0;
+			for(int j=0; j<sewerageBreakingLimit; j+=sewerageServiceSearchLimit)
+			{
+				System.out.println("Fetching records from range: "+j+" - "+(j+sewerageServiceSearchLimit));
+				String swUrl = config.getSewerageServiceHost()+"sw-services/swc/_search?tenantId="+tenantId+
+						"&offset="+j+"&limit="+sewerageServiceSearchLimit+   //"&applicationNumber=WS-AP-TEST/2021-02-05/000453"; //&fromDate=1609459200000
+						"&fromDate="+requestInfo.getMigrationParams().getFromDate()+"&toDate="+requestInfo.getMigrationParams().getToDate();
+				
+				ResponseEntity<String> tlResponse = rest.postForEntity(swUrl, requestInfo, String.class);
+				String tlResponseStr = tlResponse.getBody();
+				//System.out.println("Response is : "+tlResponseStr);
+								
+				JsonElement tlObj = parser.parse(tlResponseStr);
+				JsonArray jsonArray = tlObj.getAsJsonObject().get("SewerageConnections").getAsJsonArray();
+				System.out.println("Returned size is : "+jsonArray.size());
+				for(int k=0; k<=jsonArray.size()-1; k++)
+				{
+					JsonElement transformedJson = buildSewerageObj(requestInfo, jsonArray.get(k).getAsJsonObject());
+					JsonObject enrichedWsObject = new JsonObject();
+					enrichedWsObject.add("Data", transformedJson);
+					String identifier = jsonArray.get(k).getAsJsonObject().get("id").getAsString();
+					String tId = !jsonArray.get(k).getAsJsonObject().get("tenantId").isJsonNull() ?  jsonArray.get(k).getAsJsonObject().get("tenantId").getAsString(): "";
+					putToElasticSearch( getIndexName("sewerage-services",requestInfo), "general", identifier+tId, enrichedWsObject);
+					totalCounter++;
+					//System.out.println("Done "+k);
+				}
+
+				tenantWiseCounter+=jsonArray.size();
+				retRespJson.add(tenantId, new JsonPrimitive(tenantWiseCounter));
+				//System.out.println("Donee "+j);
+				if(jsonArray.size() < sewerageServiceSearchLimit)
+					break;
+				
 			}
 		}
-		System.out.println("Migrated "+totalCounter+" for all tenants");	
 		
-		return "success";
+		System.out.println("Sewerage: Migrated successfully: "+totalCounter+" records. For "+reqTenants.size()+" tenants");	
+		retRespJson.add("total", new JsonPrimitive(totalCounter));
+
+		return retRespJson;
+	}
+	
+	public JsonElement buildWaterObj(RequestInfoWrapper requestInfo, JsonObject waterDetails)
+	{
+		
+		List specJSON = JsonUtils.classpathToList("/config/ws.json");
+		//JsonUtils.classpathToList(classPath)("E:\\SrikanthsGitRepo\\municipal-services\\lams-services\\src\\main\\resources\\config\\ws.json");
+
+		Chainr chainr = Chainr.fromSpec(specJSON);
+		Object inputJson = JsonUtils.jsonToObject(waterDetails.toString());
+		//System.out.println("Input json is : "+jsonArray.get(k).getAsJsonObject().toString());
+		Object transformedOutput = chainr.transform(inputJson);
+		JsonElement transformedJson = parser.parse(JsonUtils.toJsonString(transformedOutput));
+		//System.out.println("Transformed JSON is :" + JsonUtils.toJsonString(transformedOutput));
+		
+		//Enrich with ward data
+		String locality = (!waterDetails.get("additionalDetails").isJsonNull() && 
+				!waterDetails.get("additionalDetails").getAsJsonObject().get("locality").isJsonNull()) ?
+					waterDetails.get("additionalDetails").getAsJsonObject().get("locality").getAsString(): "";
+		String tId = !waterDetails.get("tenantId").isJsonNull() ?  waterDetails.get("tenantId").getAsString(): "";
+		JsonElement wardObj = getWardData(requestInfo, "REVENUE", "locality", locality, tId);
+		transformedJson.getAsJsonObject().add("ward", wardObj);
+		
+		//Enrich with propery data
+		String uuid = !waterDetails.get("propertyId").isJsonNull() ? waterDetails.get("propertyId").getAsString() : "";
+		JsonElement propertyObj = getPropertyData(requestInfo, uuid, tId);
+		transformedJson.getAsJsonObject().add("propertyDetails", propertyObj);
+		//System.out.println("Final Transformed JSON is :"+transformedJson.toString());
+		
+		return transformedJson;
+	}
+	
+	public JsonElement buildSewerageObj(RequestInfoWrapper requestInfo, JsonObject sewerageDetails)
+	{
+		List specJSON = JsonUtils.classpathToList("/config/sw.json");//("E:\\SrikanthsGitRepo\\municipal-services\\lams-services\\src\\main\\resources\\config\\sw.json");
+
+		Chainr chainr = Chainr.fromSpec(specJSON);
+		Object inputJson = JsonUtils.jsonToObject(sewerageDetails.toString());
+		//System.out.println("Input json is : "+jsonArray.get(k).getAsJsonObject().toString());
+		Object transformedOutput = chainr.transform(inputJson);
+		JsonElement transformedJson = parser.parse(JsonUtils.toJsonString(transformedOutput));
+		//System.out.println("Transformed JSON is :" + JsonUtils.toJsonString(transformedOutput));
+		
+		//Enrich with ward data
+		String locality = (!sewerageDetails.get("additionalDetails").isJsonNull() && 
+				!sewerageDetails.get("additionalDetails").getAsJsonObject().get("locality").isJsonNull()) ?
+						sewerageDetails.get("additionalDetails").getAsJsonObject().get("locality").getAsString(): "";
+		String tId = !sewerageDetails.get("tenantId").isJsonNull() ?  sewerageDetails.get("tenantId").getAsString(): "";
+		JsonElement wardObj = getWardData(requestInfo, "REVENUE", "locality", locality, tId);
+		transformedJson.getAsJsonObject().add("ward", wardObj);
+		
+		//Enrich with propery data
+		String uuid = !sewerageDetails.get("propertyId").isJsonNull() ? sewerageDetails.get("propertyId").getAsString() : "";
+		JsonElement propertyObj = getPropertyData(requestInfo, uuid, tId);
+		transformedJson.getAsJsonObject().add("propertyDetails", propertyObj);
+		//System.out.println("Final Transformed JSON is :"+transformedJson.toString());
+		
+		return transformedJson;
 	}
 	
 	public String createTargetCurlCalls() {
@@ -409,10 +755,13 @@ public class LamsService {
 		return "Done";
 	}
 	
-	public String migratePGRIndex(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
-		return "success";
+	public JsonObject migratePGRIndex(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
+		return new JsonObject();
 	}
 	
+	public JsonObject migratLeaseIndex(SearchCriteria criteria, RequestInfoWrapper requestInfo) {
+		return new JsonObject();
+	}
 	public String putToElasticSearch(String indexName, String type, String identifier,  JsonObject jsonObject)
 	{
 		
@@ -471,45 +820,108 @@ public class LamsService {
 	
 	public JsonObject getTLDetails(String applicationNumber, String tenantId , RequestInfoWrapper requestInfo)
 	{
-		String url = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+"&applicationNumber="+applicationNumber;
-		ResponseEntity<String> response = rest.postForEntity(url, requestInfo, String.class);
-		String responseStr = response.getBody();
-		final JsonParser parser = new JsonParser();
-		JsonElement json = parser.parse(responseStr); 
-		
-		JsonObject domainObject = new JsonObject();
-		JsonObject tradeLicense = new JsonObject();
-		domainObject.add("tradeLicense", tradeLicense);
-		if(json.getAsJsonObject().get("Licenses") !=null && json.getAsJsonObject().get("Licenses").getAsJsonArray().size() > 0)
+		try
 		{
-			JsonObject jsonObject = json.getAsJsonObject().get("Licenses").getAsJsonArray().get(0).getAsJsonObject();
-			if(jsonObject.get("tradeLicenseDetail")!= null )
+			String url = config.getTlserviceHost()+"tl-services/v1/_search?tenantId="+tenantId+"&applicationNumber="+applicationNumber;
+			ResponseEntity<String> response = rest.postForEntity(url, requestInfo, String.class);
+			String responseStr = response.getBody();
+			JsonElement json = parser.parse(responseStr); 
+			
+			JsonObject domainObject = new JsonObject();
+			JsonObject tradeLicense = new JsonObject();
+			domainObject.add("tradeLicense", tradeLicense);
+			if(json.getAsJsonObject().get("Licenses") !=null && json.getAsJsonObject().get("Licenses").getAsJsonArray().size() > 0)
 			{
-				if(jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("address")!=null &&
-						jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("address").getAsJsonObject().get("locality")!=null)
+				JsonObject jsonObject = json.getAsJsonObject().get("Licenses").getAsJsonArray().get(0).getAsJsonObject();
+				if(jsonObject.get("tradeLicenseDetail")!= null )
 				{
-					JsonObject ward = jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("address").getAsJsonObject().get("locality").getAsJsonObject();
-					domainObject.add("ward", ward);
+					if(jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("address")!=null &&
+							jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("address").getAsJsonObject().get("locality")!=null)
+					{
+						JsonObject ward = jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("address").getAsJsonObject().get("locality").getAsJsonObject();
+						domainObject.add("ward", ward);
+						
+					}
 					
+					if(jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("tradeUnits") !=null)
+					{
+						JsonArray tradeUnits = jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("tradeUnits").getAsJsonArray();
+						domainObject.get("tradeLicense").getAsJsonObject().add("tradeUnits", tradeUnits);
+					}
+						
 				}
 				
-				if(jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("tradeUnits") !=null)
+				if(jsonObject.get("licenseNumber") != null && !jsonObject.get("licenseNumber").isJsonNull())
 				{
-					JsonArray tradeUnits = jsonObject.get("tradeLicenseDetail").getAsJsonObject().get("tradeUnits").getAsJsonArray();
-					domainObject.get("tradeLicense").getAsJsonObject().add("tradeUnits", tradeUnits);
+					String licenseNumber = jsonObject.get("licenseNumber").getAsString();
+					domainObject.get("tradeLicense").getAsJsonObject().add("licenseNumber", new JsonPrimitive(licenseNumber));
 				}
-					
+				
 			}
-			
-			if(jsonObject.get("licenseNumber") != null && !jsonObject.get("licenseNumber").isJsonNull())
-			{
-				String licenseNumber = jsonObject.get("licenseNumber").getAsString();
-				domainObject.get("tradeLicense").getAsJsonObject().add("licenseNumber", new JsonPrimitive(licenseNumber));
-			}
-			
+		
+			return domainObject;
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error while getting TL Details : "+e.getMessage()+" .However skipped and continued");
+			return null;
 		}
 		
-		return domainObject;
+	}
+	
+	public JsonObject getWsDetails(String applicationNumber, String tenantId , RequestInfoWrapper requestInfo)
+	{
+		
+		String url = config.getWaterServiceHost()+"ws-services/wc/_search?tenantId="+tenantId+"&applicationNumber="+applicationNumber;
+		ResponseEntity<String> response = rest.postForEntity(url, requestInfo, String.class);
+		String responseStr = response.getBody();
+		JsonElement json = parser.parse(responseStr); 
+		JsonObject waterObj = (!json.getAsJsonObject().get("WaterConnection").isJsonNull() && json.getAsJsonObject().get("WaterConnection").getAsJsonArray().size() > 0 )?
+				json.getAsJsonObject().get("WaterConnection").getAsJsonArray().get(0).getAsJsonObject() : null;
+		
+		JsonElement esTypeWaterObj;  //Type as stored in elastic search
+		if(waterObj!=null)
+			esTypeWaterObj = buildWaterObj(requestInfo, waterObj);
+		else
+			return null;
+		
+		//System.out.println("Check the water object: "+esTypeWaterObj);
+		List specJSON = JsonUtils.classpathToList("/config/dssPayment_ws_one_time.json");//filepathToList("E:\\SrikanthsGitRepo\\municipal-services\\lams-services\\src\\main\\resources\\config\\dssPayment_ws_one_time.json");
+		Chainr chainr = Chainr.fromSpec(specJSON);
+		Object inputJson = JsonUtils.jsonToObject(esTypeWaterObj.toString());
+		Object transformedOutput = chainr.transform(inputJson);
+		JsonElement domainObject = parser.parse(JsonUtils.toJsonString(transformedOutput));
+
+		System.out.println("Water side");
+		return domainObject.getAsJsonObject();
+		
+	}
+	
+	public JsonObject getSwDetails(String applicationNumber, String tenantId , RequestInfoWrapper requestInfo)
+	{
+		
+		String url = config.getSewerageServiceHost()+"sw-services/swc/_search?tenantId="+tenantId+"&applicationNumber="+applicationNumber;
+		ResponseEntity<String> response = rest.postForEntity(url, requestInfo, String.class);
+		String responseStr = response.getBody();
+		JsonElement json = parser.parse(responseStr); 
+		JsonObject sewerageObj = (!json.getAsJsonObject().get("SewerageConnections").isJsonNull() && json.getAsJsonObject().get("SewerageConnections").getAsJsonArray().size() > 0 )?
+				json.getAsJsonObject().get("SewerageConnections").getAsJsonArray().get(0).getAsJsonObject() : null;
+		
+		JsonElement esTypeSewerageObj;  //Type as stored in elastic search
+		if(sewerageObj!=null)
+			esTypeSewerageObj = buildWaterObj(requestInfo, sewerageObj);
+		else
+			return null;
+		
+		//System.out.println("Check the water object: "+esTypeWaterObj);
+		List specJSON = JsonUtils.classpathToList("/config/dssPayment_sw_one_time.json");//filepathToList("E:\\SrikanthsGitRepo\\municipal-services\\lams-services\\src\\main\\resources\\config\\dssPayment_sw_one_time.json");
+		Chainr chainr = Chainr.fromSpec(specJSON);
+		Object inputJson = JsonUtils.jsonToObject(esTypeSewerageObj.toString());
+		Object transformedOutput = chainr.transform(inputJson);
+		JsonElement domainObject = parser.parse(JsonUtils.toJsonString(transformedOutput));
+
+		System.out.println("Sewerage side");
+		return domainObject.getAsJsonObject();
 		
 	}
 	
@@ -518,4 +930,32 @@ public class LamsService {
 		return null;
 	}
 	
+	public JsonElement getPropertyData(RequestInfoWrapper requestInfo, String uuids, String tenantId)
+	{
+		String url = config.getPropertyServiceHost()+"property-services/property/_search"+"?uuids="+uuids+"&tenantId="+tenantId;
+		String propertyData = post(url, requestInfo);
+		JsonElement propertyResp = parser.parse(propertyData);
+		JsonElement propertyElement = (!propertyResp.getAsJsonObject().get("Properties").isJsonNull() && propertyResp.getAsJsonObject().get("Properties").getAsJsonArray().size() > 0 )?
+				propertyResp.getAsJsonObject().get("Properties").getAsJsonArray().get(0) : null; 
+		return propertyElement;
+	}
+	
+	public JsonElement getWardData(RequestInfoWrapper requestInfo, String hierarchyTypeCode, String locality, String codes, String tenantId)
+	{
+		String url = config.getLocationServiceHost()+"egov-location/location/v11/boundarys/_search"+"?hierarchyTypeCode="+hierarchyTypeCode+"&boundaryType="+locality+"&codes="+codes+"&tenantId="+tenantId;
+		String wardData = post(url, requestInfo);
+		JsonElement wardDataResp = parser.parse(wardData);
+		JsonElement wardDataJson = (!wardDataResp.getAsJsonObject().get("TenantBoundary").isJsonNull() && wardDataResp.getAsJsonObject().get("TenantBoundary").getAsJsonArray().size() > 0 
+				&& !wardDataResp.getAsJsonObject().get("TenantBoundary").getAsJsonArray().get(0).getAsJsonObject().get("boundary").isJsonNull() && 
+					wardDataResp.getAsJsonObject().get("TenantBoundary").getAsJsonArray().get(0).getAsJsonObject().get("boundary").getAsJsonArray().size() > 0 ) ?
+					wardDataResp.getAsJsonObject().get("TenantBoundary").getAsJsonArray().get(0).getAsJsonObject().get("boundary").getAsJsonArray().get(0) : null;
+		return wardDataJson;
+	}
+	
+	public String post(String url, RequestInfoWrapper  requestInfo)
+	{
+		ResponseEntity<String> response = rest.postForEntity(url, requestInfo, String.class);
+		String respStr = response.getBody();
+		return respStr;
+	}
 }
