@@ -161,6 +161,12 @@ public class WaterConnectionValidator {
 				
 			}
 			}
+		if(connection.getProcessInstance().getAction().equalsIgnoreCase(WCConstants.APPROVE_CONNECTION_CONST)) {
+			if(connection.getRoadTypeEst().size()==0 && connection.getWsTaxHeads().size()==0) {
+				throw new CustomException("ESTIMATE_NOT_DONE",
+						"Application cannot be approved without estimation");
+			}
+		}
 		
 	}
 }
