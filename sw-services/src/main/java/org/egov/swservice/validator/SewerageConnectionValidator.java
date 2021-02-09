@@ -12,6 +12,7 @@ import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.egov.swservice.web.models.ValidatorResult;
 import org.egov.swservice.service.PropertyValidator;
 import org.egov.swservice.service.SewerageFieldValidator;
+import org.egov.swservice.util.SWConstants;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -139,6 +140,12 @@ public class SewerageConnectionValidator {
 				
 			}
 			}
+		if(connection.getProcessInstance().getAction().equalsIgnoreCase(SWConstants.APPROVE_CONNECTION_CONST)) {
+			if(connection.getRoadTypeEst().size()==0 && connection.getWsTaxHeads().size()==0) {
+				throw new CustomException("ESTIMATE_NOT_DONE",
+						"Application cannot be approved without estimation");
+			}
+		}
 		
 	}
 }
