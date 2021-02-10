@@ -13,6 +13,7 @@ import org.egov.wscalculation.web.models.Demand;
 import org.egov.wscalculation.web.models.DemandResponse;
 import org.egov.wscalculation.web.models.GetBillCriteria;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.service.DemandService;
 import org.egov.wscalculation.service.WSCalculationService;
 import org.egov.wscalculation.service.WSCalculationServiceImpl;
@@ -50,6 +51,8 @@ public class CalculatorController {
 	
 	@Autowired
 	private final ResponseInfoFactory responseInfoFactory;
+	@Autowired
+	private WSCalculationConfiguration config;
 	
 	@PostMapping("/_estimate")
 	public ResponseEntity<CalculationRes> getTaxEstimation(@RequestBody @Valid CalculationReq calculationReq) {
@@ -84,6 +87,9 @@ public class CalculatorController {
 	
 	@PostMapping("/_jobscheduler")
 	public void jobscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+		if(!config.getGenerateBill()) {
+			return;
+		}
 		wSCalculationService.generateDemandBasedOnTimePeriod(requestInfoWrapper.getRequestInfo());
 	}
 	

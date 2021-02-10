@@ -197,4 +197,7 @@ public class WSCalculationConfiguration {
 
 	@Value("${workflow.process.search.path}")
 	private String searchWorkflowProcessEndPoint;
+	
+	@Value("${ws.generatebill}")
+	private Boolean generateBill;
 }
