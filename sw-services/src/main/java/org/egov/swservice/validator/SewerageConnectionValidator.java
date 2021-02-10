@@ -119,7 +119,7 @@ public class SewerageConnectionValidator {
 		return fld!=null && fld.compareTo(BigDecimal.ZERO)!=0 ? true : false;
 	}
 
-	public void validateCalcAttr(SewerageConnectionRequest sewerageConnectionRequest) {
+	public void validateCalcAttr(SewerageConnectionRequest sewerageConnectionRequest,SewerageConnection searchResult ) {
 		SewerageConnection connection = sewerageConnectionRequest.getSewerageConnection();
 		if(connection.getRoadTypeEst()!=null) {
 			for (RoadTypeEst roadTypeEst : connection.getRoadTypeEst()) {
@@ -140,10 +140,11 @@ public class SewerageConnectionValidator {
 				
 			}
 			}
-		if(connection.getProcessInstance().getAction().equalsIgnoreCase(SWConstants.APPROVE_CONNECTION_CONST)) {
+		if(connection.getProcessInstance().getAction().equalsIgnoreCase(SWConstants.APPROVE_CONNECTION_CONST) || 
+				(connection.getProcessInstance().getAction().equalsIgnoreCase(SWConstants.VERIFY_AND_FORWARD_CONST) && searchResult.getApplicationStatus().equalsIgnoreCase(SWConstants.PENDING_FOR_FIELD_INSPECTION_CONST))) {
 			if(connection.getRoadTypeEst().size()==0 && connection.getWsTaxHeads().size()==0) {
 				throw new CustomException("ESTIMATE_NOT_DONE",
-						"Application cannot be approved without estimation");
+						"Application cannot be processed without estimation");
 			}
 		}
 		

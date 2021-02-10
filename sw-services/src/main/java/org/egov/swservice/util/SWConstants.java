@@ -224,5 +224,11 @@ public class SWConstants {
     public static final String MDMS_CITYMODULE_CODE="citymodule";
 
     public static final String MDMS_MODULE_TENANT_CODE = "$.MdmsRes.tenant.citymodule.*.tenants.*.code";
+    
+    public static final String VERIFY_AND_FORWARD_CONST = "VERIFY_AND_FORWARD";
+    
+    public static final String PENDING_FOR_FIELD_INSPECTION_CONST = "PENDING_FOR_FIELD_INSPECTION";
+
+    
 
 }
