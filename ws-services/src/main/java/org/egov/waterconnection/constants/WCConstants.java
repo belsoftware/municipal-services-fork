@@ -249,5 +249,9 @@ public class WCConstants {
 			.unmodifiableList(Arrays.asList(MODIFIED_FINAL_STATE, STATUS_APPROVED));
 	
 	public static final String SEARCH_TYPE_CONNECTION = "CONNECTION";
+	
+    public static final String VERIFY_AND_FORWARD_CONST = "VERIFY_AND_FORWARD";
+    
+    public static final String PENDING_FOR_FIELD_INSPECTION_CONST = "PENDING_FOR_FIELD_INSPECTION";
 
 }
