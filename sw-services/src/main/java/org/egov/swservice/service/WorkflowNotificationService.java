@@ -296,13 +296,21 @@ public class WorkflowNotificationService {
 				}
 			});
 		}
+		StringBuilder notificationCode = new StringBuilder();
+		if (reqType == SWConstants.UPDATE_APPLICATION) {
+			notificationCode = new StringBuilder("SW_").append(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+		}
+		if(reqType == SWConstants.MODIFY_CONNECTION){
+			notificationCode = new StringBuilder("SW_MODIFY_").append(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+		}
+		String templateId =notificationUtil.getMessageTemplateId(notificationCode.toString(), localizationMessage);
 		List<SMSRequest> smsRequest = new ArrayList<>();
 		Map<String, String> mobileNumberAndMessage = getMessageForMobileNumber(mobileNumbersAndNames,
 				sewerageConnectionRequest, message, property);
 		if (message.contains("<receipt download link>"))
 			mobileNumberAndMessage = setRecepitDownloadLink(mobileNumberAndMessage, sewerageConnectionRequest, message, property);
 		mobileNumberAndMessage.forEach((mobileNumber, msg) -> {
-			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(Category.TRANSACTION).build();
+			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(Category.TRANSACTION).templateId(templateId).build();
 			smsRequest.add(req);
 		});
 		return smsRequest;
@@ -631,7 +639,8 @@ public class WorkflowNotificationService {
 			service = "SW";
 		}
 		StringBuilder URL = sewerageServicesUtil.getcollectionURL();
-		URL.append(service).append("/_search").append("?").append("consumerCodes=").append(consumerCode)
+		//URL.append(service).append("/_search").append("?").append("consumerCodes=").append(consumerCode)
+		URL.append("?").append("consumerCodes=").append(sewerageConnectionRequest.getSewerageConnection().getApplicationNo())
 				.append("&").append("tenantId=").append(sewerageConnectionRequest.getSewerageConnection().getTenantId());
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(sewerageConnectionRequest.getRequestInfo()).build();
 		Object response = serviceRequestRepository.fetchResult(URL,requestInfoWrapper);

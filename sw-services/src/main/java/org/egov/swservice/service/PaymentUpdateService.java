@@ -328,9 +328,10 @@ public class PaymentUpdateService {
 		Map<String, String> getReplacedMessage = workflowNotificationService.getMessageForMobileNumber(mobileNumbersAndNames,
 				sewerageConnectionRequest, message, property);
 		Map<String, String> mobileNumberAndMessage = replacePaymentInfo(getReplacedMessage, paymentDetail);
+		String templateId =notificationUtil.getMessageTemplateId(SWConstants.PAYMENT_NOTIFICATION_SMS, localizationMessage);
 		List<SMSRequest> smsRequest = new ArrayList<>();
 		mobileNumberAndMessage.forEach((mobileNumber, msg) -> {
-			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(org.egov.swservice.web.models.Category.TRANSACTION).build();
+			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(org.egov.swservice.web.models.Category.TRANSACTION).templateId(templateId).build();
 			smsRequest.add(req);
 		});
 		return smsRequest;

@@ -165,5 +165,17 @@ public class NotificationUtil {
 		return getMessageTemplate(code, localizationMessage);
 	}
 
+	public String getMessageTemplateId(String notificationCode, String localizationMessage) {
+        String path = "$..messages[?(@.code==\"{}\")].templateId";
+        path = path.replace("{}", notificationCode);
+        String templateid = null;
+        try {
+            Object messageObj = JsonPath.parse(localizationMessage).read(path);
+            templateid = ((ArrayList<String>) messageObj).get(0);
+        } catch (Exception e) {
+            log.warn("Unable to fetch template id ", e);
+        }
+        return templateid;
+    }
 
 }
