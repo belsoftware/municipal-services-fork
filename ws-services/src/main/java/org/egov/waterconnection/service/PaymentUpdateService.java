@@ -334,8 +334,10 @@ public class PaymentUpdateService {
 				waterConnectionRequest, message, property);
 		Map<String, String> mobileNumberAndMessage = replacePaymentInfo(getReplacedMessage, paymentDetail);
 		List<SMSRequest> smsRequest = new ArrayList<>();
+		String templateId =notificationUtil.getMessageTemplateId(WCConstants.PAYMENT_NOTIFICATION_SMS, localizationMessage);
 		mobileNumberAndMessage.forEach((mobileNumber, msg) -> {
-			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(Category.TRANSACTION).build();
+		
+			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(Category.TRANSACTION).templateId(templateId).build();
 			smsRequest.add(req);
 		});
 		return smsRequest;

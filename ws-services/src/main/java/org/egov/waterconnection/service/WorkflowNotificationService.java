@@ -292,13 +292,25 @@ public class WorkflowNotificationService {
 				}
 			});
 		}
+		
 		Map<String, String> mobileNumberAndMessage = getMessageForMobileNumber(mobileNumbersAndNames,
 				waterConnectionRequest, message, property);
 		if (message.contains("<receipt download link>"))
         	mobileNumberAndMessage = setRecepitDownloadLink(mobileNumberAndMessage, waterConnectionRequest, message, property);
+		StringBuilder builder = new StringBuilder();
+		if(reqType == WCConstants.UPDATE_APPLICATION){
+			builder.append("WS_").append(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+		}
+		if(reqType == WCConstants.MODIFY_CONNECTION){
+			builder.append("WS_MODIFY_").append(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+		}
+		String templateId =notificationUtil.getMessageTemplateId(builder.toString(), localizationMessage);
+		System.out.println("messdage==="+message);
+		System.out.println("tempalteuid=="+templateId);
 		List<SMSRequest> smsRequest = new ArrayList<>();
 		mobileNumberAndMessage.forEach((mobileNumber, msg) -> {
-			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(Category.TRANSACTION).build();
+			
+			SMSRequest req = SMSRequest.builder().mobileNumber(mobileNumber).message(msg).category(Category.TRANSACTION).templateId(templateId).build();
 			smsRequest.add(req);
 		});
 		return smsRequest;

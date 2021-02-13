@@ -93,6 +93,7 @@ public class NotificationUtil {
 		} catch (Exception e) {
 			log.warn("Fetching from localization failed", e);
 		}
+		
 		return message;
 	}
 	
@@ -167,6 +168,19 @@ public class NotificationUtil {
 		log.info("Event: " + request.toString());
 		producer.push(config.getSaveUserEventsTopic(), request);
 	}
+	
+	public String getMessageTemplateId(String notificationCode, String localizationMessage) {
+        String path = "$..messages[?(@.code==\"{}\")].templateId";
+        path = path.replace("{}", notificationCode);
+        String templateid = null;
+        try {
+            Object messageObj = JsonPath.parse(localizationMessage).read(path);
+            templateid = ((ArrayList<String>) messageObj).get(0);
+        } catch (Exception e) {
+            log.warn("Unable to fetch template id ", e);
+        }
+        return templateid;
+    }
 	
 
 }
