@@ -617,7 +617,8 @@ public class WorkflowNotificationService {
 			service = "WS";
 		}
 	    StringBuilder URL = waterServiceUtil.getcollectionURL();
-	    URL.append(service).append("/_search").append("?").append("consumerCodes=").append(consumerCode)
+	    URL.append("?").append("consumerCodes=").append(waterConnectionRequest.getWaterConnection().getApplicationNo())
+	   // URL.append(service).append("/_search").append("?").append("consumerCodes=").append(consumerCode)
                 .append("&").append("tenantId=").append(waterConnectionRequest.getWaterConnection().getTenantId());
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(waterConnectionRequest.getRequestInfo()).build();
         Object response = serviceRequestRepository.fetchResult(URL,requestInfoWrapper);
