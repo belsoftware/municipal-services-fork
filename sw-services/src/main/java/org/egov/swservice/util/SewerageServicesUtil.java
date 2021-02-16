@@ -236,7 +236,7 @@ public class SewerageServicesUtil {
 	public String getShortenedURL(String actualURL) {
 		JSONObject obj = new JSONObject();
 		obj.put(URL, actualURL);
-		String url = config.getNotificationUrl() + config.getShortenerURL();
+		String url = config.getShortnerHost() + config.getShortenerURL();
 
 		Object response = serviceRequestRepository.getShortningURL(new StringBuilder(url), obj);
 		return response.toString();

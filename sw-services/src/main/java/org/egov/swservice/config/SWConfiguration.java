@@ -183,4 +183,7 @@ public class SWConfiguration {
 
 	@Value("${egov.usr.events.pay.link}")
 	private String userEventApplicationPayLink;
+	
+	@Value("${egov.url.shortner.host}")
+	private String shortnerHost;
 }

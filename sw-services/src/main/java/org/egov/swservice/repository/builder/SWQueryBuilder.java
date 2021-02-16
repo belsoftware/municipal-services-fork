@@ -226,7 +226,7 @@ public class SWQueryBuilder {
 		if (criteria.getLimit() != null && criteria.getLimit() <= config.getDefaultLimit())
 			limit = criteria.getLimit();
 
-		if (criteria.getLimit() != null && criteria.getLimit() > config.getDefaultOffset())
+		if (criteria.getLimit() != null && criteria.getLimit() > config.getDefaultLimit())
 			limit = config.getDefaultLimit();
 
 		if (criteria.getOffset() != null)
