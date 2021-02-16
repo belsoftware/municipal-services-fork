@@ -229,11 +229,16 @@ public class WsQueryBuilder {
 		if (criteria.getLimit() == null && criteria.getOffset() == null)
 			limit = config.getMaxLimit();
 
-		if (criteria.getLimit() != null && criteria.getLimit() <= config.getDefaultLimit())
-			limit = criteria.getLimit();
+		if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxLimit()) {
 
-		if (criteria.getLimit() != null && criteria.getLimit() > config.getDefaultOffset())
-			limit = config.getDefaultLimit();
+			limit = criteria.getLimit();
+		}
+
+		if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxLimit()) {
+			limit = config.getMaxLimit();
+
+		}
+			
 
 		if (criteria.getOffset() != null)
 			offset = criteria.getOffset();
