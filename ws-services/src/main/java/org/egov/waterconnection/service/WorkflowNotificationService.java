@@ -304,7 +304,6 @@ public class WorkflowNotificationService {
 			if(connection.getProcessInstance().getAction().toUpperCase().equalsIgnoreCase("PAY")) {
 				HashMap<String, Object> addDetail = mapper.convertValue(connection.getAdditionalDetails(),
 						HashMap.class);
-				if(!StringUtils.isEmpty(String.valueOf(addDetail.get(WCConstants.DETAILS_PROVIDED_BY)))){
 				   String detailsProvidedBy = String.valueOf(addDetail.get(WCConstants.DETAILS_PROVIDED_BY));
 				if ( StringUtils.isEmpty(detailsProvidedBy) || detailsProvidedBy.equalsIgnoreCase(WCConstants.SELF)) {
 					builder.append("WS_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_1").append("_SMS_MESSAGE");
@@ -313,7 +312,7 @@ public class WorkflowNotificationService {
 					builder.append("WS_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 				}
 				
-			}
+			
 			}
 			else {
 				builder.append("WS_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
@@ -323,8 +322,9 @@ public class WorkflowNotificationService {
 		if(reqType == WCConstants.MODIFY_CONNECTION){
 			builder.append("WS_MODIFY_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 		}
+		
 		String templateId =notificationUtil.getMessageTemplateId(builder.toString(), localizationMessage);
-		System.out.println("message==="+message);
+		System.out.println(builder.toString()+"message==="+message);
 		System.out.println("templateid=="+templateId);
 		List<SMSRequest> smsRequest = new ArrayList<>();
 		mobileNumberAndMessage.forEach((mobileNumber, msg) -> {
