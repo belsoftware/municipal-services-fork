@@ -392,6 +392,8 @@ public class WorkflowNotificationService {
 						waterConnectionRequest.getWaterConnection().getConnectionNo());
 				connectionDetaislLink = connectionDetaislLink.replace(tenantIdReplacer,
 						property.getTenantId());
+				connectionDetaislLink = connectionDetaislLink.replace(mobileNoReplacer,
+						mobileAndName.getKey());
 				messageToReplace = messageToReplace.replace("<connection details page>",
 						waterServiceUtil.getShortnerURL(connectionDetaislLink));
 			}
