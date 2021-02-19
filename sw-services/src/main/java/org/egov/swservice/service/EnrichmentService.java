@@ -18,7 +18,6 @@ import org.egov.swservice.web.models.users.User;
 import org.egov.swservice.web.models.users.UserDetailResponse;
 import org.egov.swservice.web.models.users.UserSearchRequest;
 import org.egov.tracer.model.CustomException;
-import org.egov.waterconnection.constants.WCConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
