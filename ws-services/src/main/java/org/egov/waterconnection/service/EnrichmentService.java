@@ -379,6 +379,7 @@ public class EnrichmentService {
 	public void enrichWithCalculationAttr(WaterConnectionRequest waterConnectionRequest) {
 		WaterConnection connection = waterConnectionRequest.getWaterConnection();
 		BigDecimal totalAmount = BigDecimal.ZERO;
+		BigDecimal taxHeadTotal = BigDecimal.ZERO;
 		WsTaxHeads roadTaxHead = new WsTaxHeads();
 
 		if (connection.getRoadTypeEst() != null && connection.getRoadTypeEst().size() != 0) {
@@ -408,6 +409,7 @@ public class EnrichmentService {
 						taxhead.setAmount(totalAmount.setScale(2, 2));
 						flag = true;
 					}
+					taxHeadTotal=taxHeadTotal.add(taxhead.getAmount());
 				}
 				if (!flag && totalAmount.compareTo(BigDecimal.ZERO)!=0) {
 					roadTaxHead.setId(UUID.randomUUID().toString());
@@ -417,8 +419,13 @@ public class EnrichmentService {
 					connection.getWsTaxHeads().add(roadTaxHead);
 				}
 			}
-
-		
+			if(connection.getProcessInstance().getAction().equalsIgnoreCase(WCConstants.APPROVE_CONNECTION_CONST) || 
+					(connection.getProcessInstance().getAction().equalsIgnoreCase(WCConstants.VERIFY_AND_FORWARD_CONST) && connection.getApplicationStatus().equalsIgnoreCase(WCConstants.PENDING_FOR_FIELD_INSPECTION_CONST))) {
+				if(taxHeadTotal.compareTo(BigDecimal.ZERO)==0) {
+					throw new CustomException("ESTIMATE_NOT_DONE",
+							"Application cannot be processed without estimation");
+				}
+			}
 
 	}
 
