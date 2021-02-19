@@ -197,6 +197,7 @@ public class PropertyQueryBuilder {
 			appendAndQuery= true;
 		}
 		
+		
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
 
@@ -224,6 +225,14 @@ public class PropertyQueryBuilder {
 				builder.append(AND_QUERY);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
+			appendAndQuery= true;
+		}
+		if(criteria.getTenantId()!=null)
+		{
+			if(appendAndQuery)
+				builder.append(AND_QUERY);
+			builder.append("property.tenantid=?");
+			preparedStmtList.add(criteria.getTenantId());
 			appendAndQuery= true;
 		}
 
