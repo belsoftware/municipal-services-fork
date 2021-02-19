@@ -18,6 +18,7 @@ import org.egov.swservice.web.models.users.User;
 import org.egov.swservice.web.models.users.UserDetailResponse;
 import org.egov.swservice.web.models.users.UserSearchRequest;
 import org.egov.tracer.model.CustomException;
+import org.egov.waterconnection.constants.WCConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -357,6 +358,7 @@ public class EnrichmentService {
 		SewerageConnection connection = sewerageConnectionRequest.getSewerageConnection();
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		WsTaxHeads roadTaxHead = new WsTaxHeads();
+		BigDecimal taxHeadTotal = BigDecimal.ZERO;
 
 		if (connection.getRoadTypeEst() != null && connection.getRoadTypeEst().size() != 0) {
 			for (RoadTypeEst est : connection.getRoadTypeEst()) {
@@ -385,6 +387,7 @@ public class EnrichmentService {
 					taxhead.setAmount(totalAmount.setScale(2, 2));
 					flag = true;
 				}
+				taxHeadTotal=taxHeadTotal.add(taxhead.getAmount());
 			}
 			if (!flag && totalAmount.compareTo(BigDecimal.ZERO)!=0) {
 				roadTaxHead.setId(UUID.randomUUID().toString());
@@ -392,6 +395,13 @@ public class EnrichmentService {
 				roadTaxHead.setTaxHeadCode("SW_ROAD_CUTTING_CHARGE");
 				roadTaxHead.setAmount(totalAmount.setScale(2, 2));
 				connection.getWsTaxHeads().add(roadTaxHead);
+			}
+		}
+		if(connection.getProcessInstance().getAction().equalsIgnoreCase(SWConstants.APPROVE_CONNECTION_CONST) || 
+				(connection.getProcessInstance().getAction().equalsIgnoreCase(SWConstants.VERIFY_AND_FORWARD_CONST) && connection.getApplicationStatus().equalsIgnoreCase(SWConstants.PENDING_FOR_FIELD_INSPECTION_CONST))) {
+			if(taxHeadTotal.compareTo(BigDecimal.ZERO)==0) {
+				throw new CustomException("ESTIMATE_NOT_DONE",
+						"Application cannot be processed without estimation");
 			}
 		}
 	}

@@ -271,6 +271,7 @@ public class WorkflowNotificationService {
 	private List<SMSRequest> getSmsRequest(SewerageConnectionRequest sewerageConnectionRequest, String topic, Property property, String applicationStatus) {
 		String localizationMessage = notificationUtil
 				.getLocalizationMessages(property.getTenantId(), sewerageConnectionRequest.getRequestInfo());
+		SewerageConnection connection = sewerageConnectionRequest.getSewerageConnection();
 		int reqType = SWConstants.UPDATE_APPLICATION;
 		if ((!sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equalsIgnoreCase(SWConstants.ACTIVATE_CONNECTION))
 				&& sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
@@ -298,7 +299,22 @@ public class WorkflowNotificationService {
 		}
 		StringBuilder notificationCode = new StringBuilder();
 		if (reqType == SWConstants.UPDATE_APPLICATION) {
-			notificationCode = new StringBuilder("SW_").append(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+			if(connection.getProcessInstance().getAction().toUpperCase().equalsIgnoreCase("PAY")) {
+				HashMap<String, Object> addDetail = mapper.convertValue(connection.getAdditionalDetails(),
+						HashMap.class);
+				   String detailsProvidedBy = String.valueOf(addDetail.get(SWConstants.DETAILS_PROVIDED_BY));
+				if ( StringUtils.isEmpty(detailsProvidedBy) || detailsProvidedBy.equalsIgnoreCase(SWConstants.SELF)) {
+					notificationCode.append("SW_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_1").append("_SMS_MESSAGE");
+				}
+				else {
+					notificationCode.append("SW_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+				}
+				
+			
+			}
+			else {
+				notificationCode.append("SW_").append(connection.getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+			}
 		}
 		if(reqType == SWConstants.MODIFY_CONNECTION){
 			notificationCode = new StringBuilder("SW_MODIFY_").append(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
@@ -377,6 +393,7 @@ public class WorkflowNotificationService {
 				connectionDetaislLink = connectionDetaislLink.replace(connectionNoReplacer,
 						sewerageConnectionRequest.getSewerageConnection().getConnectionNo());
 				connectionDetaislLink = connectionDetaislLink.replace(tenantIdReplacer, property.getTenantId());
+				connectionDetaislLink = connectionDetaislLink.replace(mobileNoReplacer, mobileAndName.getKey());
 				messageToReplace = messageToReplace.replace("<connection details page>",
 						sewerageServicesUtil.getShortenedURL(connectionDetaislLink));
 			}
