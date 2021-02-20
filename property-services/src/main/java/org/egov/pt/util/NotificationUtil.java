@@ -93,10 +93,25 @@ public class NotificationUtil {
         } catch (Exception e) {
             log.warn("Fetching from localization failed", e);
         }
+        String templateId =getMessageTemplateId(notificationCode, localizationMessage);
+        if(!StringUtils.isEmpty(templateId) && !StringUtils.isEmpty(message)) {
+        	message=templateId+PTConstants.MESSAGE_SEPERATOR+templateId;
+        }
         return message;
     }
 
-
+    private String getMessageTemplateId(String notificationCode, String localizationMessage) {
+        String path = "$..messages[?(@.code==\"{}\")].templateId";
+        path = path.replace("{}", notificationCode);
+        String templateid = null;
+        try {
+            Object messageObj = JsonPath.parse(localizationMessage).read(path);
+            templateid = ((ArrayList<String>) messageObj).get(0);
+        } catch (Exception e) {
+            log.warn("Unable to fetch template id ", e);
+        }
+        return templateid;
+    }
 
     /**
      * Fetches messages from localization service
@@ -164,11 +179,15 @@ public class NotificationUtil {
      * @return List of SMSRequest
      */
     public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberToOwnerName) {
-    	
+    	String templateId = null;
+		if(message!=null && message.contains(PTConstants.MESSAGE_SEPERATOR)) {
+			templateId = message.split(PTConstants.MESSAGE_SEPERATOR)[0];
+			message = message.split(PTConstants.MESSAGE_SEPERATOR)[1];
+		}
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
             String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
-            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg));
+            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg,templateId));
         }
         return smsRequest;
     }

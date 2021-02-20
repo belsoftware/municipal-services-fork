@@ -205,7 +205,7 @@ public class PTConstants {
 	
 	public static final String BILL_NO_PAYABLE_DEMAND_ERROR_CODE = "EG_BS_BILL_ZERO_TAX";
 
-
+	public static final String MESSAGE_SEPERATOR ="!-~!";
 
 	
 	

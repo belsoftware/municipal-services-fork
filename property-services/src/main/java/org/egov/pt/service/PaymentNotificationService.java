@@ -476,6 +476,11 @@ public class PaymentNotificationService {
      * @return List of SMSRequest
      */
     private List<SMSRequest> getSMSRequests(Set<String> mobileNumbers, String customizedMessage, Map<String, String> valMap){
+    	String templateId = null;
+		if(customizedMessage!=null && customizedMessage.contains(PTConstants.MESSAGE_SEPERATOR)) {
+			templateId = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[0];
+			customizedMessage = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[1];
+		}
         List<SMSRequest> smsRequests = new ArrayList<>();
         for(String mobileNumber : mobileNumbers){
             if(mobileNumber!=null)
@@ -487,7 +492,7 @@ public class PaymentNotificationService {
                     String receiptDownloadLink = getReceiptLink(valMap, mobileNumber);
                     finalMessage = finalMessage.replace("<receipt download link>", receiptDownloadLink);
                 }                
-                SMSRequest smsRequest = new SMSRequest(mobileNumber,finalMessage);
+                SMSRequest smsRequest = new SMSRequest(mobileNumber,finalMessage,templateId);
                 smsRequests.add(smsRequest);
             }
         }
@@ -501,7 +506,11 @@ public class PaymentNotificationService {
      * @return SMSRequest
      */
 	private SMSRequest getSMSRequestsWithoutReceipt(String mobileNumber, String customizedMessage, Map<String, String> valMap) {
-
+		String templateId = null;
+		if(customizedMessage!=null && customizedMessage.contains(PTConstants.MESSAGE_SEPERATOR)) {
+			templateId = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[0];
+			customizedMessage = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[1];
+		}
 		String finalMessage = customizedMessage.replace("$mobile", mobileNumber);
 		if (customizedMessage.contains("<receipt download link>")) {
 			finalMessage = finalMessage.replace("Click on the link to download payment receipt <receipt download link>", "");
@@ -509,7 +518,7 @@ public class PaymentNotificationService {
 		if (customizedMessage.contains("<payLink>")) {
 			finalMessage = finalMessage.replace("<payLink>", getPaymentLink(valMap));
 		}
-		return new SMSRequest(mobileNumber, finalMessage);
+		return new SMSRequest(mobileNumber, finalMessage,templateId);
 	}
 
     /**
