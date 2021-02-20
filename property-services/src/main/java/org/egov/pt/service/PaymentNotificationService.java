@@ -478,8 +478,8 @@ public class PaymentNotificationService {
     private List<SMSRequest> getSMSRequests(Set<String> mobileNumbers, String customizedMessage, Map<String, String> valMap){
     	String templateId = null;
 		if(customizedMessage!=null && customizedMessage.contains(PTConstants.MESSAGE_SEPERATOR)) {
-			templateId = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[0];
-			customizedMessage = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[1];
+			templateId = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR,2)[0];
+			customizedMessage = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR,2)[1];
 		}
         List<SMSRequest> smsRequests = new ArrayList<>();
         for(String mobileNumber : mobileNumbers){
@@ -508,8 +508,8 @@ public class PaymentNotificationService {
 	private SMSRequest getSMSRequestsWithoutReceipt(String mobileNumber, String customizedMessage, Map<String, String> valMap) {
 		String templateId = null;
 		if(customizedMessage!=null && customizedMessage.contains(PTConstants.MESSAGE_SEPERATOR)) {
-			templateId = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[0];
-			customizedMessage = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR)[1];
+			templateId = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR,2)[0];
+			customizedMessage = customizedMessage.split(PTConstants.MESSAGE_SEPERATOR,2)[1];
 		}
 		String finalMessage = customizedMessage.replace("$mobile", mobileNumber);
 		if (customizedMessage.contains("<receipt download link>")) {

@@ -95,7 +95,7 @@ public class NotificationUtil {
         }
         String templateId =getMessageTemplateId(notificationCode, localizationMessage);
         if(!StringUtils.isEmpty(templateId) && !StringUtils.isEmpty(message)) {
-        	message=templateId+PTConstants.MESSAGE_SEPERATOR+templateId;
+        	message=templateId+PTConstants.MESSAGE_SEPERATOR+message;
         }
         return message;
     }
@@ -181,8 +181,8 @@ public class NotificationUtil {
     public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberToOwnerName) {
     	String templateId = null;
 		if(message!=null && message.contains(PTConstants.MESSAGE_SEPERATOR)) {
-			templateId = message.split(PTConstants.MESSAGE_SEPERATOR)[0];
-			message = message.split(PTConstants.MESSAGE_SEPERATOR)[1];
+			templateId = message.split(PTConstants.MESSAGE_SEPERATOR,2)[0];
+			message = message.split(PTConstants.MESSAGE_SEPERATOR,2)[1];
 		}
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
