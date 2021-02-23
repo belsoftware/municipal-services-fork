@@ -145,3 +145,11 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "lams-services/src/main/resources/db"
         image-name: "lams-services-db"
+
+  - name: "builds/municipal-services/birth-death-services"
+    build:
+      - work-dir: "birth-death-services"
+        image-name: "birth-death-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "birth-death-services/src/main/resources/db"
+        image-name: "birth-death-services-db"      
