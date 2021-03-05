@@ -151,6 +151,8 @@ public class WSCalculationConstant {
 	public static final String JSONPATH_ROOT_FOR_BilingPeriod = "$.MdmsRes.ws-services-masters.billingPeriod";
 
 	public static final String Quaterly_Billing_Period = "quarterly";
+	
+	public static final String Yearly_Billing_Period = "yearly";
 
 	public static final String Monthly_Billing_Period = "monthly";
 
@@ -236,6 +238,8 @@ public class WSCalculationConstant {
 	public static final String CALCULATION_ATTRIBUTE_CONST = "CalculationAttribute";
    
 	public static final String ATTRIBUTE = "attribute";
+	
+	public static final String FILTER_ATTRIBUTE = "filterAttribute";
 	
 	public static final String ADHOC_PENALTY = "adhocPenalty";
 	

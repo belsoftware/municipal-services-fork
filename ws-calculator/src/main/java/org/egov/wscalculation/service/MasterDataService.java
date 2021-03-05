@@ -220,6 +220,9 @@ public class MasterDataService {
 			} else if (WSCalculationConstant.Quaterly_Billing_Period
 					.equalsIgnoreCase(master.get(WSCalculationConstant.Billing_Cycle_String).toString())) {
 				estimationService.getQuarterStartAndEndDate(billingPeriod);
+			} else if (WSCalculationConstant.Yearly_Billing_Period
+					.equalsIgnoreCase(master.get(WSCalculationConstant.Billing_Cycle_String).toString())) {
+				estimationService.getYearStartAndEndDate(billingPeriod);
 			} else {
 				LocalDateTime demandEndDate = LocalDateTime.now();
 				demandEndDate = setCurrentDateValueToStartingOfDay(demandEndDate);

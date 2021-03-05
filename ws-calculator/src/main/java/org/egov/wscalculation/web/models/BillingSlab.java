@@ -10,6 +10,7 @@ public class BillingSlab {
 	private String id;
 	private String buildingType = null;
 	private String connectionType = null;
+	private String propertyLocation =null;
 
 	public String getId() {
 		return id;
@@ -57,6 +58,14 @@ public class BillingSlab {
 
 	public void setSlabs(List<Slab> slabs) {
 		this.slabs = slabs;
+	}
+
+	public String getPropertyLocation() {
+		return propertyLocation;
+	}
+
+	public void setPropertyLocation(String propertyLocation) {
+		this.propertyLocation = propertyLocation;
 	}
 
 	private String calculationAttribute = null;

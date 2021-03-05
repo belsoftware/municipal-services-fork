@@ -70,4 +70,8 @@ public class Address {
 	
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
+	
+	@JsonProperty("location")
+	private String location;
+
 }

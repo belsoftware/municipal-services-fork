@@ -1,9 +1,13 @@
 package org.egov.wscalculation.service;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -675,6 +679,7 @@ public class DemandService {
 	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId) {
 		log.info("Billing master data values for non metered connection:: {}", master);
 		long startDay = (((int) master.get(WSCalculationConstant.Demand_Generate_Date_String)) / 86400000);
+		startDay=337;
 		if(isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay)) {
 			List<String> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
 					WSCalculationConstant.nonMeterdConnection);
@@ -693,6 +698,25 @@ public class DemandService {
 		}
 	}
 
+	private Calendar  getFiscalYrBilingDay(Date d,int dayOfMonth) {
+		Calendar billingDay = Calendar.getInstance();
+		billingDay.setTime(d);
+		if(billingDay.get(Calendar.MONTH)< 3) {
+			billingDay.add(Calendar.YEAR, -1);	
+		}
+		billingDay.set(Calendar.MONTH, Calendar.APRIL);
+		billingDay.set(Calendar.DAY_OF_MONTH, 1);
+		billingDay.add(Calendar.DAY_OF_YEAR, (int)dayOfMonth);
+		setTimeToBeginningOfDay(billingDay);
+		return billingDay;
+	}
+	
+	private static void setTimeToBeginningOfDay(Calendar calendar) {
+	    calendar.set(Calendar.HOUR_OF_DAY, 0);
+	    calendar.set(Calendar.MINUTE, 0);
+	    calendar.set(Calendar.SECOND, 0);
+	    calendar.set(Calendar.MILLISECOND, 0);
+	}
 	/**
 	 * 
 	 * @param billingFrequency Billing Frequency details
@@ -704,6 +728,20 @@ public class DemandService {
 				&& (dayOfMonth == LocalDateTime.now().getDayOfMonth())) {
 			return true;
 		} else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Quaterly_Billing_Period)) {
+			return false;
+		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Yearly_Billing_Period)) {
+			//Get Todays Date
+			
+			Date d = new Date();
+			Calendar currentDay = Calendar.getInstance();
+			currentDay.setTime(d);
+			setTimeToBeginningOfDay(currentDay);
+			
+			Calendar billingDay = getFiscalYrBilingDay(d,(int)dayOfMonth);
+			
+			if(billingDay.compareTo(currentDay)==0) {
+				return true;
+			}
 			return false;
 		}
 		return true;
