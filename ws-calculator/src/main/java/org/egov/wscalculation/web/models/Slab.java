@@ -4,21 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Slab {
-	private int from;
-	private int to;
+	private double from;
+	private double to;
 	private double charge;
 	private double meterCharge;
+	private String type;
 	
-	public int getFrom() {
+	public double getFrom() {
 		return from;
 	}
-	public void setFrom(int from) {
+	public void setFrom(double from) {
 		this.from = from;
 	}
-	public int getTo() {
+	public double getTo() {
 		return to;
 	}
-	public void setTo(int to) {
+	public void setTo(double to) {
 		this.to = to;
 	}
 	public double getCharge() {
@@ -32,6 +33,12 @@ public class Slab {
 	}
 	public void setMeterCharge(double meterCharge) {
 		this.meterCharge = meterCharge;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	

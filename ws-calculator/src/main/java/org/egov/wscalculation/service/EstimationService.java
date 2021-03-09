@@ -198,7 +198,11 @@ public class EstimationService {
 					.equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection)) {
 				for (Slab slab : billSlab.getSlabs()) {
 					if (totalUOM >= slab.getFrom() && totalUOM < slab.getTo()) {
-						waterCharge = BigDecimal.valueOf((totalUOM * slab.getCharge()));
+						if(slab.getType()!=null && slab.getType().equalsIgnoreCase(WSCalculationConstant.CALC_TYPE_RATE)) {
+							waterCharge = BigDecimal.valueOf((totalUOM * slab.getCharge()));	
+						}else {
+							waterCharge = BigDecimal.valueOf((slab.getCharge()));
+						}
 						if (billSlab.getMinimumCharge() > waterCharge.doubleValue()) {
 							waterCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
 						}
@@ -240,7 +244,7 @@ public class EstimationService {
 							.equalsIgnoreCase(calculationAttribute);
 					return isBuildingTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
 				}).collect(Collectors.toList());
-				
+				break;
 			case "majorUsageType":
 				final String majorUsgType = (property.getUsageCategory() != null) ? property.getUsageCategory().split(".")[0]	: "";
 				billingSlabs= billingSlabs.stream().filter(slab -> {
@@ -250,6 +254,7 @@ public class EstimationService {
 							.equalsIgnoreCase(calculationAttribute);
 					return isBuildingTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
 				}).collect(Collectors.toList());
+				break;
 			default:
 				log.info("INVALID USECASE "+ filterName);
 				break;
