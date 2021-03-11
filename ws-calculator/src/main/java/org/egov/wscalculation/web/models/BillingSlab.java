@@ -68,7 +68,16 @@ public class BillingSlab {
 		this.propertyLocation = propertyLocation;
 	}
 
+	public double getUnAuthorizedConnection() {
+		return unAuthorizedConnection;
+	}
+
+	public void setUnAuthorizedConnection(double unAuthorizedConnection) {
+		this.unAuthorizedConnection = unAuthorizedConnection;
+	}
+
 	private String calculationAttribute = null;
 	private double minimumCharge;
+	private double unAuthorizedConnection;
 	private List<Slab> slabs = new ArrayList<>();
 }

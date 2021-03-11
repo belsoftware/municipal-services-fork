@@ -212,7 +212,12 @@ public class EstimationService {
 			}
 		} else {
 			waterCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
+			//To handle Unauthorized Connection Charges
+			waterCharge.add(new BigDecimal(billSlab.getUnAuthorizedConnection()));
 		}
+		
+		
+		
 		return waterCharge;
 	}
 	
