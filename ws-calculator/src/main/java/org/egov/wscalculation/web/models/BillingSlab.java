@@ -11,6 +11,7 @@ public class BillingSlab {
 	private String buildingType = null;
 	private String connectionType = null;
 	private String propertyLocation =null;
+	private String ownershipCategory=null;
 
 	public String getId() {
 		return id;
@@ -74,6 +75,14 @@ public class BillingSlab {
 
 	public void setUnAuthorizedConnection(double unAuthorizedConnection) {
 		this.unAuthorizedConnection = unAuthorizedConnection;
+	}
+
+	public String getOwnershipCategory() {
+		return ownershipCategory;
+	}
+
+	public void setOwnershipCategory(String ownershipCategory) {
+		this.ownershipCategory = ownershipCategory;
 	}
 
 	private String calculationAttribute = null;

@@ -251,7 +251,7 @@ public class EstimationService {
 				}).collect(Collectors.toList());
 				break;
 			case "majorUsageType":
-				final String majorUsgType = (property.getUsageCategory() != null) ? property.getUsageCategory().split(".")[0]	: "";
+				final String majorUsgType = (property.getUsageCategory() != null) ? property.getUsageCategory().split("\\.")[0]	: "";
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isBuildingTypeMatching = slab.getBuildingType().equalsIgnoreCase(majorUsgType);
 					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
@@ -260,6 +260,28 @@ public class EstimationService {
 					return isBuildingTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
 				}).collect(Collectors.toList());
 				break;
+			case "ownershipCategory":
+				final String ownershipCategory =  property.getOwnershipCategory() ;
+				//Check if specific value exist for category
+				long count =billingSlabs.stream().filter(slab -> {
+					boolean ownershipCategoryMatching = slab.getOwnershipCategory().equalsIgnoreCase(ownershipCategory);
+					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
+					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
+							.equalsIgnoreCase(calculationAttribute);
+					return  ownershipCategoryMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+				}).count();
+				//If count is zero then change to generic category
+				final String ownership = count > 0 ? ownershipCategory :  WSCalculationConstant.GENERIC_ATTRIBUTE;
+				billingSlabs= billingSlabs.stream().filter(slab -> {
+					boolean ownershipCategoryMatching = slab.getOwnershipCategory().equalsIgnoreCase(ownership);
+					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
+					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
+							.equalsIgnoreCase(calculationAttribute);
+					return (ownershipCategoryMatching)  && isConnectionTypeMatching && isCalculationAttributeMatching;
+				}).collect(Collectors.toList());
+				break;	
+				
+				
 			default:
 				log.info("INVALID USECASE "+ filterName);
 				break;

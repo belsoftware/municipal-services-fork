@@ -243,6 +243,8 @@ public class WSCalculationConstant {
    
 	public static final String ATTRIBUTE = "attribute";
 	
+	public static final String GENERIC_ATTRIBUTE = "*";
+	
 	public static final String FILTER_ATTRIBUTE = "filterAttribute";
 	
 	public static final String ADHOC_PENALTY = "adhocPenalty";
