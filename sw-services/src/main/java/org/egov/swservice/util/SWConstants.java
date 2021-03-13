@@ -229,6 +229,6 @@ public class SWConstants {
     
     public static final String PENDING_FOR_FIELD_INSPECTION_CONST = "PENDING_FOR_FIELD_INSPECTION";
 
-    
+    public static final long INVALID_CONNECTION_EXECUTION_DATE = 0L;
 
 }
