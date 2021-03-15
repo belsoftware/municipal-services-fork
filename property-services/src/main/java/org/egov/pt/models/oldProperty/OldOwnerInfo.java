@@ -55,9 +55,15 @@ public class OldOwnerInfo extends User  {
         private Set<OldDocument> oldDocuments;
 
         public enum RelationshipEnum {
-                FATHER("FATHER"),
+        		FATHER("FATHER"),
+        		
+        		HUSBAND("HUSBAND"),
+        	
+        		PARENT("PARENT"),
 
-                HUSBAND("HUSBAND");
+        		SPOUSE("SPOUSE"),
+                
+                GUARDIAN("GUARDIAN");
 
                 private String value;
 
