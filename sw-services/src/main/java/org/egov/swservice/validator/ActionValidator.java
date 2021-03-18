@@ -41,6 +41,10 @@ public class ActionValidator {
 			throw new CustomException("INVALID_STATUS",
 					"Status cannot be INITIATE when application document are provided");
 		}
+		 if(request.getSewerageConnection().getProcessInstance().getAction().equalsIgnoreCase(SWConstants.SUBMIT_APPLICATION_CONST)){
+             if(request.getSewerageConnection().getDocuments()==null)
+            	 throw new CustomException("INVALID_STATUS_APPLY","Please upload required documents and submit");
+         }
 	}
 
 	/**
