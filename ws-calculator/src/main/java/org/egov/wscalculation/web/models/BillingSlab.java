@@ -12,7 +12,12 @@ public class BillingSlab {
 	private String connectionType = null;
 	private String propertyLocation =null;
 	private String ownershipCategory=null;
-
+	private String buildingSubType =null;
+	private String waterSource=null;
+	private String calculationAttribute = null;
+	private double minimumCharge;
+	private Double maximumCharge = null;
+	private double unAuthorizedConnection;
 	public String getId() {
 		return id;
 	}
@@ -85,8 +90,31 @@ public class BillingSlab {
 		this.ownershipCategory = ownershipCategory;
 	}
 
-	private String calculationAttribute = null;
-	private double minimumCharge;
-	private double unAuthorizedConnection;
+	public String getBuildingSubType() {
+		return buildingSubType;
+	}
+
+	public void setBuildingSubType(String buildingSubType) {
+		this.buildingSubType = buildingSubType;
+	}
+
+	public String getWaterSource() {
+		return waterSource;
+	}
+
+	public void setWaterSource(String waterSource) {
+		this.waterSource = waterSource;
+	}
+
+
+	public Double getMaximumCharge() {
+		return maximumCharge;
+	}
+
+	public void setMaximumCharge(Double maximumCharge) {
+		this.maximumCharge = maximumCharge;
+	}
+
+
 	private List<Slab> slabs = new ArrayList<>();
 }
