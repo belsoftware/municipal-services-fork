@@ -181,7 +181,10 @@ public class EstimationService {
 		if (isRangeCalculation(calculationAttribute)) {
 			if (totalUOM == 0.0)
 				return waterCharge;
-			if (waterConnection.getConnectionType().equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
+			if (waterConnection.getConnectionType().equalsIgnoreCase(WSCalculationConstant.meteredConnectionType) ||
+					(waterConnection.getConnectionType().equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection) && 
+							billSlab.getCalculationAttribute().equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)
+							)) {
 				for (Slab slab : billSlab.getSlabs()) {
 					if (totalUOM > slab.getTo()) {
 						waterCharge = waterCharge.add(BigDecimal.valueOf(((slab.getTo()) - (slab.getFrom())) * slab.getCharge()));
