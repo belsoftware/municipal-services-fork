@@ -14,9 +14,10 @@ public class BillingSlab {
 	private String ownershipCategory=null;
 	private String buildingSubType =null;
 	private String waterSource=null;
+	private String ownerType =null;
 	private String calculationAttribute = null;
 	private double minimumCharge;
-	private Double maximumCharge = null;
+	private double maximumCharge;
 	private double unAuthorizedConnection;
 	public String getId() {
 		return id;
@@ -107,12 +108,21 @@ public class BillingSlab {
 	}
 
 
-	public Double getMaximumCharge() {
+	public double getMaximumCharge() {
 		return maximumCharge;
 	}
 
-	public void setMaximumCharge(Double maximumCharge) {
+	public void setMaximumCharge(double maximumCharge) {
 		this.maximumCharge = maximumCharge;
+	}
+
+
+	public String getOwnerType() {
+		return ownerType;
+	}
+
+	public void setOwnerType(String ownerType) {
+		this.ownerType = ownerType;
 	}
 
 

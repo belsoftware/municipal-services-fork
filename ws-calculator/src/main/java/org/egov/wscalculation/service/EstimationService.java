@@ -196,6 +196,9 @@ public class EstimationService {
 				if (billSlab.getMinimumCharge() > waterCharge.doubleValue()) {
 					waterCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
 				}
+				if (billSlab.getMaximumCharge() > 0 && billSlab.getMaximumCharge() < waterCharge.doubleValue()) {
+					waterCharge = BigDecimal.valueOf(billSlab.getMaximumCharge());
+				}
 			} else if (waterConnection.getConnectionType()
 					.equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection)) {
 				for (Slab slab : billSlab.getSlabs()) {
@@ -313,7 +316,33 @@ public class EstimationService {
 					return (ownershipCategoryMatching)  && isConnectionTypeMatching && isCalculationAttributeMatching;
 				}).collect(Collectors.toList());
 				break;	
-				
+			case "ownerType":
+				String ownerType = null;
+				if(!CollectionUtils.isEmpty(waterConnection.getConnectionHolders())) {
+					ownerType = waterConnection.getConnectionHolders().get(0).getOwnerType();
+				}else if(!CollectionUtils.isEmpty(property.getOwners())) {
+					ownerType =  property.getOwners().get(0).getOwnerType();
+				}
+				final String ownerType_lambda = ownerType !=null ? ownerType :"" ;
+				//Check if specific value exist for category
+				long ownerTypeCount =billingSlabs.stream().filter(slab -> {
+					boolean ownershipCategoryMatching = slab.getOwnerType().equalsIgnoreCase(ownerType_lambda);
+					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
+					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
+							.equalsIgnoreCase(calculationAttribute);
+					return  ownershipCategoryMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+				}).count();
+				//If count is zero then change to generic category
+				final String  ownerType_lambda2 = ownerTypeCount > 0 ? ownerType :  WSCalculationConstant.GENERIC_ATTRIBUTE;
+				billingSlabs= billingSlabs.stream().filter(slab -> {
+					boolean ownershipCategoryMatching = slab.getOwnerType().equalsIgnoreCase(ownerType_lambda2);
+					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
+					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
+							.equalsIgnoreCase(calculationAttribute);
+					return (ownershipCategoryMatching)  && isConnectionTypeMatching && isCalculationAttributeMatching;
+				}).collect(Collectors.toList());
+				break;	
+								
 				
 			default:
 				log.info("INVALID USECASE "+ filterName);
