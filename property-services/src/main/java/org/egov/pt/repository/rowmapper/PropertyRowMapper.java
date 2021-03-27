@@ -108,6 +108,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.tenantId(tenanId)
 						.id(propertyUuId)
 						.address(address)
+						.abasPropertyId(rs.getString("abasPropertyId"))
 						.build();
 
 				

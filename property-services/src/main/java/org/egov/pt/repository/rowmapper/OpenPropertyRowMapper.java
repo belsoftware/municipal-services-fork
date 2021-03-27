@@ -45,6 +45,7 @@ public class OpenPropertyRowMapper implements ResultSetExtractor<List<Property>>
 						.status(Status.fromValue(rs.getString("propertystatus")))
 						.oldPropertyId(rs.getString("oldPropertyId"))
 						.propertyId(rs.getString("propertyid"))
+						.abasPropertyId(rs.getString("abasPropertyId"))
 						.auditDetails(auditdetails)
 						.tenantId(tenanId)
 						.id(propertyUuId)

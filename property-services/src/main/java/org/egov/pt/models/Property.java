@@ -100,13 +100,16 @@ public class Property extends PropertyInfo {
 	@JsonProperty("workflow")
 	private ProcessInstance workflow;
 	
+	@JsonProperty("abasPropertyId")
+	private String abasPropertyId;
+	
 	@Builder
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
 			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
 			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
 			CreationReason creationReason, String usageCategory, Long noOfFloors,Long noOfFlats, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
-			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow) {
+			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String abasPropertyId) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -126,6 +129,7 @@ public class Property extends PropertyInfo {
 		this.additionalDetails = additionalDetails;
 		this.auditDetails = auditDetails;
 		this.workflow = workflow;
+		this.abasPropertyId = abasPropertyId;
 	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {
