@@ -121,6 +121,7 @@ public class PropertyQueryBuilder {
 		Boolean isEmpty = CollectionUtils.isEmpty(criteria.getPropertyIds())
 					&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
 					&& CollectionUtils.isEmpty(criteria.getOldpropertyids())
+					&& CollectionUtils.isEmpty(criteria.getAbasPropertyids())
 					&& CollectionUtils.isEmpty(criteria.getUuids())
 					&& null == criteria.getMobileNumber()
 					&& null == criteria.getName();
@@ -225,6 +226,15 @@ public class PropertyQueryBuilder {
 				builder.append(AND_QUERY);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
+			appendAndQuery= true;
+		}
+		Set<String> abasPropertyids = criteria.getAbasPropertyids();
+		if (!CollectionUtils.isEmpty(abasPropertyids)) {
+
+			if(appendAndQuery)
+				builder.append(AND_QUERY);
+			builder.append("property.abasPropertyId IN (").append(createQuery(abasPropertyids)).append(")");
+			addToPreparedStatement(preparedStmtList, abasPropertyids);
 			appendAndQuery= true;
 		}
 		if(criteria.getTenantId()!=null)
