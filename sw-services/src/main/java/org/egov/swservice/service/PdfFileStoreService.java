@@ -132,6 +132,10 @@ public class PdfFileStoreService {
 			{
 				sewerageObject.put(tenantName, tenantDetails[1].toUpperCase());
 			}
+			//Fix for Connection Holder 
+			if(sewerageObject.get("connectionHolders")==null) {
+				sewerageObject.put("connectionHolders",property.getOwners());
+			}
 			sewerageObject.put(propertyKey, property);
 			sewerageObject.put(service, "SEWERAGE");
 			return getFileStoreIdFromPDFService(sewerageObject, sewerageConnectionRequest.getRequestInfo(), tenantId,
