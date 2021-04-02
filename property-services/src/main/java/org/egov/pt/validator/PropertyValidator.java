@@ -578,6 +578,7 @@ public class PropertyValidator {
 		Boolean isCriteriaEmpty = CollectionUtils.isEmpty(criteria.getOldpropertyids())
 				&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
 				&& CollectionUtils.isEmpty(criteria.getPropertyIds())
+				&& CollectionUtils.isEmpty(criteria.getAbasPropertyids())
 				&& CollectionUtils.isEmpty(criteria.getOwnerIds()) 
 				&& CollectionUtils.isEmpty(criteria.getUuids())
 				&& null == criteria.getMobileNumber()
@@ -616,6 +617,9 @@ public class PropertyValidator {
 
         if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
             throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
+        
+        if(!CollectionUtils.isEmpty(criteria.getAbasPropertyids()) && !allowedParams.contains("abasPropertyids"))
+            throw new CustomException("EG_PT_INVALID_SEARCH","Search based on abasPropertyid is not available for userType : " + userType);
     }
 
 	/**
