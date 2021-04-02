@@ -127,6 +127,10 @@ public class PdfFileStoreService {
 			{
 				waterObject.put(tenantName, tenantDetails[1].toUpperCase());
 			}
+			//Fix for Connection Holder 
+			if(waterObject.get("connectionHolders")==null) {
+				waterObject.put("connectionHolders",property.getOwners());
+			}
 			waterObject.put(propertyKey, property);
 			waterObject.put(service, "WATER");
 			return getFileStoreIdFromPDFService(waterObject, waterConnectionRequest.getRequestInfo(), tenantId, applicationKey);
