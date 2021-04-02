@@ -634,7 +634,7 @@ public class PropertyValidator {
 			return false;
 		else if (mobileNumber.length() != 10)
 			return false;
-		else if (Character.getNumericValue(mobileNumber.charAt(0)) < 5)
+		else if (Character.getNumericValue(mobileNumber.charAt(0)) < 3)
 			return false;
 		else
 			return true;
