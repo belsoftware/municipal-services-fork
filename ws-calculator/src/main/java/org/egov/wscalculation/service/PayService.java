@@ -130,6 +130,16 @@ public class PayService {
 			// rate of penalty
 			applicablePenalty = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
+		
+		BigDecimal minAmount = null != penaltyMaster.get(WSCalculationConstant.MIN_AMOUNT_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) penaltyMaster.get(WSCalculationConstant.MIN_AMOUNT_FIELD_NAME)).doubleValue())
+				: null;
+	    if(minAmount!=null) {
+	    	if (minAmount.compareTo(applicablePenalty) > 0 ) {
+	    		applicablePenalty = minAmount;
+	    	}
+	    }
+		
 		return applicablePenalty;
 	}
 	
