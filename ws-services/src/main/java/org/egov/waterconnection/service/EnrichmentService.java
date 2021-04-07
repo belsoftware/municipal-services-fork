@@ -184,12 +184,22 @@ public class EnrichmentService {
 	 * @param waterConnectionRequest WaterConnectionRequest Object
 	 */
 	public void postStatusEnrichment(WaterConnectionRequest waterConnectionRequest) {
-		if (waterConnectionRequest.getWaterConnection().getStatus().equals(StatusEnum.ACTIVE) || WCConstants.ACTIVATE_CONNECTION
+		if (WCConstants.ACTIVATE_CONNECTION
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 			setConnectionNO(waterConnectionRequest);
 		}
 	}
 
+	
+	/**
+	 * Enrich water connection request and add connection no if connection is legacy data
+	 * @param waterConnectionRequest
+	 */
+	public void legacyStatusEnrichment(WaterConnectionRequest waterConnectionRequest) {
+		if (waterConnectionRequest.getWaterConnection().getApplicationStatus().equals("CONNECTION_ACTIVATED")  ) {
+			setConnectionNO(waterConnectionRequest);
+		}
+	}
 	/**
 	 * Create meter reading for meter connection
 	 *
