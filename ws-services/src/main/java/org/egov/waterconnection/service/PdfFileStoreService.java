@@ -184,8 +184,9 @@ public class PdfFileStoreService {
 		HashMap<String, Object> addDetail = mapper
 				.convertValue(waterConnectionRequest.getWaterConnection().getAdditionalDetails(), HashMap.class);
 		if (waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()
-				.equalsIgnoreCase(WCConstants.APPROVE_CONNECTION_CONST)
-				&& addDetail.getOrDefault(WCConstants.ESTIMATION_FILESTORE_ID, null) == null) {
+				.equalsIgnoreCase(WCConstants.APPROVE_CONNECTION_CONST)) {
+			// Estimation bills should be generated whenever the application comes for approval
+				//&& addDetail.getOrDefault(WCConstants.ESTIMATION_FILESTORE_ID, null) == null) {
 			addDetail.put(WCConstants.ESTIMATION_DATE_CONST, System.currentTimeMillis());
 			addDetail.put(WCConstants.ESTIMATION_FILESTORE_ID,
 					getFileStoreId(waterConnectionRequest, property, WCConstants.PDF_ESTIMATION_KEY));
