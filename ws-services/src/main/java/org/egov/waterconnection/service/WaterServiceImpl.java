@@ -17,6 +17,7 @@ import org.egov.waterconnection.validator.ActionValidator;
 import org.egov.waterconnection.validator.MDMSValidator;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.validator.WaterConnectionValidator;
+import org.egov.waterconnection.web.models.Connection.StatusEnum;
 import org.egov.waterconnection.web.models.Property;
 import org.egov.waterconnection.web.models.SearchCriteria;
 import org.egov.waterconnection.web.models.WaterConnection;
@@ -101,8 +102,12 @@ public class WaterServiceImpl implements WaterService {
 		mDMSValidator.validateMasterForCreateRequest(waterConnectionRequest);
 		enrichmentService.enrichWaterConnection(waterConnectionRequest, reqType);
 		userService.createUser(waterConnectionRequest);
-		// call work-flow
-		if (config.getIsExternalWorkFlowEnabled())
+		
+		WaterConnection conn = waterConnectionRequest.getWaterConnection();
+		 
+		if(conn.getOldApplication()!=null && conn.getOldApplication() && !StringUtils.isEmpty(conn.getOldConnectionNo())) {
+			enrichmentService.legacyStatusEnrichment(waterConnectionRequest);
+		}else if (config.getIsExternalWorkFlowEnabled())
 			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		waterDao.saveWaterConnection(waterConnectionRequest);
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());

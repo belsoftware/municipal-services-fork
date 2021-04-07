@@ -190,6 +190,16 @@ public class EnrichmentService {
 		}
 	}
 
+	
+	/**
+	 * Enrich water connection request and add connection no if connection is legacy data
+	 * @param waterConnectionRequest
+	 */
+	public void legacyStatusEnrichment(WaterConnectionRequest waterConnectionRequest) {
+		if (waterConnectionRequest.getWaterConnection().getApplicationStatus().equals("CONNECTION_ACTIVATED")  ) {
+			setConnectionNO(waterConnectionRequest);
+		}
+	}
 	/**
 	 * Create meter reading for meter connection
 	 *
@@ -239,8 +249,8 @@ public class EnrichmentService {
 	 */
 	public void enrichFileStoreIds(WaterConnectionRequest waterConnectionRequest) {
 		try {
-			if (waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()
-					.equalsIgnoreCase(WCConstants.APPROVE_CONNECTION_CONST)
+			log.info("enrichFileStoreIds" + waterConnectionRequest.getWaterConnection().getProcessInstance().getAction());
+			if (waterConnectionRequest.getWaterConnection().getApplicationStatus().equalsIgnoreCase(WCConstants.PENDING_APPROVAL_FOR_CONNECTION_CODE)
 					|| waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()
 							.equalsIgnoreCase(WCConstants.ACTION_PAY)) {
 				waterDao.enrichFileStoreIds(waterConnectionRequest);
