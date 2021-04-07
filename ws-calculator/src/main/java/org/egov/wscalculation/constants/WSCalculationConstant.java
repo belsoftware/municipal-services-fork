@@ -202,7 +202,9 @@ public class WSCalculationConstant {
 	
 	public static final String WC_ROADTYPE_MASTER = "RoadType";
 	
+	public static final String WC_UNAUTHORIZED_CONN = "UNAUTHORIZED";
 	
+	public static final String WC_MOTOR_CONN = "WITHPUMP";
 	
 	/**
 	 * Fee Estimation Configuration

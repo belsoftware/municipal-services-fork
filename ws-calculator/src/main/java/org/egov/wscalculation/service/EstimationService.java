@@ -217,12 +217,18 @@ public class EstimationService {
 			}
 		} else {
 			waterCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
-			//To handle Unauthorized Connection Charges
+			
+		}
+		//To handle Unauthorized Connection Charges
+		if ( !StringUtils.isEmpty( waterConnection.getAuthorizedConnection()) && waterConnection.getAuthorizedConnection().equalsIgnoreCase(WSCalculationConstant.WC_UNAUTHORIZED_CONN) )
+		{
 			waterCharge.add(new BigDecimal(billSlab.getUnAuthorizedConnection()));
 		}
-		
-		
-		
+		//To handle Unauthorized Connection Charges
+		if ( !StringUtils.isEmpty( waterConnection.getMotorInfo()) && waterConnection.getMotorInfo().equalsIgnoreCase(WSCalculationConstant.WC_MOTOR_CONN) )
+		{
+			waterCharge.add(new BigDecimal(billSlab.getMotorCharge()));
+		}
 		return waterCharge;
 	}
 	

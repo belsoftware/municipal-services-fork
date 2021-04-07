@@ -19,6 +19,7 @@ public class BillingSlab {
 	private double minimumCharge;
 	private double maximumCharge;
 	private double unAuthorizedConnection;
+	private double motorCharge;
 	public String getId() {
 		return id;
 	}
@@ -123,6 +124,15 @@ public class BillingSlab {
 
 	public void setOwnerType(String ownerType) {
 		this.ownerType = ownerType;
+	}
+
+
+	public double getMotorCharge() {
+		return motorCharge;
+	}
+
+	public void setMotorCharge(double motorCharge) {
+		this.motorCharge = motorCharge;
 	}
 
 
