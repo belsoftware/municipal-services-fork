@@ -109,6 +109,8 @@ public class WCConstants {
 
 	public static final String APPROVE_CONNECTION_STATUS_CODE = "APPROVE_CONNECTION_APPROVED";
 	
+	public static final String PENDING_APPROVAL_FOR_CONNECTION_CODE ="PENDING_APPROVAL_FOR_CONNECTION";
+	
     public static final String MDMS_TENANT_MODULE = "tenant";
 
     public static final String MDMS_CITYMODULE_CODE="citymodule";
