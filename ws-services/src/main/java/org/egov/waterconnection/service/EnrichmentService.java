@@ -249,6 +249,7 @@ public class EnrichmentService {
 	 */
 	public void enrichFileStoreIds(WaterConnectionRequest waterConnectionRequest) {
 		try {
+			log.info("enrichFileStoreIds" + waterConnectionRequest.getWaterConnection().getProcessInstance().getAction());
 			if (waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()
 					.equalsIgnoreCase(WCConstants.APPROVE_CONNECTION_CONST)
 					|| waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()
