@@ -3,7 +3,7 @@ package org.egov.wscalculation.service;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -677,12 +677,15 @@ public class DemandService {
 	 * @param tenantId Tenant Id
 	 */
 	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId) {
-		log.info("Billing master data values for non metered connection:: {}", master);
 		long startDay = ((Long.parseLong(master.get(WSCalculationConstant.Demand_Generate_Date_String).toString())) / 86400000);
+		log.info("Billing master data values for non metered connection:: {}", master);
+	
 		if(isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay)) {
 			List<String> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
 					WSCalculationConstant.nonMeterdConnection);
 			String assessmentYear = estimationService.getAssessmentYear();
+			connectionNos.clear();
+			connectionNos.add("WS-TEST-2021-000123");
 			for (String connectionNo : connectionNos) {
 				CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId)
 						.assessmentYear(assessmentYear).connectionNo(connectionNo).build();
@@ -710,6 +713,36 @@ public class DemandService {
 		return billingDay;
 	}
 	
+	private Calendar  getQuaterlyFiscalYrBilingDay(Date d,int dayOfMonth) {
+		Calendar billingDay = Calendar.getInstance();
+		billingDay.setTime(d);
+		billingDay.set(Calendar.MONTH, billingDay.get(Calendar.MONTH)/3 * 3);
+		billingDay.set(Calendar.DAY_OF_MONTH, 1);
+		billingDay.add(Calendar.DAY_OF_YEAR, (int)dayOfMonth);
+		setTimeToBeginningOfDay(billingDay);
+		return billingDay;
+	}
+	
+	private Calendar  getFiscalHalfYrBilingDay(Date d,int dayOfMonth) {
+		Calendar billingDay = Calendar.getInstance();
+		billingDay.setTime(d);
+		billingDay.set(Calendar.MONTH, billingDay.get(Calendar.MONTH)/6 * 6);
+		billingDay.set(Calendar.DAY_OF_MONTH, 1);
+		billingDay.add(Calendar.DAY_OF_YEAR, (int)dayOfMonth);
+		setTimeToBeginningOfDay(billingDay);
+		return billingDay;
+	}
+	
+	private Calendar  getFiscalBiMonthBilingDay(Date d,int dayOfMonth) {
+		Calendar billingDay = Calendar.getInstance();
+		billingDay.setTime(d);
+ 		billingDay.set(Calendar.MONTH, billingDay.get(Calendar.MONTH)/2 * 2);
+		billingDay.set(Calendar.DAY_OF_MONTH, 1);
+		setTimeToBeginningOfDay(billingDay);
+		billingDay.add(Calendar.DAY_OF_YEAR, (int)dayOfMonth);
+		return billingDay;
+	}
+	
 	private static void setTimeToBeginningOfDay(Calendar calendar) {
 	    calendar.set(Calendar.HOUR_OF_DAY, 0);
 	    calendar.set(Calendar.MINUTE, 0);
@@ -723,21 +756,39 @@ public class DemandService {
 	 * @return true if current day is for generation of demand
 	 */
 	private boolean isCurrentDateIsMatching(String billingFrequency, long dayOfMonth) {
+		Calendar currentDay = Calendar.getInstance();
+ 		setTimeToBeginningOfDay(currentDay);
+		
 		if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Monthly_Billing_Period)
 				&& (dayOfMonth == LocalDateTime.now().getDayOfMonth())) {
 			return true;
 		} else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Quaterly_Billing_Period)) {
+			//Get Todays Date
+			Calendar billingDay = getFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
+			if(billingDay.compareTo(currentDay)==0) {
+				return true;
+			}
 			return false;
 		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Yearly_Billing_Period)) {
 			//Get Todays Date
-			
-			Date d = new Date();
-			Calendar currentDay = Calendar.getInstance();
-			currentDay.setTime(d);
-			setTimeToBeginningOfDay(currentDay);
-			
-			Calendar billingDay = getFiscalYrBilingDay(d,(int)dayOfMonth);
-			
+			Calendar billingDay = getFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
+			if(billingDay.compareTo(currentDay)==0) {
+				return true;
+			}
+			return false;
+		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Half_Yearly_Billing_Period)) {
+			//Get Todays Date
+			Calendar billingDay = getFiscalHalfYrBilingDay(currentDay.getTime(),(int)dayOfMonth);			
+			if(billingDay.compareTo(currentDay)==0) {
+				return true;
+			}
+			return false;
+		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Bi_Monthly_Billing_Period)) {
+			//Get Todays Date
+			Calendar billingDay = getFiscalBiMonthBilingDay(currentDay.getTime(),(int)dayOfMonth);	
+			SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+			System.out.println("BILLING Day "+ fmt.format(billingDay.getTime()));
+			System.out.println("Today Day "+ fmt.format(currentDay.getTime()));
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -838,5 +889,4 @@ public class DemandService {
 		demandRepository.updateDemand(requestInfo, demands);
 		return calculations;
 	}
-
 }

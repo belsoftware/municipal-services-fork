@@ -223,7 +223,13 @@ public class MasterDataService {
 			} else if (WSCalculationConstant.Yearly_Billing_Period
 					.equalsIgnoreCase(master.get(WSCalculationConstant.Billing_Cycle_String).toString())) {
 				estimationService.getYearStartAndEndDate(billingPeriod);
-			} else {
+			} else if (WSCalculationConstant.Half_Yearly_Billing_Period
+					.equalsIgnoreCase(master.get(WSCalculationConstant.Billing_Cycle_String).toString())) {
+				estimationService.getHalfYearStartAndEndDate(billingPeriod);
+			} else if (WSCalculationConstant.Bi_Monthly_Billing_Period
+					.equalsIgnoreCase(master.get(WSCalculationConstant.Billing_Cycle_String).toString())) {
+				estimationService.getBiMonthStartAndEndDate(billingPeriod);
+			}else {
 				LocalDateTime demandEndDate = LocalDateTime.now();
 				demandEndDate = setCurrentDateValueToStartingOfDay(demandEndDate);
 				Long endDaysMillis = (Long) master.get(WSCalculationConstant.Demand_End_Date_String);
