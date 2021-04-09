@@ -679,8 +679,9 @@ public class DemandService {
 	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId) {
 		long startDay = ((Long.parseLong(master.get(WSCalculationConstant.Demand_Generate_Date_String).toString())) / 86400000);
 		log.info("Billing master data values for non metered connection:: {}", master);
-	
-		if(isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay)) {
+		boolean isMaching = isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay);
+		log.info("date Matching"+ isMaching);
+		if(true) {
 			List<String> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
 					WSCalculationConstant.nonMeterdConnection);
 			String assessmentYear = estimationService.getAssessmentYear();
@@ -755,6 +756,9 @@ public class DemandService {
 	 */
 	private boolean isCurrentDateIsMatching(String billingFrequency, long dayOfMonth) {
 		Calendar currentDay = Calendar.getInstance();
+		System.out.println("currentDay in millisecond "+ currentDay.getTimeInMillis());
+		
+		
  		setTimeToBeginningOfDay(currentDay);
 		
 		if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Monthly_Billing_Period)
@@ -763,6 +767,7 @@ public class DemandService {
 		} else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Quaterly_Billing_Period)) {
 			//Get Todays Date
 			Calendar billingDay = getFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
+			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -770,13 +775,15 @@ public class DemandService {
 		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Yearly_Billing_Period)) {
 			//Get Todays Date
 			Calendar billingDay = getFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
+			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
 			return false;
 		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Half_Yearly_Billing_Period)) {
 			//Get Todays Date
-			Calendar billingDay = getFiscalHalfYrBilingDay(currentDay.getTime(),(int)dayOfMonth);			
+			Calendar billingDay = getFiscalHalfYrBilingDay(currentDay.getTime(),(int)dayOfMonth);	
+			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -787,6 +794,7 @@ public class DemandService {
 			SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
 			System.out.println("BILLING Day "+ fmt.format(billingDay.getTime()));
 			System.out.println("Today Day "+ fmt.format(currentDay.getTime()));
+			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -886,5 +894,15 @@ public class DemandService {
 		log.info("Updated Demand Details " + demands.toString());
 		demandRepository.updateDemand(requestInfo, demands);
 		return calculations;
+	}
+	
+	public static void main(String[] arg) {
+		DemandService ser = new DemandService();
+		Calendar cal = ser.getFiscalHalfYrBilingDay(new Date(), 90);
+ 		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
+		Date d = new Date();
+		System.out.println("CalculatorController.jobscheduler()" + d.getTime());
+		cal.setTime(d);
+		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
 	}
 }

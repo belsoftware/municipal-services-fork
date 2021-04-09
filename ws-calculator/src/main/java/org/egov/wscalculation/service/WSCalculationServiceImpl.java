@@ -280,6 +280,8 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		if (tenantIds.isEmpty())
 			return;
 		log.info("Tenant Ids : " + tenantIds.toString());
+		tenantIds.clear();
+		tenantIds.add("pb.testing");
 		tenantIds.forEach(tenantId -> {
 			demandService.generateDemandForTenantId(tenantId, requestInfo);
 		});

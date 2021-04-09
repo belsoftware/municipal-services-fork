@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -809,6 +810,25 @@ public class EstimationService {
 								.build());
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		Date d = new Date();
+		System.out.println("CalculatorController.jobscheduler()" + d.getTime());
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
+		
+		cal.setTime(d);
+		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
+		setTimeToEndofDay(cal);
+		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
+		EstimationService service = new EstimationService();
+		HashMap<String, Object> billingPeriod = new HashMap<String, Object>();
+		service.getBiMonthStartAndEndDate(billingPeriod);
+		System.out.println("EstimationService.enclosing_method()"+ billingPeriod);
+		//EstimationService.enclosing_method(){startingDay=1614537000000, endingDay=1619807399999}
+		 
+		
 	}
 	
 }
