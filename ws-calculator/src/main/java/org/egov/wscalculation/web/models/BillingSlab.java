@@ -16,10 +16,13 @@ public class BillingSlab {
 	private String waterSource=null;
 	private String ownerType =null;
 	private String calculationAttribute = null;
+	private String propertyOwnershipCategory =null;
 	private double minimumCharge;
 	private double maximumCharge;
 	private double unAuthorizedConnection;
 	private double motorCharge;
+	private double maintenanceCharge;
+	
 	public String getId() {
 		return id;
 	}
@@ -134,6 +137,28 @@ public class BillingSlab {
 	public void setMotorCharge(double motorCharge) {
 		this.motorCharge = motorCharge;
 	}
+	
+	
+	public double getMaintenanceCharge() {
+		return maintenanceCharge;
+	}
+
+	public void setMaintenanceCharge(double maintenanceCharge) {
+		this.maintenanceCharge = maintenanceCharge;
+	}
+
+
+
+
+	public String getPropertyOwnershipCategory() {
+		return propertyOwnershipCategory;
+	}
+
+	public void setPropertyOwnershipCategory(String propertyOwnershipCategory) {
+		this.propertyOwnershipCategory = propertyOwnershipCategory;
+	}
+
+
 
 
 	private List<Slab> slabs = new ArrayList<>();

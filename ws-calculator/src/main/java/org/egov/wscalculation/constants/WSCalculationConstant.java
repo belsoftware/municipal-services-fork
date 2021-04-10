@@ -143,6 +143,8 @@ public class WSCalculationConstant {
 	public static final String noOfTapsConst = "No. of taps";
 
 	public static final String pipeSizeConst = "Pipe Size";
+	
+	public static final String arvConst = "ARV";
 
 	public static final String BILLING_PERIOD = "billingPeriod";
 	

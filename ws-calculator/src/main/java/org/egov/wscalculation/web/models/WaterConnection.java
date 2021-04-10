@@ -13,6 +13,10 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * WaterConnection
  */
+/**
+ * @author Administrator
+ *
+ */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-02T14:30:33.286+05:30[Asia/Kolkata]")
  public class WaterConnection extends Connection {
@@ -44,15 +48,20 @@ import io.swagger.annotations.ApiModelProperty;
 	@JsonProperty("noOfTaps")
 	private Integer noOfTaps = null;
 	
+	@JsonProperty("arvValue")
+	private Integer arvValue = null;
+	
 
 	@JsonProperty("motorInfo")
 	private String motorInfo = null;
-
+	
 	@JsonProperty("propertyOwnership")
 	private String propertyOwnership = null;
 	
 	@JsonProperty("authorizedConnection")
 	private String authorizedConnection = null;
+	
+	
 	
 	public WaterConnection waterSource(String waterSource) {
 		this.waterSource = waterSource;
@@ -146,6 +155,23 @@ import io.swagger.annotations.ApiModelProperty;
 	}
 	
 	
+	
+	
+	/**
+	 * No of taps for non-metered calculation attribute.
+	 * 
+	 * @return arvValue
+	 **/
+	@ApiModelProperty(value = "ARV value for non-metered calculation attribute.")
+
+	public Integer getArvValue() {
+		return arvValue;
+	}
+
+	public void setArvValue(Integer arvValue) {
+		this.arvValue = arvValue;
+	}
+
 	/**
 	 * Motor Info for non-metered calculation attribute.
 	 * 
@@ -160,6 +186,10 @@ import io.swagger.annotations.ApiModelProperty;
 	public void setMotorInfo(String motorInfo) {
 		this.motorInfo = motorInfo;
 	}
+	
+		
+
+
 	/**
 	 * Property Ownership info for non-metered calculation attribute.
 	 * 
