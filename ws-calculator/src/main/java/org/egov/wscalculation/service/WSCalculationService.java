@@ -13,4 +13,6 @@ public interface WSCalculationService {
 	void jobScheduler();
 
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo);
+	
+	public void generateDemandBasedOnTimePeriod1(RequestInfo requestInfo,String tenantId);
 }

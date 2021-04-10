@@ -22,9 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.Builder;
@@ -86,13 +88,22 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobscheduler")
-	public void jobscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+	public void jobscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper ) {
 		if(!config.getGenerateBill()) {
 			return;
 		}
 		wSCalculationService.generateDemandBasedOnTimePeriod(requestInfoWrapper.getRequestInfo());
 	}
 	
+	@PostMapping("/_jobscheduler_manual")
+	public void _jobscheduler_manual(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,  @RequestParam String   tenantId) {
+		System.out.println("Came");
+		System.out.println("Tenant Id >>"+tenantId);
+		if(!config.getGenerateBill()) {
+			return;
+		}
+		wSCalculationService.generateDemandBasedOnTimePeriod1(requestInfoWrapper.getRequestInfo(),tenantId);
+	}
 	@PostMapping("/_applyAdhocTax")
 	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {
 		List<Calculation> calculations = wSCalculationServiceImpl.applyAdhocTax(adhocTaxReq);

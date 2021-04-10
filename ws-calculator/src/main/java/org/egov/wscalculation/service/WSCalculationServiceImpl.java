@@ -280,13 +280,22 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		if (tenantIds.isEmpty())
 			return;
 		log.info("Tenant Ids : " + tenantIds.toString());
-//		tenantIds.clear();
-//		tenantIds.add("pb.testing");
 		tenantIds.forEach(tenantId -> {
 			demandService.generateDemandForTenantId(tenantId, requestInfo);
 		});
 	}
 	
+	
+	/**
+	 * Generate Demand Based on Time (Monthly, Quarterly, Yearly)
+	 */
+	public void generateDemandBasedOnTimePeriod1(RequestInfo requestInfo,String tenantId) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
+		
+		demandService.generateDemandForTenantId(tenantId, requestInfo);
+	}
 	/**
 	 * 
 	 * @param request - Calculation Request Object
