@@ -2,6 +2,8 @@ package org.egov.wscalculation.consumer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,13 +56,20 @@ public class DemandGenerationConsumer {
 			"${egov.watercalculatorservice.createdemand.topic}" }, containerFactory = "kafkaListenerContainerFactoryBatch")
 	public void listen(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
-		Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),
-				calculationReq.getCalculationCriteria().get(0).getTenantId());
+
 		List<CalculationCriteria> calculationCriteria = new ArrayList<>();
+		HashMap<String, List<CalculationCriteria>> hashMapForCbs = new HashMap<String, List<CalculationCriteria>>();
+		HashSet<String> tenantIds = new HashSet<String>();
+		 
 		records.forEach(record -> {
 			try {
 				CalculationReq calcReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
-				calculationCriteria.addAll(calcReq.getCalculationCriteria());
+				if(hashMapForCbs.get(calcReq.getCalculationCriteria().get(0).getTenantId())==null) {
+					hashMapForCbs.put(calcReq.getCalculationCriteria().get(0).getTenantId() , new ArrayList<CalculationCriteria>());
+				}
+				hashMapForCbs.get(calcReq.getCalculationCriteria().get(0).getTenantId() ).addAll(calcReq.getCalculationCriteria());
+				//tenantIds.add(calcReq.getCalculationCriteria().get(0).getTenantId());
+				//calculationCriteria.addAll(calcReq.getCalculationCriteria());
 				log.info("Consuming record: " + mapper.writeValueAsString(record));
 			} catch (final Exception e) {
 				StringBuilder builder = new StringBuilder();
@@ -73,9 +82,17 @@ public class DemandGenerationConsumer {
 				log.error(builder.toString());
 			}
 		});
-		CalculationReq request = CalculationReq.builder().calculationCriteria(calculationCriteria)
-				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
-		generateDemandInBatch(request, masterMap, config.getDeadLetterTopicBatch());
+		System.out.println("DemandGenerationConsumer.listen()" + tenantIds);
+		
+		for (String tenant : hashMapForCbs.keySet()) {
+			Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),tenant);
+			CalculationReq request = CalculationReq.builder().calculationCriteria(hashMapForCbs.get(tenant))
+					.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
+			generateDemandInBatch(request, masterMap, config.getDeadLetterTopicBatch());
+		}
+		
+		
+		
 		log.info("Number of batch records:  " + records.size());
 	}
 
@@ -90,37 +107,63 @@ public class DemandGenerationConsumer {
 			"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory")
 	public void listenDeadLetterTopic(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
-		Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),
-				calculationReq.getCalculationCriteria().get(0).getTenantId());
+		
+		HashMap<String, List<CalculationReq>> hashMapForCbs = new HashMap<String, List<CalculationReq>>();
+		int index =0;
 		records.forEach(record -> {
 			try {
 				log.info("Consuming record on dead letter topic : " + mapper.writeValueAsString(record));
 				CalculationReq calcReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
-
-				calcReq.getCalculationCriteria().forEach(calcCriteria -> {
-					CalculationReq request = CalculationReq.builder().calculationCriteria(Arrays.asList(calcCriteria))
-							.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
-					try {
-						log.info("Generating Demand for Criteria : " + mapper.writeValueAsString(calcCriteria));
-						// processing single
-						generateDemandInBatch(request, masterMap, config.getDeadLetterTopicSingle());
-					} catch (final Exception e) {
-						StringBuilder builder = new StringBuilder();
-						try {
-							builder.append("Error while generating Demand for Criteria: ")
-									.append(mapper.writeValueAsString(calcCriteria));
-						} catch (JsonProcessingException e1) {
-							e1.printStackTrace();
-						}
-						log.error(builder.toString(), e);
-					}
-				});
+				if(hashMapForCbs.get( calcReq.getCalculationCriteria().get(0).getTenantId())==null ) {
+					hashMapForCbs.put(calcReq.getCalculationCriteria().get(0).getTenantId() , new ArrayList<CalculationReq>());
+				}
+				hashMapForCbs.get( calcReq.getCalculationCriteria().get(0).getTenantId()).add(calcReq);
 			} catch (final Exception e) {
 				StringBuilder builder = new StringBuilder();
 				builder.append("Error while listening to value: ").append(record).append(" on dead letter topic.");
 				log.error(builder.toString(), e);
 			}
 		});
+		try {
+			for (String tenant : hashMapForCbs.keySet()) {
+				Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(), tenant);
+				hashMapForCbs.get(tenant).forEach(calcReq -> {
+					try {
+						calcReq.getCalculationCriteria().forEach(calcCriteria -> {
+							CalculationReq request = CalculationReq.builder().calculationCriteria(Arrays.asList(calcCriteria))
+									.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true).build();
+							try {
+								log.info("Generating Demand for Criteria : " + mapper.writeValueAsString(calcCriteria));
+								// processing single
+								generateDemandInBatch(request, masterMap, config.getDeadLetterTopicSingle());
+							} catch (final Exception e) {
+								StringBuilder builder = new StringBuilder();
+								try {
+									builder.append("Error while generating Demand for Criteria: ")
+											.append(mapper.writeValueAsString(calcCriteria));
+								} catch (JsonProcessingException e1) {
+									e1.printStackTrace();
+								}
+								log.error(builder.toString(), e);
+							}
+						});
+					} catch (final Exception e) {
+						StringBuilder builder = new StringBuilder();
+						builder.append("Error while listening to value: ").append(tenant ).append(" on dead letter topic.");
+						log.error(builder.toString(), e);
+					}
+				});
+			}
+		}catch (final Exception e) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Error while listening to value: on dead letter topic.");
+			log.error(builder.toString(), e);
+		}
+		
+		
+		
+		
+		
 	}
 
 	/**

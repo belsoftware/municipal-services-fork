@@ -756,10 +756,8 @@ public class DemandService {
 	 */
 	private boolean isCurrentDateIsMatching(String billingFrequency, long dayOfMonth) {
 		Calendar currentDay = Calendar.getInstance();
+		setTimeToBeginningOfDay(currentDay);
 		System.out.println("currentDay in millisecond "+ currentDay.getTimeInMillis());
-		
-		
- 		setTimeToBeginningOfDay(currentDay);
 		
 		if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Monthly_Billing_Period)
 				&& (dayOfMonth == LocalDateTime.now().getDayOfMonth())) {
