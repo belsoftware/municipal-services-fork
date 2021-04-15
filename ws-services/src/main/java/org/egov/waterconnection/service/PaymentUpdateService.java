@@ -26,6 +26,7 @@ import org.egov.waterconnection.util.NotificationUtil;
 import org.egov.waterconnection.util.WaterServicesUtil;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.web.models.Action;
+import org.egov.waterconnection.web.models.AuditDetails;
 import org.egov.waterconnection.web.models.Category;
 import org.egov.waterconnection.web.models.Event;
 import org.egov.waterconnection.web.models.EventRequest;
@@ -87,6 +88,7 @@ public class PaymentUpdateService {
 
 	@Autowired
 	private WaterServicesUtil waterServiceUtil;
+
 	/**
 	 * After payment change the application status
 	 *
@@ -137,6 +139,10 @@ public class PaymentUpdateService {
 
 					Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
 
+					AuditDetails auditDetails = waterServiceUtil
+							.getAuditDetails(waterConnectionRequest.getRequestInfo().getUserInfo().getUuid(), false);
+					waterConnectionRequest.getWaterConnection().setAuditDetails(auditDetails);
+					
 					wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 					enrichmentService.enrichFileStoreIds(waterConnectionRequest);
 					repo.updateWaterConnection(waterConnectionRequest, false);
