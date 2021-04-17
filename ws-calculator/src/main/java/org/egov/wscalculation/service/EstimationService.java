@@ -167,7 +167,6 @@ public class EstimationService {
 		calculationAttributeMaster.put(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST, billingSlabMaster.get(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST));
         String calculationAttribute = getCalculationAttribute(calculationAttributeMaster, waterConnection.getConnectionType());
 		List<String> filterAttrs =getFilterAttribute(calculationAttributeMaster, waterConnection.getConnectionType());
-		 
 		List<BillingSlab> billingSlabs = getSlabsFiltered(waterConnection, mappingBillingSlab, calculationAttribute, filterAttrs, property);
 		if (billingSlabs == null || billingSlabs.isEmpty())
 			throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
@@ -255,7 +254,13 @@ public class EstimationService {
 			String calculationAttribute,List<String> filterAttr, Property property) {
 	
 		final String connectionType = waterConnection.getConnectionType();
-		
+		//Based on Connection type and calculation attribute 
+		billingSlabs= billingSlabs.stream().filter(slab -> {
+			boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
+			boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
+					.equalsIgnoreCase(calculationAttribute);
+			return  isConnectionTypeMatching && isCalculationAttributeMatching;
+		}).collect(Collectors.toList());
 		
 		for (String filterName : filterAttr) {
 			switch (filterName) {
@@ -263,38 +268,27 @@ public class EstimationService {
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					final String propLoc = (property.getAddress()!=null && property.getAddress().getLocation()!=null)?property.getAddress().getLocation() :"";
 					boolean ispropLocMatching = slab.getPropertyLocation().equalsIgnoreCase(propLoc);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return ispropLocMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+
+					return ispropLocMatching ;
 				}).collect(Collectors.toList());
 				break;
 			case "waterSource":
 				long count =billingSlabs.stream().filter(slab -> {
 					final String waterSource = waterConnection.getWaterSource()!=null ?waterConnection.getWaterSource() :"";
 					boolean isWaterSourceMatching = slab.getWaterSource().equalsIgnoreCase(waterSource);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return  isWaterSourceMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return  isWaterSourceMatching ;
 				}).count();
 				final String waterSource = count > 0 ?  waterConnection.getWaterSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isWaterSourceMatching = slab.getWaterSource().equalsIgnoreCase(waterSource);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return isWaterSourceMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return isWaterSourceMatching;
 				}).collect(Collectors.toList());
 				break;
 			case "buildingType":
 				final String buildingType = (property.getUsageCategory() != null) ? property.getUsageCategory()	: "";
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isBuildingTypeMatching = slab.getBuildingType().equalsIgnoreCase(buildingType);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return isBuildingTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return isBuildingTypeMatching;
 				}).collect(Collectors.toList());
 				break;
 			case "majorUsageType":
@@ -302,10 +296,7 @@ public class EstimationService {
 				
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isBuildingTypeMatching = slab.getBuildingType().equalsIgnoreCase(majorUsgType);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return isBuildingTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return isBuildingTypeMatching;
 				}).collect(Collectors.toList());
 				break;
 			case "buildingSubType":
@@ -317,10 +308,7 @@ public class EstimationService {
 				//Check if specific value exist for category
 				long buildingSubTypeCount =billingSlabs.stream().filter(slab -> {
 					boolean isBuildingSubTypeMatching = buildingSubType.contains(slab.getBuildingSubType());
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return isBuildingSubTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return isBuildingSubTypeMatching;
 				}).count();
 				
 				if(buildingSubTypeCount ==0 ) {
@@ -328,10 +316,8 @@ public class EstimationService {
 				}
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isBuildingSubTypeMatching = buildingSubType.contains(slab.getBuildingSubType());
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return isBuildingSubTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+
+					return isBuildingSubTypeMatching;
 				}).collect(Collectors.toList());
 				break;
 			case "ownershipCategory": // eg:INSTITUTIONAL.PRIVATE etc..
@@ -339,19 +325,14 @@ public class EstimationService {
 				//Check if specific value exist for category
 				long ownershipCount =billingSlabs.stream().filter(slab -> {
 					boolean ownershipCategoryMatching = slab.getOwnershipCategory().equalsIgnoreCase(ownershipCategory);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return  ownershipCategoryMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+
+					return  ownershipCategoryMatching;
 				}).count();
 				//If count is zero then change to generic category
 				final String ownership = ownershipCount > 0 ? ownershipCategory :  WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean ownershipCategoryMatching = slab.getOwnershipCategory().equalsIgnoreCase(ownership);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return (ownershipCategoryMatching)  && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return (ownershipCategoryMatching);
 				}).collect(Collectors.toList());
 				break;	
 			case "ownerType": //EG:-STAFF,FREEDOMFIGHTER etc.
@@ -365,19 +346,13 @@ public class EstimationService {
 				//Check if specific value exist for category
 				long ownerTypeCount =billingSlabs.stream().filter(slab -> {
 					boolean ownershipCategoryMatching = slab.getOwnerType().equalsIgnoreCase(ownerType_lambda);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return  ownershipCategoryMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return  ownershipCategoryMatching;
 				}).count();
 				//If count is zero then change to generic category
 				final String  ownerType_lambda2 = ownerTypeCount > 0 ? ownerType :  WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean ownershipCategoryMatching = slab.getOwnerType().equalsIgnoreCase(ownerType_lambda2);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return (ownershipCategoryMatching)  && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return (ownershipCategoryMatching);
 				}).collect(Collectors.toList());
 				break;	
 				
@@ -386,10 +361,7 @@ public class EstimationService {
 				 
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean ownershipCategoryMatching = slab.getPropertyOwnershipCategory().equalsIgnoreCase(propertyOwnershipCategory);
-					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
-					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
-							.equalsIgnoreCase(calculationAttribute);
-					return (ownershipCategoryMatching)  && isConnectionTypeMatching && isCalculationAttributeMatching;
+					return (ownershipCategoryMatching);
 				}).collect(Collectors.toList());
 				break;	
 								
