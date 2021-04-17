@@ -299,6 +299,7 @@ public class EstimationService {
 				break;
 			case "majorUsageType":
 				final String majorUsgType = (property.getUsageCategory() != null) ? property.getUsageCategory().split("\\.")[0]	: "";
+				
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isBuildingTypeMatching = slab.getBuildingType().equalsIgnoreCase(majorUsgType);
 					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
@@ -311,6 +312,19 @@ public class EstimationService {
 				final List<String> buildingSubType = new ArrayList<String>();
 				if(property.getUnits()!=null && property.getUnits().size()>0) {
 					buildingSubType.addAll(property.getUnits().stream().map(u -> u.getUsageCategory()).collect(Collectors.toList()));
+				}
+				
+				//Check if specific value exist for category
+				long buildingSubTypeCount =billingSlabs.stream().filter(slab -> {
+					boolean isBuildingSubTypeMatching = buildingSubType.contains(slab.getBuildingSubType());
+					boolean isConnectionTypeMatching = slab.getConnectionType().equalsIgnoreCase(connectionType);
+					boolean isCalculationAttributeMatching = slab.getCalculationAttribute()
+							.equalsIgnoreCase(calculationAttribute);
+					return isBuildingSubTypeMatching && isConnectionTypeMatching && isCalculationAttributeMatching;
+				}).count();
+				
+				if(buildingSubTypeCount ==0 ) {
+					buildingSubType.add("*");
 				}
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean isBuildingSubTypeMatching = buildingSubType.contains(slab.getBuildingSubType());
@@ -449,26 +463,26 @@ public class EstimationService {
 		if (waterConnection.getConnectionType().equals(WSCalculationConstant.meteredConnectionType)) {
 			totalUnit = (criteria.getCurrentReading() - criteria.getLastReading());
 			return totalUnit;
-		} else if (waterConnection.getConnectionType().equals(WSCalculationConstant.nonMeterdConnection)
-				&& calculationAttribute.equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)) {
-			if (waterConnection.getNoOfTaps() == null)
+		} else {  
+			if(calculationAttribute.equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)) {
+				if (waterConnection.getNoOfTaps() == null)
+					return totalUnit;
+				return new Double(waterConnection.getNoOfTaps());
+			}else if ( calculationAttribute.equalsIgnoreCase(WSCalculationConstant.pipeSizeConst)) {
+				if (waterConnection.getPipeSize() == null)
+					return totalUnit;
+				return waterConnection.getPipeSize();
+			}else if( calculationAttribute.equalsIgnoreCase(WSCalculationConstant.arvConst)) {
+				if(!CollectionUtils.isEmpty(property.getUnits()) && property.getUnits().get(0).getArv()!=null) {
+					return property.getUnits().get(0).getArv().doubleValue();
+				}
 				return totalUnit;
-			return new Double(waterConnection.getNoOfTaps());
-		} else if (waterConnection.getConnectionType().equals(WSCalculationConstant.nonMeterdConnection)
-				&& calculationAttribute.equalsIgnoreCase(WSCalculationConstant.pipeSizeConst)) {
-			if (waterConnection.getPipeSize() == null)
-				return totalUnit;
-			return waterConnection.getPipeSize();
-		}else if(waterConnection.getConnectionType().equals(WSCalculationConstant.nonMeterdConnection)
-				&& calculationAttribute.equalsIgnoreCase(WSCalculationConstant.arvConst)) {
-			if(waterConnection.getPropertyOwnership() == null)
-				return totalUnit;
-			if(!CollectionUtils.isEmpty(property.getUnits()) && property.getUnits().get(0).getArv()!=null) {
-				return property.getUnits().get(0).getArv().doubleValue();
+			}else if( calculationAttribute.equalsIgnoreCase(WSCalculationConstant.propAreaConst)) {
+			if(property.getLandArea()!=null) {
+				return property.getLandArea() ;
 			}
-			return totalUnit;
-			
-				
+			return totalUnit;		
+		}
 		}
 		return 0.0;
 	}
