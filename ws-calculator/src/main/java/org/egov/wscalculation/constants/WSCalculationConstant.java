@@ -145,6 +145,8 @@ public class WSCalculationConstant {
 	public static final String pipeSizeConst = "Pipe Size";
 	
 	public static final String arvConst = "ARV";
+	
+	public static final String propAreaConst = "Property Area";
 
 	public static final String BILLING_PERIOD = "billingPeriod";
 	
