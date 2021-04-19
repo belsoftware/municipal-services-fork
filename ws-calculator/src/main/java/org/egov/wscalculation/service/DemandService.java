@@ -664,11 +664,11 @@ public class DemandService {
 	 * @param tenantId
 	 *            TenantId for getting master data.
 	 */
-	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo) {
+	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, String connectionNo) {
 		requestInfo.getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
 		if(billingMasterData!=null) {
-			generateDemandForULB(billingMasterData, requestInfo, tenantId);	
+			generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNo);	
 		}
 	}
 
@@ -678,7 +678,7 @@ public class DemandService {
 	 * @param requestInfo Request Info
 	 * @param tenantId Tenant Id
 	 */
-	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId) {
+	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId, String connectionno) {
 		long startDay = ((Long.parseLong(master.get(WSCalculationConstant.Demand_Generate_Date_String).toString())) / 86400000);
 		log.info("Billing master data values for non metered connection:: {}", master);
 		boolean isMaching = isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay);
@@ -686,6 +686,10 @@ public class DemandService {
 		if(true) {
 			List<String> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
 					WSCalculationConstant.nonMeterdConnection);
+			if(!StringUtils.isBlank(connectionno)) {
+				connectionNos.clear();
+				connectionNos.add(connectionno);
+			}
 			String assessmentYear = estimationService.getAssessmentYear();
 			for (String connectionNo : connectionNos) {
 				CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId)

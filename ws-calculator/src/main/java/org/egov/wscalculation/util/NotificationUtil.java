@@ -180,6 +180,7 @@ public class NotificationUtil {
 	public String getShortnerURL(String actualURL) {
 		net.minidev.json.JSONObject obj = new net.minidev.json.JSONObject();
 		obj.put("url", actualURL);
+		log.info("Actual URL "+ actualURL);
 		String url = config.getShortnerHost() + config.getShortenerURL();
 
 		Object response = serviceRequestRepository.getShorteningURL(new StringBuilder(url), obj);

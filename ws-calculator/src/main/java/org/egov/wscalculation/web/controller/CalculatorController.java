@@ -96,13 +96,12 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobscheduler_manual")
-	public void _jobscheduler_manual(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,  @RequestParam String   tenantId) {
-		System.out.println("Came");
-		System.out.println("Tenant Id >>"+tenantId);
-		if(!config.getGenerateBill()) {
-			return;
-		}
-		wSCalculationService.generateDemandBasedOnTimePeriod1(requestInfoWrapper.getRequestInfo(),tenantId);
+	public void _jobscheduler_manual(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@RequestParam String   tenantId,
+			@RequestParam(required = false) String  connectionno
+			) {
+ 
+			wSCalculationService.generateDemandBasedOnTimePeriod_manual(requestInfoWrapper.getRequestInfo(),tenantId,connectionno);
 	}
 	@PostMapping("/_applyAdhocTax")
 	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {
