@@ -313,7 +313,10 @@ public class CalculatorUtil {
 			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "ERROR IN FETCHING THE BILLING FREQUENCY");
 		}
 		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
-		return jsonOutput.get(0);
+		if(jsonOutput.size() > 0 ) {
+			return jsonOutput.get(0);
+		}
+		return null;
 	}
 
 	public Property getProperty(RequestInfo requestInfo, String tenantId, String propertyId) {
