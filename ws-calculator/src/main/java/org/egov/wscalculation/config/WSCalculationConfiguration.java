@@ -200,4 +200,7 @@ public class WSCalculationConfiguration {
 	
 	@Value("${ws.generatebill}")
 	private Boolean generateBill;
+	
+	@Value("${egov.url.shortner.host}")
+	private String shortnerHost;
 }
