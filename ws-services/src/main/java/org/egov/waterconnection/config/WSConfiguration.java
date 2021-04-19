@@ -124,7 +124,13 @@ public class WSConfiguration {
 
     	@Value("${egov.ws.calculation.endpoint}")
     	private String calculateEndpoint;
+    	
+    	@Value("${egov.ws.jobschedular.endpoint}")
+    	private String jobschedularEndpoint;
     
+    	@Value("${generateDemandForTesting}")
+    	private Boolean generateDemandForTesting;
+    	
     	@Value("${egov.receipt.businessservice.topic}")
     	private String receiptBusinessservice;
     

@@ -272,6 +272,10 @@ public class WaterServicesUtil {
 		return builder.append(config.getCalculatorHost()).append(config.getCalculateEndpoint());
 	}
 	
+	public StringBuilder getJobSchedularURL() {
+		StringBuilder builder = new StringBuilder();
+		return builder.append(config.getCalculatorHost()).append(config.getJobschedularEndpoint());
+	}
 	/**
 	 * 
 	 * @return URL of estimation service

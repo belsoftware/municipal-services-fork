@@ -187,6 +187,9 @@ public class WaterServiceImpl implements WaterService {
 		boolean isStateUpdatable = waterServiceUtil.getStatusForUpdate(businessService, previousApplicationStatus);
 		waterDao.updateWaterConnection(waterConnectionRequest, isStateUpdatable);
 		enrichmentService.postForMeterReading(waterConnectionRequest,  WCConstants.UPDATE_APPLICATION);
+		if(config.getGenerateDemandForTesting()!=null && config.getGenerateDemandForTesting()) {
+			calculationService.generateDemandForNonMeterConnection(waterConnectionRequest);
+		}
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());
 	}
 
