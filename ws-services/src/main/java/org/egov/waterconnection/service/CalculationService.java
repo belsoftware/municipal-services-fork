@@ -66,7 +66,7 @@ public class CalculationService {
 	
 	public void generateDemandForNonMeterConnection(WaterConnectionRequest request ) {
 		if(config.getGenerateDemandForTesting()!=null &&  config.getGenerateDemandForTesting() &&
-				WCConstants.ACTIVATE_CONNECTION.equalsIgnoreCase(request.getWaterConnection().getApplicationStatus() )) {
+				WCConstants.STATUS_APPROVED.equalsIgnoreCase(request.getWaterConnection().getApplicationStatus() )) {
  			try {
  				RequestInfoWrapper requestInfo = RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
  				String actionLink = waterServiceUtil.getJobSchedularURL().toString()
