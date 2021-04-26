@@ -147,6 +147,14 @@ public class EstimationService {
 	 * present in the Water Details
 	 */
 
+	/**
+	 * @param waterConnection
+	 * @param criteria
+	 * @param billingSlabMaster
+	 * @param billingSlabIds
+	 * @param requestInfo
+	 * @return
+	 */
 	public BigDecimal getWaterEstimationCharge(WaterConnection waterConnection, CalculationCriteria criteria, 
 			Map<String, JSONArray> billingSlabMaster, ArrayList<String> billingSlabIds, RequestInfo requestInfo) {
 		BigDecimal waterCharge = BigDecimal.ZERO;
@@ -207,7 +215,7 @@ public class EstimationService {
 			}else if (waterConnection.getConnectionType()
 					.equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection)) {
 				if(!CollectionUtils.isEmpty(billSlab.getSlabs())) {
-				for (Slab slab : billSlab.getSlabs()) {
+				for (Slab slab : billSlab.getSlabs()) {				
 					if (totalUOM >= slab.getFrom() && totalUOM < slab.getTo()) {
 						if(slab.getType()!=null && slab.getType().equalsIgnoreCase(WSCalculationConstant.CALC_TYPE_RATE)) {
 							waterCharge = BigDecimal.valueOf((totalUOM * slab.getCharge()));	
@@ -231,12 +239,15 @@ public class EstimationService {
 		//To handle Unauthorized Connection Charges
 		if ( !StringUtils.isEmpty( waterConnection.getAuthorizedConnection()) && waterConnection.getAuthorizedConnection().equalsIgnoreCase(WSCalculationConstant.WC_UNAUTHORIZED_CONN) )
 		{
-			waterCharge.add(new BigDecimal(billSlab.getUnAuthorizedConnection()));
+			waterCharge = waterCharge.add(new BigDecimal(billSlab.getUnAuthorizedConnection()));
 		}
-		//To handle Unauthorized Connection Charges
+		//To handle with and without pump
 		if ( !StringUtils.isEmpty( waterConnection.getMotorInfo()) && waterConnection.getMotorInfo().equalsIgnoreCase(WSCalculationConstant.WC_MOTOR_CONN) )
 		{
-			waterCharge.add(new BigDecimal(billSlab.getMotorCharge()));
+			
+			waterCharge = waterCharge.add(BigDecimal.valueOf(billSlab.getMotorCharge()));
+			
+			
 		}
 		//To add maintenance charge
 		if(billSlab.getMaintenanceCharge() != 0.0) {
@@ -399,7 +410,7 @@ public class EstimationService {
 		if(array!=null) {
 			arr =array.stream().map(obj ->obj.toString()).collect(Collectors.toList());
 		}
-		System.out.println(array.toArray());
+		
 		return arr;
 	}
 	
