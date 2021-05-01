@@ -52,8 +52,8 @@ public class User   {
         private String salutation;
 
         @NotNull
-        @Size(max=100)
-        @Pattern(regexp = "^[a-zA-Z0-9 \\-'`\\.]*$", message = "Invalid name. Only alphabets and special characters -, ',`, .")
+        @Size(max=200)
+        //@Pattern(regexp = "^[a-zA-Z0-9 \\-'`\\.]*$", message = "Invalid name. Only alphabets and special characters -, ',`, .")
         @JsonProperty("name")
         private String name;
 
