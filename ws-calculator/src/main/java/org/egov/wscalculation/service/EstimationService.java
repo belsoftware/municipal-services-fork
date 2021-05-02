@@ -34,6 +34,7 @@ import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.util.WSCalculationUtil;
 import org.egov.wscalculation.util.WaterCessUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -61,6 +62,9 @@ public class EstimationService {
 	
 	@Autowired
 	private WSCalculationUtil wSCalculationUtil;
+	
+	@Value("${app.timezone}")
+	private String timeZone;
 
 	/**
 	 * Generates a List of Tax head estimates with tax head code, tax head
@@ -472,18 +476,15 @@ public class EstimationService {
 	
 	
 	public Map<String, Object> getHalfYearStartAndEndDate(Map<String, Object> billingPeriod){
-		Date date = new Date();
-		Calendar fromDateCalendar = Calendar.getInstance();
-		fromDateCalendar.setTime(date);
+		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		if(fromDateCalendar.get(Calendar.MONTH)<= Calendar.JUNE) {
 			fromDateCalendar.set(Calendar.MONTH, Calendar.JANUARY);	
 		}else {
 			fromDateCalendar.set(Calendar.MONTH, Calendar.JULY);	
 		}
-		
 		fromDateCalendar.set(Calendar.DAY_OF_MONTH, 1); 
 		setTimeToBeginningOfDay(fromDateCalendar);
-		Calendar toDateCalendar = Calendar.getInstance();
+		Calendar toDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		toDateCalendar.setTimeInMillis(fromDateCalendar.getTimeInMillis());
 		toDateCalendar.add(Calendar.MONTH, 5);
 		toDateCalendar.set(Calendar.DAY_OF_MONTH, toDateCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -495,16 +496,14 @@ public class EstimationService {
 	
 	
 	public Map<String, Object> getYearStartAndEndDate(Map<String, Object> billingPeriod){
-		Date date = new Date();
-		Calendar fromDateCalendar = Calendar.getInstance();
-		fromDateCalendar.setTime(date);
+		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		if(fromDateCalendar.get(Calendar.MONTH)< 3) {
 			fromDateCalendar.add(Calendar.YEAR, -1);	
 		}
 		fromDateCalendar.set(Calendar.MONTH, Calendar.APRIL);
 		fromDateCalendar.set(Calendar.DAY_OF_MONTH, 1); 
 		setTimeToBeginningOfDay(fromDateCalendar);
-		Calendar toDateCalendar = Calendar.getInstance();
+		Calendar toDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		toDateCalendar.setTimeInMillis(fromDateCalendar.getTimeInMillis());
 		toDateCalendar.add(Calendar.YEAR, 1);
 		toDateCalendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -515,14 +514,11 @@ public class EstimationService {
 	}
 	
 	public Map<String, Object> getQuarterStartAndEndDate(Map<String, Object> billingPeriod){
-		Date date = new Date();
-		Calendar fromDateCalendar = Calendar.getInstance();
-		fromDateCalendar.setTime(date);
+		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		fromDateCalendar.set(Calendar.MONTH, fromDateCalendar.get(Calendar.MONTH)/3 * 3);
 		fromDateCalendar.set(Calendar.DAY_OF_MONTH, 1);
 		setTimeToBeginningOfDay(fromDateCalendar);
-		Calendar toDateCalendar = Calendar.getInstance();
-		toDateCalendar.setTime(date);
+		Calendar toDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		toDateCalendar.set(Calendar.MONTH, toDateCalendar.get(Calendar.MONTH)/3 * 3 + 2);
 		toDateCalendar.set(Calendar.DAY_OF_MONTH, toDateCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		setTimeToEndofDay(toDateCalendar);
@@ -532,15 +528,12 @@ public class EstimationService {
 	}
 	
 	public Map<String, Object> getBiMonthStartAndEndDate(Map<String, Object> billingPeriod){
-		Date date = new Date();
-		Calendar fromDateCalendar = Calendar.getInstance();
-		fromDateCalendar.setTime(date);
+		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		System.out.println(fromDateCalendar.get(Calendar.MONTH));
 		fromDateCalendar.set(Calendar.MONTH, fromDateCalendar.get(Calendar.MONTH)/2 * 2);
 		fromDateCalendar.set(Calendar.DAY_OF_MONTH, 1);
 		setTimeToBeginningOfDay(fromDateCalendar);
-		Calendar toDateCalendar = Calendar.getInstance();
-		toDateCalendar.setTime(date);
+		Calendar toDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		toDateCalendar.set(Calendar.MONTH, toDateCalendar.get(Calendar.MONTH)/2 * 2 + 1);
 		toDateCalendar.set(Calendar.DAY_OF_MONTH, toDateCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		setTimeToEndofDay(toDateCalendar);
@@ -550,14 +543,11 @@ public class EstimationService {
 	}
 	
 	public Map<String, Object> getMonthStartAndEndDate(Map<String, Object> billingPeriod){
-		Date date = new Date();
-		Calendar monthStartDate = Calendar.getInstance();
-		monthStartDate.setTime(date);
+		Calendar monthStartDate = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		monthStartDate.set(Calendar.DAY_OF_MONTH, monthStartDate.getActualMinimum(Calendar.DAY_OF_MONTH));
 		setTimeToBeginningOfDay(monthStartDate);
 	    
-		Calendar monthEndDate = Calendar.getInstance();
-		monthEndDate.setTime(date);
+		Calendar monthEndDate = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
 		monthEndDate.set(Calendar.DAY_OF_MONTH, monthEndDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 		setTimeToEndofDay(monthEndDate);
 		billingPeriod.put(WSCalculationConstant.STARTING_DATE_APPLICABLES, monthStartDate.getTimeInMillis());
@@ -860,7 +850,7 @@ public class EstimationService {
 		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
 		EstimationService service = new EstimationService();
 		HashMap<String, Object> billingPeriod = new HashMap<String, Object>();
-		service.getBiMonthStartAndEndDate(billingPeriod);
+		service.getYearStartAndEndDate(billingPeriod);
 		System.out.println("EstimationService.enclosing_method()"+ billingPeriod);
 		//EstimationService.enclosing_method(){startingDay=1614537000000, endingDay=1619807399999}
 		 
