@@ -100,7 +100,15 @@ public class WaterServiceImpl implements WaterService {
 		Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
 		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
 		mDMSValidator.validateMasterForCreateRequest(waterConnectionRequest);
+		
+		if(StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getUsageCategory()) && property!=null){
+			if(!CollectionUtils.isEmpty(property.getUnits())){
+				waterConnectionRequest.getWaterConnection().setUsageCategory(property.getUnits().get(0).getUsageCategory());
+			}
+		}
+		
 		enrichmentService.enrichWaterConnection(waterConnectionRequest, reqType);
+		
 		userService.createUser(waterConnectionRequest);
 		
 		WaterConnection conn = waterConnectionRequest.getWaterConnection();

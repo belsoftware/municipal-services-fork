@@ -133,6 +133,9 @@ public class Connection {
 	@JsonProperty("roadTypeEst")
 	@Valid
 	private List<RoadTypeEst> roadTypeEst = new ArrayList<>();
+	
+	@JsonProperty("usageCategory")
+	private String usageCategory;
 
 	public Connection id(String id) {
 		this.id = id;
@@ -628,6 +631,16 @@ public class Connection {
 		this.applicationType = applicationType;
 	}
 
+	
+	@ApiModelProperty(value = "Connection Usage Categoryf")
+	public String getUsageCategory() {
+		return usageCategory;
+	}
+
+	public void setUsageCategory(String usageCategory) {
+		this.usageCategory = usageCategory;
+	}
+
 	@Override
 	public boolean equals(java.lang.Object o) {
 		if (this == o) {
@@ -657,7 +670,8 @@ public class Connection {
 				&& Objects.equals(this.dateEffectiveFrom, connection.dateEffectiveFrom)
 				&& Objects.equals(this.oldApplication,connection.oldApplication)
 				&& Objects.equals(this.roadTypeEst, connection.roadTypeEst)
-				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads);
+				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads) 
+				&& Objects.equals(this.usageCategory, connection.usageCategory);
 	}
 
 	@Override
@@ -665,7 +679,7 @@ public class Connection {
 		return Objects.hash(id, tenantId, propertyId, applicationNo, applicationStatus, status, connectionNo,
 				oldConnectionNo, documents, plumberInfo, roadType, roadCuttingArea, connectionExecutionDate,
 				connectionCategory, connectionType, additionalDetails, auditDetails, connectionHolders,
-				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads);
+				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads,usageCategory);
 	}
 
 	@Override
@@ -696,6 +710,7 @@ public class Connection {
 		sb.append("	   oldApplication: ").append(toIndentedString(oldApplication)).append("\n");
 		sb.append("	   roadTypeEst: ").append(toIndentedString(roadTypeEst)).append("\n");
 		sb.append("	   wsTaxHeads: ").append(toIndentedString(wsTaxHeads)).append("\n");
+		sb.append("	   usageCategory: ").append(toIndentedString(usageCategory)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
