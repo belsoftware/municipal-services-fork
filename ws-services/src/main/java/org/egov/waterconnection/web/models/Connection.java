@@ -136,6 +136,9 @@ public class Connection {
 	
 	@JsonProperty("usageCategory")
 	private String usageCategory;
+	
+	@JsonProperty("subUsageCategory")
+	private String subUsageCategory;
 
 	public Connection id(String id) {
 		this.id = id;
@@ -641,6 +644,16 @@ public class Connection {
 		this.usageCategory = usageCategory;
 	}
 
+	
+	
+	public String getSubUsageCategory() {
+		return subUsageCategory;
+	}
+
+	public void setSubUsageCategory(String subUsageCategory) {
+		this.subUsageCategory = subUsageCategory;
+	}
+
 	@Override
 	public boolean equals(java.lang.Object o) {
 		if (this == o) {
@@ -671,7 +684,8 @@ public class Connection {
 				&& Objects.equals(this.oldApplication,connection.oldApplication)
 				&& Objects.equals(this.roadTypeEst, connection.roadTypeEst)
 				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads) 
-				&& Objects.equals(this.usageCategory, connection.usageCategory);
+				&& Objects.equals(this.usageCategory, connection.usageCategory)
+				&& Objects.equals(this.subUsageCategory, connection.subUsageCategory);
 	}
 
 	@Override
@@ -679,7 +693,7 @@ public class Connection {
 		return Objects.hash(id, tenantId, propertyId, applicationNo, applicationStatus, status, connectionNo,
 				oldConnectionNo, documents, plumberInfo, roadType, roadCuttingArea, connectionExecutionDate,
 				connectionCategory, connectionType, additionalDetails, auditDetails, connectionHolders,
-				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads,usageCategory);
+				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads,usageCategory ,subUsageCategory);
 	}
 
 	@Override
@@ -711,6 +725,7 @@ public class Connection {
 		sb.append("	   roadTypeEst: ").append(toIndentedString(roadTypeEst)).append("\n");
 		sb.append("	   wsTaxHeads: ").append(toIndentedString(wsTaxHeads)).append("\n");
 		sb.append("	   usageCategory: ").append(toIndentedString(usageCategory)).append("\n");
+		sb.append("	   subUsageCategory: ").append(toIndentedString(subUsageCategory)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}

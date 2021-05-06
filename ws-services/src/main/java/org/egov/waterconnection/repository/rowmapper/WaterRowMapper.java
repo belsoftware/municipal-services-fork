@@ -73,6 +73,7 @@ public class WaterRowMapper implements ResultSetExtractor<List<WaterConnection>>
                 currentWaterConnection.setApplicationType(rs.getString("applicationType"));
                 currentWaterConnection.setDateEffectiveFrom(rs.getLong("dateEffectiveFrom"));
                 currentWaterConnection.setUsageCategory(rs.getString("usagecategory"));
+                currentWaterConnection.setSubUsageCategory(rs.getString("subusagecategory"));
                 AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("ws_createdBy"))
                         .createdTime(rs.getLong("ws_createdTime")).lastModifiedBy(rs.getString("ws_lastModifiedBy"))
                         .lastModifiedTime(rs.getLong("ws_lastModifiedTime")).build();

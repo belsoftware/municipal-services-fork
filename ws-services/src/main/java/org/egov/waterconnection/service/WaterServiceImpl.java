@@ -101,11 +101,7 @@ public class WaterServiceImpl implements WaterService {
 		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
 		mDMSValidator.validateMasterForCreateRequest(waterConnectionRequest);
 		
-		if(StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getUsageCategory()) && property!=null){
-			if(!CollectionUtils.isEmpty(property.getUnits())){
-				waterConnectionRequest.getWaterConnection().setUsageCategory(property.getUnits().get(0).getUsageCategory());
-			}
-		}
+
 		
 		enrichmentService.enrichWaterConnection(waterConnectionRequest, reqType);
 		
@@ -113,6 +109,13 @@ public class WaterServiceImpl implements WaterService {
 		
 		WaterConnection conn = waterConnectionRequest.getWaterConnection();
 		 
+		if(StringUtils.isEmpty(conn.getUsageCategory()) && property!=null){
+			conn.setUsageCategory(property.getUsageCategory());
+			if(!CollectionUtils.isEmpty(property.getUnits())){
+				conn.setSubUsageCategory(property.getUnits().get(0).getUsageCategory());
+			}
+		}
+		
 		if(!StringUtils.isEmpty(conn.getOldConnectionNo()) && reqType==WCConstants.CREATE_APPLICATION) {
 			enrichmentService.legacyStatusEnrichment(waterConnectionRequest);
 		}else if (config.getIsExternalWorkFlowEnabled())
