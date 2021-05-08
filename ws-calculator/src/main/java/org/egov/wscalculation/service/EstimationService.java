@@ -240,11 +240,7 @@ public class EstimationService {
 			waterCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
 			
 		}
-		//To handle Unauthorized Connection Charges
-		if ( !StringUtils.isEmpty( waterConnection.getAuthorizedConnection()) && waterConnection.getAuthorizedConnection().equalsIgnoreCase(WSCalculationConstant.WC_UNAUTHORIZED_CONN) )
-		{
-			waterCharge = waterCharge.add(new BigDecimal(billSlab.getUnAuthorizedConnection()));
-		}
+
 		//To handle with and without pump
 		if ( !StringUtils.isEmpty( waterConnection.getMotorInfo()) && waterConnection.getMotorInfo().equalsIgnoreCase(WSCalculationConstant.WC_MOTOR_CONN) )
 		{
@@ -373,13 +369,24 @@ public class EstimationService {
 				
 			case "propertyOwnershipCategory": //EG:-HOR , Tenant etc.
 				final String  propertyOwnershipCategory =  !StringUtils.isEmpty(waterConnection.getPropertyOwnership()) ?waterConnection.getPropertyOwnership() :  "HOR";
-				 
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					boolean ownershipCategoryMatching = slab.getPropertyOwnershipCategory().equalsIgnoreCase(propertyOwnershipCategory);
 					return (ownershipCategoryMatching);
 				}).collect(Collectors.toList());
 				break;	
-								
+
+			case "authorizedConnection": //EG:-HOR , Tenant etc.
+				final String  authorizedConnectionCategory =  !StringUtils.isEmpty(waterConnection.getAuthorizedConnection()) ?waterConnection.getAuthorizedConnection() :  "";
+				long authCount =billingSlabs.stream().filter(slab -> {
+					boolean isAuthorizedConnectionMatching = slab.getAuthorizedConnection().equalsIgnoreCase(authorizedConnectionCategory);
+					return  isAuthorizedConnectionMatching ;
+				}).count();
+				final String authConn = authCount > 0 ?  authorizedConnectionCategory :WSCalculationConstant.GENERIC_ATTRIBUTE;
+				 billingSlabs= billingSlabs.stream().filter(slab -> {
+					boolean authConnMatching = slab.getAuthorizedConnection().equalsIgnoreCase(authConn);
+					return (authConnMatching);
+				}).collect(Collectors.toList());
+				break;	
 				
 			default:
 				log.info("INVALID USECASE "+ filterName);

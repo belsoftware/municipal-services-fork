@@ -18,11 +18,10 @@ public class BillingSlab {
 	private String calculationAttribute = null;
 	private String propertyOwnershipCategory =null;
 	private double minimumCharge;
-	private double maximumCharge;
-	private double unAuthorizedConnection;
+	private double maximumCharge; 
 	private double motorCharge;
 	private double maintenanceCharge;
-	
+	private String authorizedConnection;
 	public String getId() {
 		return id;
 	}
@@ -79,13 +78,6 @@ public class BillingSlab {
 		this.propertyLocation = propertyLocation;
 	}
 
-	public double getUnAuthorizedConnection() {
-		return unAuthorizedConnection;
-	}
-
-	public void setUnAuthorizedConnection(double unAuthorizedConnection) {
-		this.unAuthorizedConnection = unAuthorizedConnection;
-	}
 
 	public String getOwnershipCategory() {
 		return ownershipCategory;
@@ -156,6 +148,17 @@ public class BillingSlab {
 
 	public void setPropertyOwnershipCategory(String propertyOwnershipCategory) {
 		this.propertyOwnershipCategory = propertyOwnershipCategory;
+	}
+
+
+
+
+	public String getAuthorizedConnection() {
+		return authorizedConnection;
+	}
+
+	public void setAuthorizedConnection(String authorizedConnection) {
+		this.authorizedConnection = authorizedConnection;
 	}
 
 
