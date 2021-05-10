@@ -212,7 +212,7 @@ public class EnrichmentService {
 			if (reqType == WCConstants.UPDATE_APPLICATION && WCConstants.ACTIVATE_CONNECTION
 					.equalsIgnoreCase(waterConnectionrequest.getWaterConnection().getProcessInstance().getAction())) {
 				waterDao.postForMeterReading(waterConnectionrequest);
-			} else if (WCConstants.MODIFY_CONNECTION == reqType && WCConstants.APPROVE_CONNECTION.
+			} else if (WCConstants.MODIFY_CONNECTION == reqType && WCConstants.ACTIVATE_CONNECTION.
 					equals(waterConnectionrequest.getWaterConnection().getProcessInstance().getAction())) {
 				SearchCriteria criteria = SearchCriteria.builder()
 						.tenantId(waterConnectionrequest.getWaterConnection().getTenantId())
