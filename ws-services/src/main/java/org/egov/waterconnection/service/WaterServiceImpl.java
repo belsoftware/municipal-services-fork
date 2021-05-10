@@ -176,7 +176,7 @@ public class WaterServiceImpl implements WaterService {
 				waterConnectionRequest.getWaterConnection().getTenantId(),
 				config.getBusinessServiceValue());
 		enrichmentService.enrichUpdateWaterConnection(waterConnectionRequest);
-		actionValidator.validateUpdateRequest(waterConnectionRequest, businessService, previousApplicationStatus);
+		actionValidator.validateUpdateRequest(waterConnectionRequest, businessService, previousApplicationStatus, WCConstants.UPDATE_APPLICATION);
 		waterConnectionValidator.validateUpdate(waterConnectionRequest, searchResult, WCConstants.UPDATE_APPLICATION);
 		waterConnectionValidator.validateCalcAttr(waterConnectionRequest,searchResult);
 		enrichmentService.enrichWithCalculationAttr(waterConnectionRequest);
@@ -241,12 +241,15 @@ public class WaterServiceImpl implements WaterService {
 				waterConnectionRequest.getWaterConnection().getApplicationNo(),
 				waterConnectionRequest.getWaterConnection().getTenantId(), config.getModifyWSBusinessServiceName());
 		enrichmentService.enrichUpdateWaterConnection(waterConnectionRequest);
-		actionValidator.validateUpdateRequest(waterConnectionRequest, businessService, previousApplicationStatus);
+		actionValidator.validateUpdateRequest(waterConnectionRequest, businessService, previousApplicationStatus,  WCConstants.MODIFY_CONNECTION);
+		waterConnectionValidator.validateCalcAttr(waterConnectionRequest,searchResult);
+		enrichmentService.enrichWithCalculationAttr(waterConnectionRequest);
 		userService.updateUser(waterConnectionRequest, searchResult);
 		waterConnectionValidator.validateUpdate(waterConnectionRequest, searchResult, WCConstants.MODIFY_CONNECTION);
-		wfIntegrator.callWorkFlow(waterConnectionRequest, property);
+		
 		//call calculator service to generate the demand for one time fee
 		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
+		wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		boolean isStateUpdatable = waterServiceUtil.getStatusForUpdate(businessService, previousApplicationStatus);
 		waterDao.updateWaterConnection(waterConnectionRequest, isStateUpdatable);
 		// setting oldApplication Flag

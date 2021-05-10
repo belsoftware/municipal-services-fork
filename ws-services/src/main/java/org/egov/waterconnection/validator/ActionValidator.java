@@ -26,8 +26,10 @@ public class ActionValidator {
 	 * @param request Water Connection Request
 	 * @param businessService BusinessService
 	 */
-	public void validateUpdateRequest(WaterConnectionRequest request, BusinessService businessService, String applicationStatus) {
-		validateDocumentsForUpdate(request);
+	public void validateUpdateRequest(WaterConnectionRequest request, BusinessService businessService, String applicationStatus,int reqType) {
+		if (reqType == WCConstants.UPDATE_APPLICATION) {
+			validateDocumentsForUpdate(request);
+		}
 		validateIds(request, businessService, applicationStatus);
 	}
 

@@ -59,8 +59,13 @@ public class WaterFieldValidator implements WaterActionValidator {
 	}
 	
 	private void handleModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest, Map<String, String> errorMap){
-		if (WCConstants.APPROVE_CONNECTION
-				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
+		
+		 
+		
+		if (WCConstants.VERIFY_AND_FORWARD_CONST
+				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()) ||
+				WCConstants.APPROVE_CONNECTION_CONST
+				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())	) {
 			if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionType())) {
 				errorMap.put("INVALID_WATER_CONNECTION_TYPE", "Connection type should not be empty");
 			}
@@ -72,9 +77,7 @@ public class WaterFieldValidator implements WaterActionValidator {
 				errorMap.put("INVALID_CONNECTION_EXECUTION_DATE", "Connection execution date should not be empty");
 			}
 		}
-		if (WCConstants.SUBMIT_APPLICATION_CONST
-				.equals(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())
-				|| WCConstants.APPROVE_CONNECTION.equalsIgnoreCase(
+		if ( WCConstants.ACTIVATE_CONNECTION.equalsIgnoreCase(
 				waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 			if (waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() == null
 					|| waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() < 0

@@ -51,7 +51,7 @@ public class MeterInfoValidator implements WaterActionValidator {
 	
 	private void handleModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest,
 			Map<String, String> errorMap) {
-		if (WCConstants.APPROVE_CONNECTION
+		if (WCConstants.ACTIVATE_CONNECTION_CONST
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 			if (WCConstants.METERED_CONNECTION
 					.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getConnectionType())) {
