@@ -129,6 +129,7 @@ public class NotificationUtil {
 		if(reqType == WCConstants.MODIFY_CONNECTION){
 			builder.append("WS_MODIFY_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 		}
+		log.info("MessagesCode: " +builder.toString());
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 
@@ -146,6 +147,7 @@ public class NotificationUtil {
 		if (reqType == WCConstants.MODIFY_CONNECTION) {
 			builder.append("WS_MODIFY_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_APP_MESSAGE");
 		}
+		log.info("APPMESSAGE : "+builder.toString());
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 	

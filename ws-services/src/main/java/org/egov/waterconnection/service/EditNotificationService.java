@@ -81,8 +81,7 @@ public class EditNotificationService {
 		String localizationMessage = notificationUtil
 				.getLocalizationMessages(property.getTenantId(), waterConnectionRequest.getRequestInfo());
 		String code = WCConstants.WS_EDIT_IN_APP;
-		if ((!waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION))
-				&& waterServicesUtil.isModifyConnectionRequest(waterConnectionRequest)) {
+		if (  waterServicesUtil.isModifyConnectionApplication(waterConnectionRequest))  {
 			   code = WCConstants.WS_MODIFY_IN_APP;
 		}
 		String message = notificationUtil.getCustomizedMsg(code, localizationMessage);

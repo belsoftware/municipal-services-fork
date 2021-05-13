@@ -307,6 +307,16 @@ public class WaterServicesUtil {
 	public boolean isModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest) {
 		return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo());
 	}
+	
+	public boolean isModifyConnectionApplication(WaterConnectionRequest waterConnectionRequest) {
+		if(!StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getApplicationType())) {
+			if(waterConnectionRequest.getWaterConnection().getApplicationType().equals(WCConstants.MODIFY_WATER_CONNECTION )) {
+				return true;
+			}
+		} 
+		return false;
+	}
+
 
 	public StringBuilder getcollectionURL() {
 		StringBuilder builder = new StringBuilder();

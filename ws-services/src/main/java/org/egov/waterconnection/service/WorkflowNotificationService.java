@@ -129,8 +129,7 @@ public class WorkflowNotificationService {
 		String localizationMessage = notificationUtil
 				.getLocalizationMessages(property.getTenantId(), request.getRequestInfo());
 		int reqType = WCConstants.UPDATE_APPLICATION;
-		if ((!request.getWaterConnection().getProcessInstance().getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION))
-				&& waterServiceUtil.isModifyConnectionRequest(request)) {
+		if (  waterServiceUtil.isModifyConnectionApplication(request)) {
 			reqType = WCConstants.MODIFY_CONNECTION;
 		}
 		String message = notificationUtil.getCustomizedMsgForInApp(request.getWaterConnection().getProcessInstance().getAction(), applicationStatus,
@@ -269,8 +268,7 @@ public class WorkflowNotificationService {
 				waterConnectionRequest.getRequestInfo());
 		WaterConnection connection = waterConnectionRequest.getWaterConnection();
 		int reqType = WCConstants.UPDATE_APPLICATION;
-		if ((!waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION))
-				&& waterServiceUtil.isModifyConnectionRequest(waterConnectionRequest)) {
+		if (  waterServiceUtil.isModifyConnectionApplication(waterConnectionRequest)) {
 			reqType = WCConstants.MODIFY_CONNECTION;
 		}
 		String message = notificationUtil.getCustomizedMsgForSMS(
