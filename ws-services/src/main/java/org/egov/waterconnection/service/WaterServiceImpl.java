@@ -111,6 +111,9 @@ public class WaterServiceImpl implements WaterService {
 		 
 		if(!StringUtils.isEmpty(conn.getOldConnectionNo()) && reqType==WCConstants.CREATE_APPLICATION) {
 			enrichmentService.legacyStatusEnrichment(waterConnectionRequest);
+			if(waterConnectionRequest.getWaterConnection().getTenantId().equals("pb.testing")) {
+				wfIntegrator.callWorkFlow(waterConnectionRequest, property);
+			}
 		}else if (config.getIsExternalWorkFlowEnabled())
 			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		waterDao.saveWaterConnection(waterConnectionRequest);

@@ -59,7 +59,10 @@ public class WorkflowIntegrator {
 		String wfBusinessServiceName = config.getBusinessServiceValue();
 		if(wsUtil.isModifyConnectionRequest(waterConnectionRequest)) {
 			wfBusinessServiceName = config.getModifyWSBusinessServiceName();
+		}else if (! StringUtils.isEmpty( waterConnectionRequest.getWaterConnection().getOldConnectionNo()) && property.getTenantId().equals("pb.testing") ){
+			wfBusinessServiceName="LegacyWS";
 		}
+		log.info("WS WORKFLOW NAME :"+wfBusinessServiceName );
 		ProcessInstance processInstance = ProcessInstance.builder()
 				.businessId(waterConnectionRequest.getWaterConnection().getApplicationNo())
 				.tenantId(property.getTenantId())
