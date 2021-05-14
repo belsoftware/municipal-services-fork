@@ -209,7 +209,13 @@ public class EnrichmentService {
 		if (!StringUtils.isEmpty(waterConnectionrequest.getWaterConnection().getConnectionType())
 				&& WCConstants.METERED_CONNECTION
 				.equalsIgnoreCase(waterConnectionrequest.getWaterConnection().getConnectionType())) {
-			if (reqType == WCConstants.UPDATE_APPLICATION && WCConstants.ACTIVATE_CONNECTION
+			if (reqType == WCConstants.LEGACY_CONNECTION && WCConstants.ACTIVATE_CONNECTION
+					.equalsIgnoreCase(waterConnectionrequest.getWaterConnection().getProcessInstance().getAction())) {
+				if(waterConnectionrequest.getWaterConnection().getMeterInstallationDate()!=null) {
+					waterConnectionrequest.getWaterConnection().setConnectionExecutionDate(waterConnectionrequest.getWaterConnection().getMeterInstallationDate());
+				}
+				waterDao.postForMeterReading(waterConnectionrequest);
+			}if (reqType == WCConstants.UPDATE_APPLICATION && WCConstants.ACTIVATE_CONNECTION
 					.equalsIgnoreCase(waterConnectionrequest.getWaterConnection().getProcessInstance().getAction())) {
 				waterDao.postForMeterReading(waterConnectionrequest);
 			} else if (WCConstants.MODIFY_CONNECTION == reqType && WCConstants.ACTIVATE_CONNECTION.

@@ -109,6 +109,8 @@ public class WaterServiceImpl implements WaterService {
 		
 		WaterConnection conn = waterConnectionRequest.getWaterConnection();
 		 
+		
+		
 		if(!StringUtils.isEmpty(conn.getOldConnectionNo()) && reqType==WCConstants.CREATE_APPLICATION) {
 			
 			if(waterConnectionRequest.getWaterConnection().getTenantId().equals("pb.testing")) {
@@ -119,7 +121,7 @@ public class WaterServiceImpl implements WaterService {
 			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		waterDao.saveWaterConnection(waterConnectionRequest);
 		if(!StringUtils.isEmpty(conn.getOldConnectionNo()) && reqType==WCConstants.CREATE_APPLICATION) {
-			enrichmentService.postForMeterReading(waterConnectionRequest,  WCConstants.UPDATE_APPLICATION);
+			enrichmentService.postForMeterReading(waterConnectionRequest,  WCConstants.LEGACY_CONNECTION);
 		}
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());
 	}
