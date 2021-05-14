@@ -199,6 +199,9 @@ public class WSConfiguration {
 	
 	@Value("${modify.ws.workflow.name}")
 	private String modifyWSBusinessServiceName;
+	
+	@Value("${legacy.ws.workflow.name}")
+	private String legacyWSBusinessServiceName;
 
 	@Value("${egov.collection.host}")
 	private String collectionHost;

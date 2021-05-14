@@ -110,16 +110,14 @@ public class WaterServiceImpl implements WaterService {
 		WaterConnection conn = waterConnectionRequest.getWaterConnection();
 		 
 		
-		
+		//Legacy Condition 
 		if(!StringUtils.isEmpty(conn.getOldConnectionNo()) && reqType==WCConstants.CREATE_APPLICATION) {
-			
-			if(waterConnectionRequest.getWaterConnection().getTenantId().equals("pb.testing")) {
-				wfIntegrator.callWorkFlow(waterConnectionRequest, property);
-			}
+			wfIntegrator.callWorkFlow(waterConnectionRequest, property,config.getLegacyWSBusinessServiceName());
 			enrichmentService.legacyStatusEnrichment(waterConnectionRequest);
 		}else if (config.getIsExternalWorkFlowEnabled())
 			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		waterDao.saveWaterConnection(waterConnectionRequest);
+		//Legacy Condition 
 		if(!StringUtils.isEmpty(conn.getOldConnectionNo()) && reqType==WCConstants.CREATE_APPLICATION) {
 			enrichmentService.postForMeterReading(waterConnectionRequest,  WCConstants.LEGACY_CONNECTION);
 		}
