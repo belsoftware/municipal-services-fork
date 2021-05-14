@@ -30,46 +30,8 @@ public class WSCalculationWorkflowValidator {
 
 	@Autowired
 	private MDMSValidator mdmsValidator;
-	
+
 	 public Boolean applicationValidation(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
-		    Map<String,String> errorMap = new HashMap<>();
-			 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,connectionNo,tenantId);
-			 WaterConnection waterConnection = null;
-			 if(waterConnectionList != null){
-				 int size = waterConnectionList.size();
-				 waterConnection = waterConnectionList.get(size-1);
-				 String waterApplicationNumber = waterConnection.getApplicationNo();
-				 //If oldConnectionNo == null , application initiated from eChhawani, validate both WATER and PROPERTY
-				 if(waterConnection.getOldConnectionNo() == null) {					
-					 waterConnectionValidation(requestInfo, tenantId, waterApplicationNumber, errorMap);
-					 String propertyId = waterConnection.getPropertyId();
-					 Property property = util.getProperty(requestInfo,tenantId,propertyId);
-					 propertyValidation(requestInfo,tenantId,property,errorMap); 
-				 }
-				 //Legacy data application , check any workflow exists or not ie modify connection flow performed
-				 // if workflow exists validate only WATER else validate NONE 
-				 else {
-					 List<ProcessInstance> processInstancesList = util.getWorkFlowProcessInstance(requestInfo,tenantId,waterApplicationNumber);
-					 if(processInstancesList.size() != 0) {
-						 waterConnectionValidation(requestInfo, tenantId, waterApplicationNumber, errorMap);
-
-					 }
-				 }
-
-				 
-			 }
-			 else{
-				 errorMap.put("WATER_CONNECTION_ERROR",
-						 "Water connection object is null");
-			 }
-
-	        if(!CollectionUtils.isEmpty(errorMap))
-				throw new CustomException(errorMap);
-
-	        return genratedemand;
-		}
-
-	 public Boolean applicationValidation1(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
 	    Map<String,String> errorMap = new HashMap<>();
 		 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,connectionNo,tenantId);
 		 WaterConnection waterConnection = null;
