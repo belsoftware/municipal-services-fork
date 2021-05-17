@@ -276,74 +276,64 @@ public class EstimationService {
 		for (String filterName : filterAttr) {
 			switch (filterName) {
 			case "PropertyLocation":
+				long propLocCount =0 ;
+				if(!StringUtils.isEmpty(property.getAddress().getLocation())) {
+					propLocCount=billingSlabs.stream().filter(slab -> { 
+						return slab.getPropertyLocation().equalsIgnoreCase(property.getAddress().getLocation());
+					}).count();
+				}
+				final String propLoc = propLocCount > 0 ?  property.getAddress().getLocation() :WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
-					final String propLoc = (property.getAddress()!=null && property.getAddress().getLocation()!=null)?property.getAddress().getLocation() :"";
-					boolean ispropLocMatching = slab.getPropertyLocation().equalsIgnoreCase(propLoc);
-
-					return ispropLocMatching ;
+					return slab.getPropertyLocation().equalsIgnoreCase(propLoc); 
 				}).collect(Collectors.toList());
 				break;
 			case "waterSource":
-				long count =billingSlabs.stream().filter(slab -> {
-					final String waterSource = waterConnection.getWaterSource()!=null ?waterConnection.getWaterSource() :"";
-					boolean isWaterSourceMatching = slab.getWaterSource().equalsIgnoreCase(waterSource);
-					return  isWaterSourceMatching ;
-				}).count();
-				final String waterSource = count > 0 ?  waterConnection.getWaterSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
+				long waterSourceCount =0 ;
+				if(!StringUtils.isEmpty(waterConnection.getWaterSource())) {
+					waterSourceCount=billingSlabs.stream().filter(slab -> { 
+						return slab.getWaterSource().equalsIgnoreCase(waterConnection.getWaterSource());
+					}).count();
+				}
+				final String waterSource = waterSourceCount > 0 ?  waterConnection.getWaterSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
-					boolean isWaterSourceMatching = slab.getWaterSource().equalsIgnoreCase(waterSource);
-					return isWaterSourceMatching;
+					return slab.getWaterSource().equalsIgnoreCase(waterSource); 
 				}).collect(Collectors.toList());
 				break;
 			case "buildingType":
-				final String buildingType = (property.getUsageCategory() != null) ? property.getUsageCategory()	: "";
+				long buildTypeCount =0;
+				if(!StringUtils.isEmpty(waterConnection.getUsageCategory())) {
+					buildTypeCount =billingSlabs.stream().filter(slab -> { 
+						return  slab.getBuildingType().equalsIgnoreCase(waterConnection.getUsageCategory()) ;
+					}).count();
+				}
+				final String buildingType = buildTypeCount >0 ?   waterConnection.getUsageCategory()	: WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
-					boolean isBuildingTypeMatching = slab.getBuildingType().equalsIgnoreCase(buildingType);
-					return isBuildingTypeMatching;
-				}).collect(Collectors.toList());
-				break;
-			case "majorUsageType":
-				final String majorUsgType = (property.getUsageCategory() != null) ? property.getUsageCategory().split("\\.")[0]	: "";
-				
-				billingSlabs= billingSlabs.stream().filter(slab -> {
-					boolean isBuildingTypeMatching = slab.getBuildingType().equalsIgnoreCase(majorUsgType);
-					return isBuildingTypeMatching;
+					return slab.getBuildingType().equalsIgnoreCase(buildingType);
 				}).collect(Collectors.toList());
 				break;
 			case "buildingSubType":
-				final List<String> buildingSubType = new ArrayList<String>();
-				if(property.getUnits()!=null && property.getUnits().size()>0) {
-					buildingSubType.addAll(property.getUnits().stream().map(u -> u.getUsageCategory()).collect(Collectors.toList()));
+				long buildSubTypeCount =0;
+				if(!StringUtils.isEmpty(waterConnection.getSubUsageCategory())) {
+					buildSubTypeCount =billingSlabs.stream().filter(slab -> { 
+						return  slab.getBuildingSubType().equalsIgnoreCase(waterConnection.getSubUsageCategory()) ;
+					}).count();
 				}
-				
-				//Check if specific value exist for category
-				long buildingSubTypeCount =billingSlabs.stream().filter(slab -> {
-					boolean isBuildingSubTypeMatching = buildingSubType.contains(slab.getBuildingSubType());
-					return isBuildingSubTypeMatching;
-				}).count();
-				
-				if(buildingSubTypeCount ==0 ) {
-					buildingSubType.add("*");
-				}
-				billingSlabs= billingSlabs.stream().filter(slab -> {
-					boolean isBuildingSubTypeMatching = buildingSubType.contains(slab.getBuildingSubType());
-
-					return isBuildingSubTypeMatching;
+				final String buildingSubType = buildSubTypeCount >0 ?   waterConnection.getSubUsageCategory()	: WSCalculationConstant.GENERIC_ATTRIBUTE;
+				billingSlabs= billingSlabs.stream().filter(slab -> { 
+					return slab.getBuildingSubType().equalsIgnoreCase(buildingSubType);
 				}).collect(Collectors.toList());
-				break;
+				break; 
 			case "ownershipCategory": // eg:INSTITUTIONAL.PRIVATE etc..
-				final String ownershipCategory =  property.getOwnershipCategory() ;
-				//Check if specific value exist for category
-				long ownershipCount =billingSlabs.stream().filter(slab -> {
-					boolean ownershipCategoryMatching = slab.getOwnershipCategory().equalsIgnoreCase(ownershipCategory);
-
-					return  ownershipCategoryMatching;
-				}).count();
-				//If count is zero then change to generic category
-				final String ownership = ownershipCount > 0 ? ownershipCategory :  WSCalculationConstant.GENERIC_ATTRIBUTE;
+				long ownershipCount =0 ;
+				if(!StringUtils.isEmpty(property.getOwnershipCategory())) {
+					ownershipCount =billingSlabs.stream().filter(slab -> {
+						return  slab.getOwnershipCategory().equalsIgnoreCase(property.getOwnershipCategory());
+					}).count();
+				}
+ 				//If count is zero then change to generic category
+				final String ownership = ownershipCount > 0 ? property.getOwnershipCategory() :  WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
-					boolean ownershipCategoryMatching = slab.getOwnershipCategory().equalsIgnoreCase(ownership);
-					return (ownershipCategoryMatching);
+					return slab.getOwnershipCategory().equalsIgnoreCase(ownership);
 				}).collect(Collectors.toList());
 				break;	
 			case "ownerType": //EG:-STAFF,FREEDOMFIGHTER etc.
@@ -376,15 +366,15 @@ public class EstimationService {
 				break;	
 
 			case "authorizedConnection": //EG:-HOR , Tenant etc.
-				final String  authorizedConnectionCategory =  !StringUtils.isEmpty(waterConnection.getAuthorizedConnection()) ?waterConnection.getAuthorizedConnection() :  "";
-				long authCount =billingSlabs.stream().filter(slab -> {
-					boolean isAuthorizedConnectionMatching = slab.getAuthorizedConnection().equalsIgnoreCase(authorizedConnectionCategory);
-					return  isAuthorizedConnectionMatching ;
-				}).count();
-				final String authConn = authCount > 0 ?  authorizedConnectionCategory :WSCalculationConstant.GENERIC_ATTRIBUTE;
+				long authCount =0 ;
+				if(!StringUtils.isEmpty(waterConnection.getAuthorizedConnection())) {
+					authCount =billingSlabs.stream().filter(slab -> {
+						return  slab.getAuthorizedConnection().equalsIgnoreCase(waterConnection.getAuthorizedConnection());
+					}).count();
+				}
+				final String authConn = authCount > 0 ?  waterConnection.getAuthorizedConnection() :WSCalculationConstant.GENERIC_ATTRIBUTE;
 				 billingSlabs= billingSlabs.stream().filter(slab -> {
-					boolean authConnMatching = slab.getAuthorizedConnection().equalsIgnoreCase(authConn);
-					return (authConnMatching);
+					return slab.getAuthorizedConnection().equalsIgnoreCase(authConn); 
 				}).collect(Collectors.toList());
 				break;	
 				

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+ 
 import org.egov.wscalculation.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
@@ -112,16 +114,19 @@ public class Connection {
 
 	@JsonProperty("processInstance")
 	private ProcessInstance processInstance = null;
-
+	
 	@JsonProperty("applicationType")
 	private String applicationType = null;
 
 	@JsonProperty("dateEffectiveFrom")
 	private Long dateEffectiveFrom = null;
-
+	
 	@JsonProperty("connectionHolders")
 	@Valid
 	private List<OwnerInfo> connectionHolders;
+
+	@JsonProperty("oldApplication")
+	private Boolean oldApplication = false;
 	
 	@JsonProperty("wsTaxHeads")
 	@Valid
@@ -130,6 +135,12 @@ public class Connection {
 	@JsonProperty("roadTypeEst")
 	@Valid
 	private List<RoadTypeEst> roadTypeEst = new ArrayList<>();
+	
+	@JsonProperty("usageCategory")
+	private String usageCategory;
+	
+	@JsonProperty("subUsageCategory")
+	private String subUsageCategory;
 
 	public Connection id(String id) {
 		this.id = id;
@@ -138,7 +149,7 @@ public class Connection {
 
 	/**
 	 * Unique Identifier of the connection for internal reference.
-	 *
+	 * 
 	 * @return id
 	 **/
 	@ApiModelProperty(readOnly = true, value = "Unique Identifier of the connection for internal reference.")
@@ -159,7 +170,7 @@ public class Connection {
 
 	/**
 	 * Unique ULB identifier.
-	 *
+	 * 
 	 * @return tenantId
 	 **/
 	@ApiModelProperty(value = "Unique ULB identifier.")
@@ -179,9 +190,17 @@ public class Connection {
 		return this;
 	}
 
+	@ApiModelProperty(value = " ")
+
+	public Boolean getOldApplication() {return oldApplication;}
+
+	public void setOldApplication(Boolean oldApplication) {
+		this.oldApplication = oldApplication;
+	}
+
 	/**
 	 * UUID of the property.
-	 *
+	 * 
 	 * @return propertyId
 	 **/
 	@ApiModelProperty(value = "UUID of the property.")
@@ -202,7 +221,7 @@ public class Connection {
 	/**
 	 * Formatted application number, which will be generated using ID-Gen at the
 	 * time .
-	 *
+	 * 
 	 * @return applicationNo
 	 **/
 	@ApiModelProperty(readOnly = true, value = "Formatted application number, which will be generated using ID-Gen at the time .")
@@ -223,7 +242,7 @@ public class Connection {
 
 	/**
 	 * Get applicationStatus
-	 *
+	 * 
 	 * @return applicationStatus
 	 **/
 	@ApiModelProperty(value = "")
@@ -243,7 +262,7 @@ public class Connection {
 
 	/**
 	 * Get status
-	 *
+	 * 
 	 * @return status
 	 **/
 	@ApiModelProperty(value = "")
@@ -266,7 +285,7 @@ public class Connection {
 	 * after aproval of connection application in case of new application. If the
 	 * source of data is \"DATA_ENTRY\" then application status will be considered
 	 * as \"APROVED\" application.
-	 *
+	 * 
 	 * @return connectionNo
 	 **/
 	@ApiModelProperty(readOnly = true, value = "Formatted connection number, which will be generated using ID-Gen service after aproval of connection application in case of new application. If the source of data is \"DATA_ENTRY\" then application status will be considered as \"APROVED\" application.")
@@ -287,7 +306,7 @@ public class Connection {
 
 	/**
 	 * Mandatory if source is \"DATA_ENTRY\".
-	 *
+	 * 
 	 * @return oldConnectionNo
 	 **/
 	@ApiModelProperty(readOnly = true, value = "Mandatory if source is \"DATA_ENTRY\".")
@@ -317,7 +336,7 @@ public class Connection {
 
 	/**
 	 * The documents attached by owner for exemption.
-	 *
+	 * 
 	 * @return documents
 	 **/
 	@ApiModelProperty(value = "The documents attached by owner for exemption.")
@@ -346,7 +365,7 @@ public class Connection {
 
 	/**
 	 * The documents attached by owner for exemption.
-	 *
+	 * 
 	 * @return plumberInfo
 	 **/
 	@ApiModelProperty(value = "The documents attached by owner for exemption.")
@@ -367,7 +386,7 @@ public class Connection {
 	/**
 	 * It is a master data, defined in MDMS. If road cutting is required to
 	 * established the connection then we need to capture the details of road type.
-	 *
+	 * 
 	 * @return roadType
 	 **/
 	@ApiModelProperty(value = "It is a master data, defined in MDMS. If road cutting is required to established the connection then we need to capture the details of road type.")
@@ -388,7 +407,7 @@ public class Connection {
 
 	/**
 	 * Capture the road cutting area in sqft.
-	 *
+	 * 
 	 * @return roadCuttingArea
 	 **/
 	@ApiModelProperty(value = "Capture the road cutting area in sqft.")
@@ -408,7 +427,7 @@ public class Connection {
 
 	/**
 	 * Get connectionExecutionDate
-	 *
+	 * 
 	 * @return connectionExecutionDate
 	 **/
 	@ApiModelProperty(readOnly = true, value = "")
@@ -429,7 +448,7 @@ public class Connection {
 
 	/**
 	 * It is a master data, defined in MDMS
-	 *
+	 * 
 	 * @return connectionCategory
 	 **/
 	@ApiModelProperty(required = true, value = "It is a master data, defined in MDMS")
@@ -450,7 +469,7 @@ public class Connection {
 
 	/**
 	 * It is a master data, defined in MDMS.
-	 *
+	 * 
 	 * @return connectionType
 	 **/
 	@ApiModelProperty(required = true, value = "It is a master data, defined in MDMS.")
@@ -472,7 +491,7 @@ public class Connection {
 	/**
 	 * Json object to capture any extra information which is not accommodated of
 	 * model
-	 *
+	 * 
 	 * @return additionalDetails
 	 **/
 	@ApiModelProperty(value = "Json object to capture any extra information which is not accommodated of model")
@@ -492,7 +511,7 @@ public class Connection {
 
 	/**
 	 * Get auditDetails
-	 *
+	 * 
 	 * @return auditDetails
 	 **/
 	@ApiModelProperty(value = "")
@@ -518,7 +537,7 @@ public class Connection {
 	public void setProcessInstance(ProcessInstance processInstance) {
 		this.processInstance = processInstance;
 	}
-
+	
 	public Connection addConnectionHolderInfo(OwnerInfo ownerInfo) {
 		if (this.connectionHolders == null) {
 			this.connectionHolders = new ArrayList<OwnerInfo>();
@@ -528,7 +547,6 @@ public class Connection {
 		return this;
 	}
 	
-
 	public Connection addRoadTypeEst(RoadTypeEst roadTypeEst) {
 		if (this.roadTypeEst == null) {
 			this.roadTypeEst = new ArrayList<RoadTypeEst>();
@@ -556,11 +574,6 @@ public class Connection {
 	public void setConnectionHolders(List<OwnerInfo> ownerInfo) {
 		this.connectionHolders = ownerInfo;
 	}
-
-	public Connection dateEffectiveFrom(Long dateEffectiveFrom) {
-		this.dateEffectiveFrom = dateEffectiveFrom;
-		return this;
-	}
 	
 
 	@ApiModelProperty(value = "Tax head details")
@@ -583,6 +596,10 @@ public class Connection {
 		this.roadTypeEst = roadTypeEst;
 	}
 	
+	public Connection dateEffectiveFrom(Long dateEffectiveFrom) {
+		this.dateEffectiveFrom = dateEffectiveFrom;
+		return this;
+	}
 
 	/**
 	 * Get dateEffectiveFrom
@@ -619,6 +636,26 @@ public class Connection {
 		this.applicationType = applicationType;
 	}
 
+	
+	@ApiModelProperty(value = "Connection Usage Categoryf")
+	public String getUsageCategory() {
+		return usageCategory;
+	}
+
+	public void setUsageCategory(String usageCategory) {
+		this.usageCategory = usageCategory;
+	}
+
+	
+	
+	public String getSubUsageCategory() {
+		return subUsageCategory;
+	}
+
+	public void setSubUsageCategory(String subUsageCategory) {
+		this.subUsageCategory = subUsageCategory;
+	}
+
 	@Override
 	public boolean equals(java.lang.Object o) {
 		if (this == o) {
@@ -646,8 +683,11 @@ public class Connection {
 				&& Objects.equals(this.connectionHolders, connection.connectionHolders)
 				&& Objects.equals(this.applicationType, connection.applicationType)
 				&& Objects.equals(this.dateEffectiveFrom, connection.dateEffectiveFrom)
+				&& Objects.equals(this.oldApplication,connection.oldApplication)
 				&& Objects.equals(this.roadTypeEst, connection.roadTypeEst)
-				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads);
+				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads) 
+				&& Objects.equals(this.usageCategory, connection.usageCategory)
+				&& Objects.equals(this.subUsageCategory, connection.subUsageCategory);
 	}
 
 	@Override
@@ -655,7 +695,7 @@ public class Connection {
 		return Objects.hash(id, tenantId, propertyId, applicationNo, applicationStatus, status, connectionNo,
 				oldConnectionNo, documents, plumberInfo, roadType, roadCuttingArea, connectionExecutionDate,
 				connectionCategory, connectionType, additionalDetails, auditDetails, connectionHolders,
-				applicationType, dateEffectiveFrom, roadTypeEst, wsTaxHeads);
+				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads,usageCategory ,subUsageCategory);
 	}
 
 	@Override
@@ -683,8 +723,11 @@ public class Connection {
 		sb.append("    connectionHolders: ").append(toIndentedString(connectionHolders)).append("\n");
 		sb.append("    applicationType: ").append(toIndentedString(applicationType)).append("\n");
 		sb.append("	   dateEffectiveFrom: ").append(toIndentedString(dateEffectiveFrom)).append("\n");
+		sb.append("	   oldApplication: ").append(toIndentedString(oldApplication)).append("\n");
 		sb.append("	   roadTypeEst: ").append(toIndentedString(roadTypeEst)).append("\n");
 		sb.append("	   wsTaxHeads: ").append(toIndentedString(wsTaxHeads)).append("\n");
+		sb.append("	   usageCategory: ").append(toIndentedString(usageCategory)).append("\n");
+		sb.append("	   subUsageCategory: ").append(toIndentedString(subUsageCategory)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
