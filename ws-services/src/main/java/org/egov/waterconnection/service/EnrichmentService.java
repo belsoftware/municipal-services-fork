@@ -82,13 +82,6 @@ public class EnrichmentService {
 	  			reqType == WCConstants.MODIFY_CONNECTION ? WCConstants.MODIFY_WATER_CONNECTION :  WCConstants.NEW_WATER_CONNECTION);
 		setApplicationIdGenIds(waterConnectionRequest);
 		setStatusForCreate(waterConnectionRequest);
-		//In case of modify water connection copy the plumber information 
-		if (reqType == WCConstants.MODIFY_CONNECTION && !CollectionUtils.isEmpty(waterConnectionRequest.getWaterConnection().getPlumberInfo())) {
-			waterConnectionRequest.getWaterConnection().getPlumberInfo().forEach(plumberInfo -> {
-				plumberInfo.setId(UUID.randomUUID().toString());
-				plumberInfo.setAuditDetails(auditDetails);
-			});
-		}
 		
 	}
 	@SuppressWarnings("unchecked")
