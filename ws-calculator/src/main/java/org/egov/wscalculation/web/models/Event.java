@@ -3,6 +3,7 @@ package org.egov.wscalculation.web.models;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.wscalculation.models.enums.Source;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;

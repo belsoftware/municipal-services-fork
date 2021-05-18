@@ -3,6 +3,7 @@ package org.egov.wscalculation.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.CalculatorUtil;
@@ -30,6 +31,9 @@ public class WSCalculationWorkflowValidator {
 
 	@Autowired
 	private MDMSValidator mdmsValidator;
+	
+	@Autowired
+	private WSCalculationConfiguration configurations;
 
 	 public Boolean applicationValidation(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
 	    Map<String,String> errorMap = new HashMap<>();
@@ -69,13 +73,22 @@ public class WSCalculationWorkflowValidator {
 
 	public void propertyValidation(RequestInfo requestInfo, String tenantId, Property property,
 			Map<String, String> errorMap) {
-		Boolean isApplicationApproved = workflowValidation(requestInfo, tenantId, property.getAcknowldgementNumber());
+				
+		
+		if ((configurations.getPropertySkipValidation() != null) && !configurations.getPropertySkipValidation().isEmpty()) {
+			if(configurations.getPropertySkipValidation().stream().filter(s -> s.equalsIgnoreCase(property.getSource().toString())).findFirst().isPresent()) {
+				return;		
+			}
+		}
+			
+		Boolean isApplicationApproved   = workflowValidation(requestInfo, tenantId, property.getAcknowldgementNumber());
 		JSONObject mdmsResponse=getWnsPTworkflowConfig(requestInfo,tenantId);
 		if(mdmsResponse.getBoolean("inWorkflowStatusAllowed")&&!isApplicationApproved){
 			if(property.getStatus().equals(Status.INWORKFLOW))
 				isApplicationApproved=true;
 		}
-
+			
+		
 		if (!isApplicationApproved)
 			errorMap.put("PROPERTY_APPLICATION_ERROR",
 					"Demand cannot be generated as property application with application number "

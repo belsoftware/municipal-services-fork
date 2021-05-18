@@ -1,6 +1,7 @@
 package org.egov.wscalculation.config;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,13 @@ import lombok.Setter;
 @Component
 public class WSCalculationConfiguration {
 
+	
+	
+	
+	@Value("#{'${property.skip.validation}'.split(',')}")
+    private List<String> propertySkipValidation;
+	
+	
 	@Value("${egov.ws.search.meterReading.pagination.default.limit}")
 	private Integer meterReadingDefaultLimit;
 
@@ -203,4 +211,6 @@ public class WSCalculationConfiguration {
 	
 	@Value("${egov.url.shortner.host}")
 	private String shortnerHost;
+	
+	
 }
