@@ -268,6 +268,10 @@ public class WSCalculationConstant {
 	public static final String WS_TIME_ADHOC_PENALTY = "WS_TIME_ADHOC_PENALTY";
 	
 	public static final String WS_TIME_ADHOC_REBATE = "WS_TIME_ADHOC_REBATE";
+	
+	public static final String WS_BILL_STATUS_SUCCESS = "BILL_SUCCESS";
+	
+	public static final String WS_BILL_STATUS_FAIL = "BILL_FAILED";
 
 
 	

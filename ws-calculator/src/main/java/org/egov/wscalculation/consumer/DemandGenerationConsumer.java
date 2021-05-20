@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
+import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.CalculationCriteria;
 import org.egov.wscalculation.web.models.CalculationReq;
@@ -135,7 +137,7 @@ public class DemandGenerationConsumer {
 							try {
 								log.info("Generating Demand for Criteria : " + mapper.writeValueAsString(calcCriteria));
 								// processing single
-								generateDemandInBatch(request, masterMap, config.getDeadLetterTopicSingle());
+								generateDemandInBatch(request, masterMap,config.getDeadLetterTopicSingle());
 							} catch (final Exception e) {
 								StringBuilder builder = new StringBuilder();
 								try {
@@ -188,7 +190,13 @@ public class DemandGenerationConsumer {
 			StringBuilder str = new StringBuilder("Demand generated Successfully. For records : ")
 					.append(connectionNoStrings);
 			log.info(str.toString());
-		} catch (Exception ex) {
+		} catch(CustomException cex) {
+			request.setReason(cex.getMessage());						
+			producer.push(errorTopic, request);
+		}
+		
+		catch (Exception ex) {		
+			request.setReason(ex.getMessage());			
 			log.error("Demand generation error: ", ex);
 			producer.push(errorTopic, request);
 		}

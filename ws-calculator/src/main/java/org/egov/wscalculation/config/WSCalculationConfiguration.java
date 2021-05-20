@@ -186,6 +186,9 @@ public class WSCalculationConfiguration {
 
     	@Value("${persister.demand.based.dead.letter.topic.single}")
     	private String deadLetterTopicSingle;
+    	
+    	@Value("${persister.ws.failedBill.topic}")
+    	private String wsFailedBillTopic;
     
     
     	@Value("${notification.url}")

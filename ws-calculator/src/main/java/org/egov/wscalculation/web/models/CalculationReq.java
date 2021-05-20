@@ -52,6 +52,11 @@ public class CalculationReq  {
         this.calculationCriteria.add(calulationCriteriaItem);
         return this;
         }
+        
+    	private String reason;
+    	
+    	private String status;
+    	
 
 }
 
