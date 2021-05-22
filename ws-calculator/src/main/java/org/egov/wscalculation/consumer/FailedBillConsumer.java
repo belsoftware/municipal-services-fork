@@ -92,44 +92,5 @@ public class FailedBillConsumer {
  	}
 
 
-	
-	
-//	@KafkaListener(topics = { "${persister.demand.based.dead.letter.topic.single}" })
-//	public void listen(final HashMap<String, Object> request, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {	
-//		
-//		
-//		CalculationReq notificationObj;
-//		BillFailureNotificationObj billFailureNotificationObj;
-//		try {
-//			notificationObj = mapper.convertValue(request, CalculationReq.class);			
-//			billFailureNotificationObj = mapper.convertValue(notificationObj.getCalculationCriteria().get(0),BillFailureNotificationObj.class);
-//			billFailureNotificationObj.setReason(notificationObj.getReason());
-//			billFailureNotificationObj.setStatus(WSCalculationConstant.WS_BILL_STATUS_FAIL);		        
-//			billFailureNotificationObj.setId(UUID.randomUUID().toString());
-//			billFailureNotificationObj.setCreatedBy(notificationObj.getRequestInfo().getUserInfo().getName());
-//			
-//			Long time = System.currentTimeMillis();
-//			billFailureNotificationObj.setCreatedTime(time);
-//			
-//			String myQuery = "SELECT count(*) FROM eg_ws_failed_bill WHERE connectionno='"+billFailureNotificationObj.getConnectionNo()+"' and assessmentyear  ='"+billFailureNotificationObj.getAssessmentYear() +"'";
-//		
-//			int result = jdbcTemplate.queryForObject(myQuery, Integer.class);		
-//		
-//			if(result == 1) {				
-//				billFailureNotificationObj.setLastModifiedBy(notificationObj.getRequestInfo().getUserInfo().getName());
-//				billFailureNotificationObj.setLastModifiedTime(time);
-//				log.info("Send update msg to ws-failedBill-topic"+billFailureNotificationObj);
-//				producer.push(config.getWsFailedBillTopic(), billFailureNotificationObj);
-//			}
-//			else {
-//				log.info("Send msg to ws-failedBill-topic"+billFailureNotificationObj);
-//				producer.push(config.getWsFailedBillTopic(), billFailureNotificationObj);
-//			}
-//			
-//		
-//		} catch (final Exception e) {
-//			log.error("Error while listening to value: " + request + " on topic: " + topic + ": " + e);
-//		}
-// 	}
 
 }
