@@ -189,7 +189,9 @@ public class WSCalculationConfiguration {
     	
     	@Value("${persister.ws.failedBill.topic}")
     	private String wsFailedBillTopic;
-    
+    	
+    	@Value("${persister.update.ws.failedBill.topic}")
+    	private String updatewsFailedBillTopic;
     
     	@Value("${notification.url}")
     	private String notificationUrl;

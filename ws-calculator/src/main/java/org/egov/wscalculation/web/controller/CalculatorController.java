@@ -1,7 +1,9 @@
 package org.egov.wscalculation.web.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -103,6 +105,20 @@ public class CalculatorController {
  
 			wSCalculationService.generateDemandBasedOnTimePeriod_manual(requestInfoWrapper.getRequestInfo(),tenantId,connectionno);
 	}
+	
+	@PostMapping("/_jobscheduler_checkFailedBill")
+	public void _jobscheduler_checkFailedBill(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@RequestParam String   tenantId,
+			@RequestParam(required = false) String  connectionno,
+			@RequestParam(required = false) Long  fromDateSearch,
+			@RequestParam(required = false) Long  toDateSearch
+			) {
+		   
+			//List<Demand> demands = demandService.getDemandForFailedBills( requestInfoWrapper.getRequestInfo() ,  fromDateSearch, toDateSearch, tenantId , connectionno);
+			//System.out.println("demands---"+demands);
+			wSCalculationService.checkFailedBills(requestInfoWrapper.getRequestInfo() ,  fromDateSearch, toDateSearch, tenantId , connectionno);
+	}
+	
 	@PostMapping("/_applyAdhocTax")
 	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {
 		List<Calculation> calculations = wSCalculationServiceImpl.applyAdhocTax(adhocTaxReq);

@@ -15,4 +15,7 @@ public interface WSCalculationService {
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo);
 	
 	public void generateDemandBasedOnTimePeriod_manual(RequestInfo requestInfo,String tenantId, String connectionno);
+	
+	public void checkFailedBills(RequestInfo requestInfo,Long fromDateSearch , Long toDateSearch , String tenantId, String connectionno);
+	 
 }

@@ -32,6 +32,8 @@ public class WSCalculatorQueryBuilder {
 	private static final String connectionNoListQuery = "SELECT distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id";
 
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
+	
+	private static final String failedDemandQuery = "SELECT * FROM eg_ws_failed_bill WHERE status = 'BILL_FAILED'";
 
 
 	public String getDistinctTenantIds() {
@@ -149,6 +151,17 @@ public class WSCalculatorQueryBuilder {
 		if (!StringUtils.isEmpty(tenentId)) {
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" conn.tenantId = ? ");
+			preparedStatement.add(tenentId);
+		}
+		return query.toString();
+
+	}
+	
+	public String getFailedBillQuery(String tenentId ,List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(failedDemandQuery);
+		if (!StringUtils.isEmpty(tenentId)) {
+			query.append(" AND ");
+			query.append("tenantId = ? ");
 			preparedStatement.add(tenentId);
 		}
 		return query.toString();

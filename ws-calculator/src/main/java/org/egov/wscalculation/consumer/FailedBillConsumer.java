@@ -12,6 +12,7 @@ import org.egov.wscalculation.repository.builder.WSCalculatorQueryBuilder;
 import org.egov.wscalculation.service.EnrichmentService;
 import org.egov.wscalculation.web.models.AuditDetails;
 import org.egov.wscalculation.web.models.BillFailureNotificationObj;
+import org.egov.wscalculation.web.models.BillFailureNotificationRequest;
 import org.egov.wscalculation.web.models.CalculationReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,16 +42,17 @@ public class FailedBillConsumer {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	
-	
+
 	@KafkaListener(topics = { "${persister.demand.based.dead.letter.topic.single}" })
 	public void listen(final HashMap<String, Object> request, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {	
 		
 		
 		CalculationReq notificationObj;
 		BillFailureNotificationObj billFailureNotificationObj;
+		BillFailureNotificationRequest billFailureNotificationRequest = new BillFailureNotificationRequest();
 		try {
-			notificationObj = mapper.convertValue(request, CalculationReq.class);			
+			notificationObj = mapper.convertValue(request, CalculationReq.class);	
+			
 			billFailureNotificationObj = mapper.convertValue(notificationObj.getCalculationCriteria().get(0),BillFailureNotificationObj.class);
 			billFailureNotificationObj.setReason(notificationObj.getReason());
 			billFailureNotificationObj.setStatus(WSCalculationConstant.WS_BILL_STATUS_FAIL);		        
@@ -62,23 +64,33 @@ public class FailedBillConsumer {
 			
 			String myQuery = "SELECT count(*) FROM eg_ws_failed_bill WHERE connectionno='"+billFailureNotificationObj.getConnectionNo()+"' and assessmentyear  ='"+billFailureNotificationObj.getAssessmentYear() +"'";
 		
-			int result = jdbcTemplate.queryForObject(myQuery, Integer.class);		
+			int result = jdbcTemplate.queryForObject(myQuery, Integer.class);
+			
+			billFailureNotificationRequest.setRequestInfo(notificationObj.getRequestInfo());
+			log.info("No of previous failed bills = "+result);
 		
-			if(result == 1) {				
+			if(result >= 1) {				
 				billFailureNotificationObj.setLastModifiedBy(notificationObj.getRequestInfo().getUserInfo().getName());
 				billFailureNotificationObj.setLastModifiedTime(time);
-				log.info("Send update msg to ws-failedBill-topic"+billFailureNotificationObj);
-				producer.push(config.getWsFailedBillTopic(), billFailureNotificationObj);
+				
+				billFailureNotificationRequest.setBillFailureNotificationObj(billFailureNotificationObj);
+				log.info("Send update msg to ws-failedBill-topic  :"+billFailureNotificationRequest);
+				producer.push(config.getUpdatewsFailedBillTopic(), billFailureNotificationRequest);
 			}
 			else {
-				log.info("Send msg to ws-failedBill-topic"+billFailureNotificationObj);
-				producer.push(config.getWsFailedBillTopic(), billFailureNotificationObj);
+				billFailureNotificationRequest.setBillFailureNotificationObj(billFailureNotificationObj);
+				log.info("Send msg to ws-failedBill-topic   : "+billFailureNotificationRequest);
+				producer.push(config.getWsFailedBillTopic(), billFailureNotificationRequest);
 			}
+			
+			
 			
 		
 		} catch (final Exception e) {
 			log.error("Error while listening to value: " + request + " on topic: " + topic + ": " + e);
 		}
  	}
+
+
 
 }
