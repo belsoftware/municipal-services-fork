@@ -900,6 +900,34 @@ public class DemandService {
 		return calculations;
 	}
 	
+	/**
+	 * Search demand based on demand id and updated the tax heads with new adhoc tax heads
+	 * 
+	 * @param requestInfo - Request Info Object
+	 * @param calculations - List of Calculation to update the Demand
+	 * @return List of calculation
+	 */
+	public List<Demand> getDemandForFailedBills(RequestInfo requestInfo,Long fromDateSearch,Long toDateSearch,String tenantId ,String consumerCode) {
+		Set<String> consumerCodes = Collections.singleton(consumerCode);
+		List<Demand> demands = searchDemand(tenantId, consumerCodes, fromDateSearch, toDateSearch, requestInfo);
+		return demands;
+	/*	for (Calculation calculation : calculations) {
+			Set<String> consumerCodes = Collections.singleton(calculation.getApplicationNO());
+			List<Demand> searchResult = searchDemandBasedOnDemandId(calculation.getTenantId(), consumerCodes,
+					requestInfo);
+			if (CollectionUtils.isEmpty(searchResult))
+				throw new CustomException("INVALID_DEMAND_UPDATE",
+						"No demand exists for Number: " + consumerCodes.toString());
+			Demand demand = searchResult.get(0);
+			demand.setDemandDetails(getUpdatedAdhocTax(calculation, demand.getDemandDetails()));
+			demands.add(demand);
+		}
+
+		log.info("Updated Demand Details " + demands.toString());
+		demandRepository.updateDemand(requestInfo, demands);
+		return calculations;*/
+	}
+	
 	public static void main(String[] arg) {
 		DemandService ser = new DemandService();
 		Calendar cal = ser.getFiscalHalfYrBilingDay(new Date(), 90);

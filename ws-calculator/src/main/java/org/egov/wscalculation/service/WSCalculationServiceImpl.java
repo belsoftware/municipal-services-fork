@@ -13,15 +13,21 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
+import org.egov.wscalculation.producer.WSCalculationProducer;
 import org.egov.wscalculation.web.models.AdhocTaxReq;
+import org.egov.wscalculation.web.models.BillFailureNotificationObj;
+import org.egov.wscalculation.web.models.BillFailureNotificationRequest;
 import org.egov.wscalculation.web.models.Calculation;
 import org.egov.wscalculation.web.models.CalculationCriteria;
 import org.egov.wscalculation.web.models.CalculationReq;
+import org.egov.wscalculation.web.models.Demand;
 import org.egov.wscalculation.web.models.TaxHeadCategory;
 import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.TaxHeadEstimate;
 import org.egov.wscalculation.web.models.TaxHeadMaster;
+import org.egov.wscalculation.web.models.TaxPeriod;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterConnectionRequest;
 import org.egov.wscalculation.repository.ServiceRequestRepository;
@@ -62,6 +68,12 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	
 	@Autowired
 	private WSCalculationUtil wSCalculationUtil;
+	
+	@Autowired
+	private WSCalculationProducer producer;
+	
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	/**
 	 * Get CalculationReq and Calculate the Tax Head on Water Charge And Estimation Charge
@@ -336,6 +348,39 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 				.applicationNO(adhocTaxReq.getDemandId()).taxHeadEstimates(estimates).build();
 		List<Calculation> calculations = Collections.singletonList(calculation);
 		return demandService.updateDemandForAdhocTax(adhocTaxReq.getRequestInfo(), calculations);
+	}
+
+
+	@Override
+	public void checkFailedBills(RequestInfo requestInfo,Long fromDateSearch , Long toDateSearch , String tenantId, String connectionno) {
+		// TODO Auto-generated method stub
+		List<Demand> demands = demandService.getDemandForFailedBills( requestInfo ,  fromDateSearch, toDateSearch, tenantId , connectionno);
+		//System.out.println("demands---"+demands);
+		List<BillFailureNotificationObj>  billDtls =  wSCalculationDao.getFailedBillDtl(tenantId , connectionno);
+		//System.out.println("billDtls---"+billDtls);
+		List<BillFailureNotificationObj> filterDemand = new ArrayList<BillFailureNotificationObj>();
+		if(demands.size()>0 && billDtls.size()>0)
+		{
+			demands.forEach(passedDemand ->{
+				//String passedConsumer = billDtls.stream().filter(d -> d.equals(passedDemand.getConsumerCode())).findAny().orElse(null);
+				BillFailureNotificationObj passedConsumer = billDtls.stream().filter(d -> d.getConnectionNo().equals(passedDemand.getConsumerCode())).findAny().orElse(null);
+				if(passedConsumer!=null)
+				filterDemand.add(passedConsumer);
+			}); 
+		}
+		 System.out.println("filterDemand---"+filterDemand);
+		  if(filterDemand.size()>0)
+		 {
+			 filterDemand.forEach(demandObj ->{
+				 BillFailureNotificationRequest billFailureNotificationRequest = new BillFailureNotificationRequest();
+				 demandObj.setStatus(WSCalculationConstant.WS_BILL_STATUS_SUCCESS);
+				 demandObj.setLastModifiedTime( System.currentTimeMillis());
+				 demandObj.setLastModifiedBy(requestInfo.getUserInfo().getName());
+				 billFailureNotificationRequest.setBillFailureNotificationObj(demandObj);
+				 log.info("Send update msg to ws-failedBill-topic  :"+billFailureNotificationRequest);
+				 producer.push(config.getUpdatewsFailedBillTopic(), billFailureNotificationRequest);
+			 });
+		 } 
 	}
 	
 }
