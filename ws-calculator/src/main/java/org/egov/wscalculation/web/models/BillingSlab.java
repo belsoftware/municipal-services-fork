@@ -15,6 +15,7 @@ public class BillingSlab {
 	private String buildingSubType =null;
 	private String waterSource=null;
 	private String ownerType =null;
+	private String motorInfo =null;
 	private String calculationAttribute = null;
 	private String propertyOwnershipCategory =null;
 	private double minimumCharge;
@@ -159,6 +160,17 @@ public class BillingSlab {
 
 	public void setAuthorizedConnection(String authorizedConnection) {
 		this.authorizedConnection = authorizedConnection;
+	}
+
+
+
+
+	public String getMotorInfo() {
+		return motorInfo;
+	}
+
+	public void setMotorInfo(String motorInfo) {
+		this.motorInfo = motorInfo;
 	}
 
 

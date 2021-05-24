@@ -323,6 +323,18 @@ public class EstimationService {
 					return slab.getBuildingSubType().equalsIgnoreCase(buildingSubType);
 				}).collect(Collectors.toList());
 				break; 
+			case "motorInfo":
+				long motorInfoCount =0;
+				if(!StringUtils.isEmpty(waterConnection.getMotorInfo())) {
+					motorInfoCount =billingSlabs.stream().filter(slab -> { 
+						return  slab.getMotorInfo().equalsIgnoreCase(waterConnection.getMotorInfo()) ;
+					}).count();
+				}
+				final String motorInfo = motorInfoCount >0 ?   waterConnection.getMotorInfo()	: WSCalculationConstant.GENERIC_ATTRIBUTE;
+				billingSlabs= billingSlabs.stream().filter(slab -> { 
+					return slab.getMotorInfo().equalsIgnoreCase(motorInfo);
+				}).collect(Collectors.toList());
+				break; 
 			case "ownershipCategory": // eg:INSTITUTIONAL.PRIVATE etc..
 				long ownershipCount =0 ;
 				if(!StringUtils.isEmpty(property.getOwnershipCategory())) {
