@@ -770,7 +770,7 @@ public class DemandService {
 			return true;
 		} else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Quaterly_Billing_Period)) {
 			//Get Todays Date
-			Calendar billingDay = getFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
+			Calendar billingDay = getQuaterlyFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
 			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
