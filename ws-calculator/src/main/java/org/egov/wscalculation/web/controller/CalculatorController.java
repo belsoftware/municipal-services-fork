@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Getter
@@ -41,6 +42,7 @@ import lombok.Setter;
 @Builder
 @RestController
 @RequestMapping("/waterCalculator")
+@Slf4j
 public class CalculatorController {
 	
 	
@@ -91,10 +93,13 @@ public class CalculatorController {
 	
 	@PostMapping("/_jobscheduler")
 	public void jobscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper ) {
+		log.info("Water billing job schedular started ");
 		if(!config.getGenerateBill()) {
 			return;
 		}
+		log.info("Water billing job schedular started 1");
 		wSCalculationService.generateDemandBasedOnTimePeriod(requestInfoWrapper.getRequestInfo());
+		log.info("Water billing job schedular started 2");
 	}
 	
 	@PostMapping("/_jobscheduler_manual")
