@@ -2,17 +2,13 @@ package org.egov.wscalculation.consumer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.producer.WSCalculationProducer;
-import org.egov.wscalculation.repository.builder.WSCalculatorQueryBuilder;
-import org.egov.wscalculation.service.EnrichmentService;
 import org.egov.wscalculation.service.MasterDataService;
-import org.egov.wscalculation.web.models.AuditDetails;
 import org.egov.wscalculation.web.models.BillFailureNotificationObj;
 import org.egov.wscalculation.web.models.BillFailureNotificationRequest;
 import org.egov.wscalculation.web.models.CalculationCriteria;
@@ -25,10 +21,8 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.corba.se.impl.orbutil.ObjectUtility;
 
 import lombok.extern.slf4j.Slf4j;
 
