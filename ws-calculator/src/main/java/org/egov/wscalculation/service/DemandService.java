@@ -680,7 +680,7 @@ public class DemandService {
 	 */
 	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId ) {
 		long startDay = ((Long.parseLong(master.get(WSCalculationConstant.Demand_Generate_Date_String).toString())) / 86400000);
-		log.info("Billing master data values for non metered connection:: {}", master);
+		log.info("GENERATING DEMAND FOR TENANT :"+ tenantId);
 		boolean isMaching = isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay);
 		log.info("date Matching"+ isMaching);
 		if(isMaching) {
