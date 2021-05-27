@@ -664,11 +664,16 @@ public class DemandService {
 	 * @param tenantId
 	 *            TenantId for getting master data.
 	 */
-	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, String connectionNo) {
+	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, String connectionNo, boolean checkDate) {
 		requestInfo.getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
 		if(billingMasterData!=null) {
-			generateDemandForULB(billingMasterData, requestInfo, tenantId);	
+			if(checkDate) {
+				generateDemandForULB(billingMasterData, requestInfo, tenantId);	
+			}else {
+				generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNo);	
+			}
+				
 		}
 	}
 

@@ -292,7 +292,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		if (tenantIds.isEmpty())
 			return;
 		tenantIds.forEach(tenantId -> {
-			demandService.generateDemandForTenantId(tenantId, requestInfo,null);
+			demandService.generateDemandForTenantId(tenantId, requestInfo,null,true);
 		});
 	}
 	
@@ -305,7 +305,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
 		
-		demandService.generateDemandForTenantId(tenantId, requestInfo,connectionno);
+		demandService.generateDemandForTenantId(tenantId, requestInfo,connectionno,false);
 	}
 	/**
 	 * 
