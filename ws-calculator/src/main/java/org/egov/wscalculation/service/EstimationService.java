@@ -486,10 +486,13 @@ public class EstimationService {
 	
 	public Map<String, Object> getHalfYearStartAndEndDate(Map<String, Object> billingPeriod){
 		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
-		if(fromDateCalendar.get(Calendar.MONTH)<= Calendar.JUNE) {
-			fromDateCalendar.set(Calendar.MONTH, Calendar.JANUARY);	
+		if(fromDateCalendar.get(Calendar.MONTH)<= Calendar.MARCH   ) {
+			fromDateCalendar.set(Calendar.MONTH, Calendar.OCTOBER);	
+			fromDateCalendar.add(Calendar.YEAR, -1);	
+		}else if(fromDateCalendar.get(Calendar.MONTH)>=Calendar.OCTOBER   ) {
+			fromDateCalendar.set(Calendar.MONTH, Calendar.OCTOBER);	
 		}else {
-			fromDateCalendar.set(Calendar.MONTH, Calendar.JULY);	
+			fromDateCalendar.set(Calendar.MONTH, Calendar.APRIL);	
 		}
 		fromDateCalendar.set(Calendar.DAY_OF_MONTH, 1); 
 		setTimeToBeginningOfDay(fromDateCalendar);
@@ -850,7 +853,7 @@ public class EstimationService {
 	public static void main(String[] args) {
 		Date d = new Date();
 		System.out.println("CalculatorController.jobscheduler()" + d.getTime());
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("IST"));
 		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
 		
 		cal.setTime(d);
@@ -859,7 +862,7 @@ public class EstimationService {
 		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
 		EstimationService service = new EstimationService();
 		HashMap<String, Object> billingPeriod = new HashMap<String, Object>();
-		service.getYearStartAndEndDate(billingPeriod);
+		service.getHalfYearStartAndEndDate(billingPeriod);
 		System.out.println("EstimationService.enclosing_method()"+ billingPeriod);
 		//EstimationService.enclosing_method(){startingDay=1614537000000, endingDay=1619807399999}
 		 
