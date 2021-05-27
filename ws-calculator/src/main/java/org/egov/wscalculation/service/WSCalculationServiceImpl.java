@@ -291,7 +291,6 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		List<String> tenantIds = wSCalculationDao.getTenantId();
 		if (tenantIds.isEmpty())
 			return;
-		log.info("Tenant Ids : " + tenantIds.toString());
 		tenantIds.forEach(tenantId -> {
 			demandService.generateDemandForTenantId(tenantId, requestInfo,null);
 		});
@@ -299,7 +298,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	
 	
 	/**
-	 * Generate Demand Based on Time (Monthly, Quarterly, Yearly)
+	 * Generate Demand Manually
 	 */
 	public void generateDemandBasedOnTimePeriod_manual(RequestInfo requestInfo,String tenantId, String connectionno) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

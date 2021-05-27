@@ -668,7 +668,7 @@ public class DemandService {
 		requestInfo.getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
 		if(billingMasterData!=null) {
-			generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNo);	
+			generateDemandForULB(billingMasterData, requestInfo, tenantId);	
 		}
 	}
 
@@ -678,31 +678,38 @@ public class DemandService {
 	 * @param requestInfo Request Info
 	 * @param tenantId Tenant Id
 	 */
-	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId, String connectionno) {
+	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId ) {
 		long startDay = ((Long.parseLong(master.get(WSCalculationConstant.Demand_Generate_Date_String).toString())) / 86400000);
 		log.info("Billing master data values for non metered connection:: {}", master);
 		boolean isMaching = isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay);
 		log.info("date Matching"+ isMaching);
-		if(true) {
-			List<String> connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
-					WSCalculationConstant.nonMeterdConnection);
-			if(!StringUtils.isBlank(connectionno)) {
-				connectionNos.clear();
-				connectionNos.add(connectionno);
-			}
-			String assessmentYear = estimationService.getAssessmentYear();
-			for (String connectionNo : connectionNos) {
-				CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId)
-						.assessmentYear(assessmentYear).connectionNo(connectionNo).build();
-				List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
-				calculationCriteriaList.add(calculationCriteria);
-				CalculationReq calculationReq = CalculationReq.builder().calculationCriteria(calculationCriteriaList)
-						.requestInfo(requestInfo).isconnectionCalculation(true).build();
-				wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
-				// log.info("Prepared Statement" + calculationRes.toString());
-
-			}
+		if(isMaching) {
+			generateDemandForULB(  master, requestInfo, tenantId, null);
 		}
+	}
+	
+	
+	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId, String connectionno) {
+		List<String> connectionNos =new ArrayList<String>();
+		if(StringUtils.isBlank(connectionno)) {
+			connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
+					WSCalculationConstant.nonMeterdConnection);
+		}else {
+			connectionNos.add(connectionno);
+		}
+		String assessmentYear = estimationService.getAssessmentYear();
+		for (String connectionNo : connectionNos) {
+			CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId)
+					.assessmentYear(assessmentYear).connectionNo(connectionNo).build();
+			List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
+			calculationCriteriaList.add(calculationCriteria);
+			CalculationReq calculationReq = CalculationReq.builder().calculationCriteria(calculationCriteriaList)
+					.requestInfo(requestInfo).isconnectionCalculation(true).build();
+			wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+			// log.info("Prepared Statement" + calculationRes.toString());
+
+		}
+		 
 	}
 
 	private Calendar  getFiscalYrBilingDay(Date d,int dayOfMonth) {
