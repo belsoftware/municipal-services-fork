@@ -458,6 +458,8 @@ public class EstimationService {
 		Double totalUnit = 0.0;
 		if (waterConnection.getConnectionType().equals(WSCalculationConstant.meteredConnectionType)) {
 			totalUnit = (criteria.getCurrentReading() - criteria.getLastReading());
+			totalUnit = totalUnit / 1000;
+			totalUnit = (double)Math.round(totalUnit);		    
 			return totalUnit;
 		} else {  
 			if(calculationAttribute.equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)) {
