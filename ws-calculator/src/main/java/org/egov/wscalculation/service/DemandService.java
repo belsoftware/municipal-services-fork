@@ -688,6 +688,7 @@ public class DemandService {
 		log.info("GENERATING DEMAND FOR TENANT :"+ tenantId);
 		boolean isMaching = isCurrentDateIsMatching((String) master.get(WSCalculationConstant.Billing_Cycle_String), startDay);
 		log.info("date Matching"+ isMaching);
+		isMaching =true;
 		if(isMaching) {
 			generateDemandForULB(  master, requestInfo, tenantId, null);
 		}
