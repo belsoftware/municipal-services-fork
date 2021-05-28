@@ -31,7 +31,8 @@ public class WSCalculatorQueryBuilder {
 	
 	private static final String connectionNoListQuery = "SELECT distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id";
 
-	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
+	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws where id in (select connection_id from eg_ws_service where connectiontype ='Non Metered' )";
+			 
 	
 	private static final String failedDemandQuery = "SELECT * FROM eg_ws_failed_bill WHERE status = 'BILL_FAILED'";
 
