@@ -89,19 +89,19 @@ public class FailedBillConsumer {
 			int result = jdbcTemplate.queryForObject(myQuery, Integer.class);
 			
 			billFailureNotificationRequest.setRequestInfo(calcReq.getRequestInfo());
-			log.info("No of previous failed bills = "+result);
+			//log.info("No of previous failed bills = "+result);
 		
 			if(result >= 1) {				
 				notificationObj.setLastModifiedBy(calcReq.getRequestInfo().getUserInfo().getName());
 				notificationObj.setLastModifiedTime(System.currentTimeMillis());
 				
 				billFailureNotificationRequest.setBillFailureNotificationObj(notificationObj);
-				log.info("Send update msg to ws-failedBill-topic  :"+billFailureNotificationRequest);
+				//log.info("Send update msg to ws-failedBill-topic  :"+billFailureNotificationRequest);
 				producer.push(config.getUpdatewsFailedBillTopic(), billFailureNotificationRequest);
 			}
 			else {
 				billFailureNotificationRequest.setBillFailureNotificationObj(notificationObj);
-				log.info("Send msg to ws-failedBill-topic   : "+billFailureNotificationRequest);
+				//log.info("Send msg to ws-failedBill-topic   : "+billFailureNotificationRequest);
 				producer.push(config.getWsFailedBillTopic(), billFailureNotificationRequest);
 			}
 			

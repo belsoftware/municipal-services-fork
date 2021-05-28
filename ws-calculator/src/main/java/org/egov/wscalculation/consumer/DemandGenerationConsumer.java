@@ -191,7 +191,8 @@ public class DemandGenerationConsumer {
 					.append(connectionNoStrings);
 			log.info(str.toString());
 		} catch(CustomException cex) {
-			request.setReason(cex.getMessage());						
+			request.setReason(cex.getMessage());
+			log.error("Demand generation error: ", cex);
 			producer.push(errorTopic, request);
 		}
 		

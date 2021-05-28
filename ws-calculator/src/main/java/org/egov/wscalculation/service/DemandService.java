@@ -665,16 +665,22 @@ public class DemandService {
 	 *            TenantId for getting master data.
 	 */
 	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, String connectionNo, boolean checkDate) {
-		requestInfo.getUserInfo().setTenantId(tenantId);
-		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
-		if(billingMasterData!=null) {
-			if(checkDate) {
-				generateDemandForULB(billingMasterData, requestInfo, tenantId);	
-			}else {
-				generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNo);	
+		try {
+			requestInfo.getUserInfo().setTenantId(tenantId);
+			Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
+			if(billingMasterData!=null) {
+				if(checkDate) {
+					generateDemandForULB(billingMasterData, requestInfo, tenantId);	
+				}else {
+					generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNo);	
+				}
+					
 			}
-				
+			
+		}catch (Exception e) {
+			log.info("Error in generating demand for tenant  :"+ tenantId);
 		}
+		
 	}
 
 	/**
