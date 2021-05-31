@@ -101,6 +101,8 @@ public class DemandService {
     @Autowired
 	private WSCalculationWorkflowValidator wsCalulationWorkflowValidator;
 
+	@Autowired
+	private WSCalculationConfiguration config;
 	/**
 	 * Creates or updates Demand
 	 * 
@@ -542,8 +544,9 @@ public class DemandService {
 
 			demands.add(demand);
 		}
-
-		log.info("Updated Demand Details " + demands.toString());
+		if(config.getNotificationDisabled()) {
+			log.info("Updated Demand Details " + demands.toString());
+		}
 		return demandRepository.updateDemand(requestInfo, demands);
 	}
 

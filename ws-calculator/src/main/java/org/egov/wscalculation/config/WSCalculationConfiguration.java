@@ -219,4 +219,7 @@ public class WSCalculationConfiguration {
 	
 	@Value("#{'${egov.user.dummy.mobile.startswith}'.split(',')}")
     private List<String> dummyMobileStartsWith;
+	
+	@Value("${wscalc.notification.disable}")
+	private Boolean notificationDisabled;
 }

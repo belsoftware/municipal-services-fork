@@ -33,6 +33,11 @@ public class DemandNotificationConsumer {
 	public void listen(final HashMap<String, Object> request, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		DemandNotificationObj notificationObj;
 		try {
+			log.info("Consuming record: " + request);
+		}catch(final Exception e) {
+			
+		}
+		try {
 			notificationObj = mapper.convertValue(request, DemandNotificationObj.class);
 			notificationService.process(notificationObj, topic);
 		} catch (final Exception e) {

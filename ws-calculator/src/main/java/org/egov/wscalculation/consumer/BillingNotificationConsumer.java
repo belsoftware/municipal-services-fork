@@ -2,6 +2,7 @@ package org.egov.wscalculation.consumer;
 
 import java.util.HashMap;
 
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.service.PaymentNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,6 +18,8 @@ public class BillingNotificationConsumer {
 
 	@Autowired
 	PaymentNotificationService paymentService;
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	/**
 	 * 
@@ -25,6 +28,9 @@ public class BillingNotificationConsumer {
 	 */
 	@KafkaListener(topics = { "${kafka.topics.billgen.topic}" })
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+			if(config.getNotificationDisabled()) {
+				return ;
+			}
 			log.info("Consuming record: " + record);
 			paymentService.process(record, topic);
 	}
