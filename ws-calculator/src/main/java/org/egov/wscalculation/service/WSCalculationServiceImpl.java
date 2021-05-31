@@ -121,14 +121,12 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		return calculations;
 	}
 	
-	public double getBillMonthsToCharge(  Map<String, Object>startAndEndDate ) {
-		     Long billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");		   
-		    Instant instance = java.time.Instant.ofEpochMilli(billingCycleEndDate);
-		    LocalDate billingPeriodEndDate = java.time.LocalDate.ofInstant(instance, java.time.ZoneId.of("Asia/Kolkata"));  		   		    
+	public double getBillMonthsToCharge(Map<String, Object>startAndEndDate ) {
+		    Long billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");		   
+		    LocalDate billingPeriodEndDate = LocalDate.ofEpochDay(billingCycleEndDate / 86400000L);		    
 		    LocalDate toDay = LocalDate.now();		   
 		    Period difference = Period.between(toDay, billingPeriodEndDate);
-		    double monthsToCharge = difference.getMonths()+1; 
-		 
+		    double monthsToCharge = difference.getMonths()+1; 		    
 		    return monthsToCharge;
 	}
 
@@ -206,8 +204,6 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 								
 							}
 						  
-						  
-						  
 						switch(billingCycle) {
 						case(WSCalculationConstant.Monthly_Billing_Period) :
 							 
@@ -219,7 +215,6 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 							
 						    startAndEndDate = estimationService.getQuarterStartAndEndDate(billingPeriod);
 						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
-						//	billAmountForBillingPeriod = (billingSlab.getMinimumCharge()/3 )*monthsToCharge;
 						    billAmountForBillingPeriod = (billAmountForBillingPeriod/3.0)*monthsToCharge;
 							fianlBillAmount = billAmountForBillingPeriod + billingSlab.getMotorCharge()+billingSlab.getMaintenanceCharge();
 											
