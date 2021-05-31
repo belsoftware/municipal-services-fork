@@ -209,13 +209,14 @@ public class EstimationService {
 			case WSCalculationConstant.pipeSizeConst :				
 				double pipeNeeded  = criteria.getWaterConnection().getPipeSize();
 				Optional<Slab> req = slabs.stream().filter(each -> each.getFrom() < pipeNeeded && pipeNeeded < each.getTo()).findFirst();
-				if(req.isEmpty()) {					
-					return null;
-				}
-				else {					
+				if(req.isPresent()) {		
+					
 					List<Slab> matchingSlab = new ArrayList<Slab>();
 					matchingSlab.add(req.get());
-					bl.setSlabs(matchingSlab);
+					bl.setSlabs(matchingSlab);					
+				}
+				else {					
+					return null;
 					
 				}	
 				break;
