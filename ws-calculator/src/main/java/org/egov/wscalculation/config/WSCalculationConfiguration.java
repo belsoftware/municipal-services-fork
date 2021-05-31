@@ -222,4 +222,7 @@ public class WSCalculationConfiguration {
 	
 	@Value("${wscalc.notification.disable}")
 	private Boolean notificationDisabled;
+	
+	@Value("${wscalc.validate.property}")
+	private Boolean validateProperty;
 }

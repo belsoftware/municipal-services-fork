@@ -49,6 +49,7 @@ import org.egov.wscalculation.web.models.WaterConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -183,13 +184,17 @@ public class DemandService {
 			}
 			WaterConnectionRequest waterConnectionRequest = WaterConnectionRequest.builder().waterConnection(connection)
 					.requestInfo(requestInfo).build();
-			Property property = wsCalculationUtil.getProperty(waterConnectionRequest);
+			
 			String tenantId = calculation.getTenantId();
 			String consumerCode = isForConnectionNO ? calculation.getConnectionNo()
 					: calculation.getApplicationNO();
-			User owner = property.getOwners().get(0).toCommonUser();
+			User owner = null; 
 			if (!CollectionUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionHolders())) {
 				owner = waterConnectionRequest.getWaterConnection().getConnectionHolders().get(0).toCommonUser();
+			}
+			if(owner==null) {
+				Property property = wsCalculationUtil.getProperty(waterConnectionRequest);
+				owner = property.getOwners().get(0).toCommonUser();
 			}
 			List<DemandDetail> demandDetails = new LinkedList<>();
 			calculation.getTaxHeadEstimates().forEach(taxHeadEstimate -> {
@@ -530,10 +535,13 @@ public class DemandService {
 				if(connection.getApplicationType().equalsIgnoreCase("MODIFY_WATER_CONNECTION")){
 					WaterConnectionRequest waterConnectionRequest = WaterConnectionRequest.builder().waterConnection(connection)
 							.requestInfo(requestInfo).build();
-					Property property = wsCalculationUtil.getProperty(waterConnectionRequest);
-					User owner = property.getOwners().get(0).toCommonUser();
+					User owner =null;
 					if (!CollectionUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionHolders())) {
 						owner = waterConnectionRequest.getWaterConnection().getConnectionHolders().get(0).toCommonUser();
+					}
+					if(owner==null){
+						Property property = wsCalculationUtil.getProperty(waterConnectionRequest);
+						owner = property.getOwners().get(0).toCommonUser();
 					}
 					if(!(demand.getPayer().getUuid().equalsIgnoreCase(owner.getUuid())))
 						demand.setPayer(owner);
@@ -544,9 +552,8 @@ public class DemandService {
 
 			demands.add(demand);
 		}
-		if(config.getNotificationDisabled()) {
-			log.info("Updated Demand Details " + demands.toString());
-		}
+		
+		log.info("Updated Demand Details " + demands.toString());
 		return demandRepository.updateDemand(requestInfo, demands);
 	}
 
@@ -611,6 +618,10 @@ public class DemandService {
 
 		BigDecimal penalty = interestPenaltyEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
 		BigDecimal interest = interestPenaltyEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
+		if(penalty == null)
+			penalty = BigDecimal.ZERO;
+		if(interest == null)
+			interest = BigDecimal.ZERO;
 
 		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail;
 

@@ -59,9 +59,7 @@ public class DemandGenerationConsumer {
 	public void listen(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
 
-		List<CalculationCriteria> calculationCriteria = new ArrayList<>();
 		HashMap<String, List<CalculationCriteria>> hashMapForCbs = new HashMap<String, List<CalculationCriteria>>();
-		HashSet<String> tenantIds = new HashSet<String>();
 		 
 		records.forEach(record -> {
 			try {
