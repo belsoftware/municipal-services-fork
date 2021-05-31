@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -115,6 +116,139 @@ public class EstimationService {
 		estimatesAndBillingSlabs.put("billingSlabIds", billingSlabIds);
 		return estimatesAndBillingSlabs;
 	}
+	
+	public BillingSlab getEstimationMapForApplicationNo(CalculationCriteria criteria, RequestInfo requestInfo,
+			Map<String, Object> masterData) {
+		Map<String, JSONArray> billingSlabMaster = new HashMap<>();
+		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
+		ArrayList<String> billingSlabIds = new ArrayList<>();
+		billingSlabMaster.put(WSCalculationConstant.WC_BILLING_SLAB_MASTER,
+				(JSONArray) masterData.get(WSCalculationConstant.WC_BILLING_SLAB_MASTER));
+		
+		billingSlabMaster.put(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST,(JSONArray)masterData.get(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST));
+		
+		
+		timeBasedExemptionMasterMap.put(WSCalculationConstant.WC_WATER_CESS_MASTER,(JSONArray) (masterData.getOrDefault(WSCalculationConstant.WC_WATER_CESS_MASTER, null)));
+			
+		JSONArray wsBillingSlab = billingSlabMaster.get("WCBillingSlab");
+			
+		if (billingSlabMaster.get(WSCalculationConstant.WC_BILLING_SLAB_MASTER) == null)
+			throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
+		List<BillingSlab> mappingBillingSlab;
+		Property propertytry =null;
+		try {
+			mappingBillingSlab = mapper.readValue(
+					billingSlabMaster.get(WSCalculationConstant.WC_BILLING_SLAB_MASTER).toJSONString(),
+					mapper.getTypeFactory().constructCollectionType(List.class, BillingSlab.class));
+			propertytry = wSCalculationUtil.getProperty(WaterConnectionRequest.builder().waterConnection(criteria.getWaterConnection()).requestInfo(requestInfo).build());
+		} catch (IOException e) {
+			throw new CustomException("PARSING_ERROR", "Billing Slab can not be parsed!");
+		}
+	
+		JSONObject calculationAttributeMaster = new JSONObject();
+		calculationAttributeMaster.put(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST, billingSlabMaster.get(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST));
+        String calculationAttribute = getCalculationAttribute(calculationAttributeMaster, criteria.getWaterConnection().getConnectionType());
+		List<String> filterAttrs =getFilterAttribute(calculationAttributeMaster, criteria.getWaterConnection().getConnectionType());
+		
+		List<BillingSlab> billingSlabs = getSlabsFiltered(criteria.getWaterConnection(), mappingBillingSlab, calculationAttribute, filterAttrs, propertytry);
+		if (billingSlabs == null || billingSlabs.isEmpty())
+			throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
+		if (billingSlabs.size() > 1)
+			throw new CustomException("INVALID_BILLING_SLAB",
+					"More than one billing slab found");
+		billingSlabIds.add(billingSlabs.get(0).getId());
+		log.debug(" Billing Slab Id For Water Charge Calculation **********--->  " + billingSlabIds.toString());
+		
+	
+		
+		int index = Integer.parseInt(billingSlabIds.get(0));
+		
+	    Object obj = wsBillingSlab.get(index-1);	   	    
+	    BillingSlab bl = mapper.convertValue(obj, BillingSlab.class);	    
+	  
+	    if(bl.getSlabs().size() >1) {
+	    	
+	    	JSONArray calculationAttr = (JSONArray) masterData.get(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST);
+	    	
+	    	JSONObject requiredBillingSlab = null;    	
+	    	for(int i=0;i<calculationAttr.size();i++) {
+	    		
+	    		JSONObject eachJsonObj = mapper.convertValue(calculationAttr.get(i), JSONObject.class);
+	    		if((eachJsonObj.get("active") .equals(true)) && eachJsonObj.get("name").equals(criteria.getWaterConnection().getConnectionType())) {
+	    			
+	    			requiredBillingSlab = eachJsonObj;
+	    			break;
+	    		}
+	    	}
+	    	
+	    	
+			//JSONObject jsonobj = mapper.convertValue(calculationAttr.get(0), JSONObject.class);
+		
+			String attribute = (String) requiredBillingSlab.get("attribute");
+			List<Slab> slabs = bl.getSlabs();			
+			switch(attribute) {
+			case WSCalculationConstant.propAreaConst :				
+				Property property =null;
+				try {
+					property = wSCalculationUtil.getProperty(WaterConnectionRequest.builder().waterConnection(criteria.getWaterConnection()).requestInfo(requestInfo).build());
+					if(property.getLandArea()!=null) {						
+						double propertyAreaNeeded = property.getLandArea();
+						Optional<Slab>req = slabs.parallelStream().filter(each -> each.getFrom() < propertyAreaNeeded &&  propertyAreaNeeded < each.getTo()).findFirst();
+						List<Slab> matchingSlab = new ArrayList<Slab>();
+						matchingSlab.add(req.get());
+						bl.setSlabs(matchingSlab);
+					}
+					else {
+						return null;
+					}		
+					
+				} catch (Exception e) {
+					throw new CustomException("PARSING_ERROR", "Billing Slab can not be parsed!");
+				}
+				break;
+			case WSCalculationConstant.pipeSizeConst :				
+				double pipeNeeded  = criteria.getWaterConnection().getPipeSize();
+				Optional<Slab> req = slabs.stream().filter(each -> each.getFrom() < pipeNeeded && pipeNeeded < each.getTo()).findFirst();
+				if(req.isEmpty()) {					
+					return null;
+				}
+				else {					
+					List<Slab> matchingSlab = new ArrayList<Slab>();
+					matchingSlab.add(req.get());
+					bl.setSlabs(matchingSlab);
+					
+				}	
+				break;
+			case WSCalculationConstant.arvConst:					
+				Property propertyARV =null;
+				try {
+					propertyARV = wSCalculationUtil.getProperty(WaterConnectionRequest.builder().waterConnection(criteria.getWaterConnection()).requestInfo(requestInfo).build());
+					if(propertyARV.getUnits().get(0).getArv().doubleValue() >0 ) {						
+						double propertyARVNeeded = propertyARV.getUnits().get(0).getArv().doubleValue();
+						Optional<Slab>requried = slabs.parallelStream().filter(each -> each.getFrom() < propertyARVNeeded &&  propertyARVNeeded < each.getTo()).findFirst();
+						List<Slab> matchingSlab = new ArrayList<Slab>();
+						matchingSlab.add(requried.get());
+						bl.setSlabs(matchingSlab);
+					}
+					else {
+						return null;
+					}					
+					
+				} catch (Exception e) {
+					throw new CustomException("PARSING_ERROR", "Billing Slab can not be parsed!");
+				}
+				break;
+				
+				
+				
+
+			}
+			
+	    }
+
+		return bl;
+	}
+	
 
 	/**
 	 * 
@@ -261,6 +395,8 @@ public class EstimationService {
 	}
 	
 	
+	
+	
 	private List<BillingSlab> getSlabsFiltered(WaterConnection waterConnection, List<BillingSlab> billingSlabs,
 			String calculationAttribute,List<String> filterAttr, Property property) {
 	
@@ -272,7 +408,6 @@ public class EstimationService {
 					.equalsIgnoreCase(calculationAttribute);
 			return  isConnectionTypeMatching && isCalculationAttributeMatching;
 		}).collect(Collectors.toList());
-		
 		for (String filterName : filterAttr) {
 			switch (filterName) {
 			case "PropertyLocation":
@@ -289,17 +424,17 @@ public class EstimationService {
 				break;
 			case "waterSource":
 				long waterSourceCount =0 ;
-				if(!StringUtils.isEmpty(waterConnection.getWaterSource())) {
+				if(!StringUtils.isEmpty(waterConnection.getWaterSourceSubSource())) {
 					waterSourceCount=billingSlabs.stream().filter(slab -> { 
-						return slab.getWaterSource().equalsIgnoreCase(waterConnection.getWaterSource());
+						return slab.getWaterSource().equalsIgnoreCase(waterConnection.getWaterSourceSubSource());
 					}).count();
 				}
-				final String waterSource = waterSourceCount > 0 ?  waterConnection.getWaterSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
+				final String waterSource = waterSourceCount > 0 ?  waterConnection.getWaterSourceSubSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					return slab.getWaterSource().equalsIgnoreCase(waterSource); 
 				}).collect(Collectors.toList());
 				break;
-			case "buildingType":
+			case "buildingType":			
 				long buildTypeCount =0;
 				if(!StringUtils.isEmpty(waterConnection.getUsageCategory())) {
 					buildTypeCount =billingSlabs.stream().filter(slab -> { 
@@ -348,7 +483,7 @@ public class EstimationService {
 					return slab.getOwnershipCategory().equalsIgnoreCase(ownership);
 				}).collect(Collectors.toList());
 				break;	
-			case "ownerType": //EG:-STAFF,FREEDOMFIGHTER etc.
+			case "ownerType": //EG:-STAFF,FREEDOMFIGHTER etc.				
 				String ownerType = null;
 				if(!CollectionUtils.isEmpty(waterConnection.getConnectionHolders())) {
 					ownerType = waterConnection.getConnectionHolders().get(0).getOwnerType();
@@ -542,8 +677,7 @@ public class EstimationService {
 	}
 	
 	public Map<String, Object> getBiMonthStartAndEndDate(Map<String, Object> billingPeriod){
-		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
-		System.out.println(fromDateCalendar.get(Calendar.MONTH));
+		Calendar fromDateCalendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone));	
 		fromDateCalendar.set(Calendar.MONTH, fromDateCalendar.get(Calendar.MONTH)/2 * 2);
 		fromDateCalendar.set(Calendar.DAY_OF_MONTH, 1);
 		setTimeToBeginningOfDay(fromDateCalendar);
@@ -853,19 +987,13 @@ public class EstimationService {
 	}
 	
 	public static void main(String[] args) {
-		Date d = new Date();
-		System.out.println("CalculatorController.jobscheduler()" + d.getTime());
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("IST"));
-		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
-		
-		cal.setTime(d);
-		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
-		setTimeToEndofDay(cal);
-		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
+		Date d = new Date();	
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("IST"));		
+		cal.setTime(d);	
+		setTimeToEndofDay(cal);		
 		EstimationService service = new EstimationService();
 		HashMap<String, Object> billingPeriod = new HashMap<String, Object>();
-		service.getHalfYearStartAndEndDate(billingPeriod);
-		System.out.println("EstimationService.enclosing_method()"+ billingPeriod);
+		service.getHalfYearStartAndEndDate(billingPeriod);		
 		//EstimationService.enclosing_method(){startingDay=1614537000000, endingDay=1619807399999}
 		 
 		

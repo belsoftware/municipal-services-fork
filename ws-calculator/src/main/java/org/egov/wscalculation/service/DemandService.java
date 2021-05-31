@@ -782,7 +782,6 @@ public class DemandService {
 	private boolean isCurrentDateIsMatching(String billingFrequency, long dayOfMonth) {
 		Calendar currentDay = Calendar.getInstance();
 		setTimeToBeginningOfDay(currentDay);
-		System.out.println("currentDay in millisecond "+ currentDay.getTimeInMillis());
 		
 		if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Monthly_Billing_Period)
 				&& (dayOfMonth == LocalDateTime.now().getDayOfMonth())) {
@@ -790,7 +789,7 @@ public class DemandService {
 		} else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Quaterly_Billing_Period)) {
 			//Get Todays Date
 			Calendar billingDay = getQuaterlyFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
-			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
+			
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -798,7 +797,7 @@ public class DemandService {
 		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Yearly_Billing_Period)) {
 			//Get Todays Date
 			Calendar billingDay = getFiscalYrBilingDay(currentDay.getTime(),(int)dayOfMonth);
-			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
+		
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -806,7 +805,7 @@ public class DemandService {
 		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Half_Yearly_Billing_Period)) {
 			//Get Todays Date
 			Calendar billingDay = getFiscalHalfYrBilingDay(currentDay.getTime(),(int)dayOfMonth);	
-			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
+			
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -814,10 +813,7 @@ public class DemandService {
 		}else if (billingFrequency.equalsIgnoreCase(WSCalculationConstant.Bi_Monthly_Billing_Period)) {
 			//Get Todays Date
 			Calendar billingDay = getFiscalBiMonthBilingDay(currentDay.getTime(),(int)dayOfMonth);	
-			SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
-			System.out.println("BILLING Day "+ fmt.format(billingDay.getTime()));
-			System.out.println("Today Day "+ fmt.format(currentDay.getTime()));
-			System.out.println("billingDay in millisecond "+ billingDay.getTimeInMillis());
+			SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");			
 			if(billingDay.compareTo(currentDay)==0) {
 				return true;
 			}
@@ -949,11 +945,9 @@ public class DemandService {
 	
 	public static void main(String[] arg) {
 		DemandService ser = new DemandService();
-		Calendar cal = ser.getFiscalHalfYrBilingDay(new Date(), 90);
- 		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
-		Date d = new Date();
-		System.out.println("CalculatorController.jobscheduler()" + d.getTime());
+		Calendar cal = ser.getFiscalHalfYrBilingDay(new Date(), 90); 		
+		Date d = new Date();	
 		cal.setTime(d);
-		System.out.println("CalculatorController.jobscheduler()" + cal.getTimeInMillis());
+		
 	}
 }

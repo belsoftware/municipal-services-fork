@@ -84,8 +84,6 @@ public class DemandGenerationConsumer {
 				log.error(builder.toString());
 			}
 		});
-		System.out.println("DemandGenerationConsumer.listen()" + tenantIds);
-		
 		for (String tenant : hashMapForCbs.keySet()) {
 			Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),tenant);
 			CalculationReq request = CalculationReq.builder().calculationCriteria(hashMapForCbs.get(tenant))

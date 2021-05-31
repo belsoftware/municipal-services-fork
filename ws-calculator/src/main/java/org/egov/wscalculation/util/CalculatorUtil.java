@@ -297,6 +297,19 @@ public class CalculatorUtil {
 				.build();
 		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 	}
+	
+	private MdmsCriteriaReq getBillingFrequencyForMeterConnection(RequestInfo requestInfo, String tenantId) {
+
+		MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.BILLING_PERIOD)
+				.filter("[?(@.active== " + true + " && @.connectionType== '" + WSCalculationConstant.meteredConnectionType
+						+ "')]")
+				.build();
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(WSCalculationConstant.WS_MODULE)
+				.masterDetails(Arrays.asList(masterDetail)).build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId(tenantId)
+				.build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
 
 	/**
 	 * 
@@ -319,6 +332,23 @@ public class CalculatorUtil {
 		return null;
 	}
 
+	public Map<String, Object> loadBillingFrequencyMasterDataMeterConnection(RequestInfo requestInfo, String tenantId) {
+		MdmsCriteriaReq mdmsCriteriaReq = getBillingFrequencyForMeterConnection(requestInfo, tenantId);
+	
+		Object res = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+		if (res == null) {
+			throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY", "ERROR IN FETCHING THE BILLING FREQUENCY");
+		}
+		List<Map<String, Object>> jsonOutput = JsonPath.read(res, WSCalculationConstant.JSONPATH_ROOT_FOR_BilingPeriod);
+		if(jsonOutput.size() > 0 ) {
+			return jsonOutput.get(0);
+		}
+		return null;
+		
+	}
+	
+	
+	
 	public Property getProperty(RequestInfo requestInfo, String tenantId, String propertyId) {
 		String propertySearchURL = getPropertySearchURL(propertyId, tenantId);
 		Object propertyResult = serviceRequestRepository.fetchResult(new StringBuilder(propertySearchURL),

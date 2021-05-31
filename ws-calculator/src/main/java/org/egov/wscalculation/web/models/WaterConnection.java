@@ -27,6 +27,10 @@ import io.swagger.annotations.ApiModelProperty;
 	@JsonProperty("waterSource")
 	private String waterSource = null;
 	
+	@JsonProperty("waterSourceSubSource")
+	private String waterSourceSubSource = null;
+	
+	
 	@JsonProperty("sourceInfo")
 	private String sourceInfo = null;
 
@@ -275,6 +279,16 @@ import io.swagger.annotations.ApiModelProperty;
 
 	public void setPipeSize(Double pipeSize) {
 		this.pipeSize = pipeSize;
+	}
+	
+	
+
+	public String getWaterSourceSubSource() {
+		return waterSourceSubSource;
+	}
+
+	public void setWaterSourceSubSource(String waterSourceSubSource) {
+		this.waterSourceSubSource = waterSourceSubSource;
 	}
 
 	@Override
