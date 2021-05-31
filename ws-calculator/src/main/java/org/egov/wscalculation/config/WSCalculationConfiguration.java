@@ -217,5 +217,12 @@ public class WSCalculationConfiguration {
 	@Value("${egov.url.shortner.host}")
 	private String shortnerHost;
 	
+	@Value("#{'${egov.user.dummy.mobile.startswith}'.split(',')}")
+    private List<String> dummyMobileStartsWith;
 	
+	@Value("${wscalc.notification.disable}")
+	private Boolean notificationDisabled;
+	
+	@Value("${wscalc.validate.property}")
+	private Boolean validateProperty;
 }

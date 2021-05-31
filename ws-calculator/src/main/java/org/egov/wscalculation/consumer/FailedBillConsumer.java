@@ -51,6 +51,10 @@ public class FailedBillConsumer {
 	public void listen(final HashMap<String, Object> request, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {	
 		
 		
+		if(config.getNotificationDisabled()) {
+			return ;
+		}
+		
 		CalculationReq calcReq=null;
 		BillFailureNotificationObj notificationObj=null;
 		BillFailureNotificationRequest billFailureNotificationRequest = new BillFailureNotificationRequest();

@@ -44,7 +44,6 @@ import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jayway.jsonpath.JsonPath;
@@ -320,11 +319,13 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		@SuppressWarnings("unchecked")
 		List<String> billingSlabIds = estimatesAndBillingSlabs.get("billingSlabIds");
 		WaterConnection waterConnection = criteria.getWaterConnection();
-		Property property = wSCalculationUtil.getProperty(
-				WaterConnectionRequest.builder().waterConnection(waterConnection).requestInfo(requestInfo).build());
-		
-		String tenantId = null != property.getTenantId() ? property.getTenantId() : criteria.getTenantId();
+		String tenantId = criteria.getTenantId();
 
+		if(StringUtils.isEmpty(tenantId)) {
+			Property property = wSCalculationUtil.getProperty(
+				WaterConnectionRequest.builder().waterConnection(waterConnection).requestInfo(requestInfo).build());
+			tenantId =   property.getTenantId();
+		}
 		@SuppressWarnings("unchecked")
 		Map<String, TaxHeadCategory> taxHeadCategoryMap = ((List<TaxHeadMaster>) masterMap
 				.get(WSCalculationConstant.TAXHEADMASTER_MASTER_KEY)).stream()

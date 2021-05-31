@@ -314,6 +314,7 @@ public class PaymentNotificationService {
 		userSearchRequest.put("tenantId", tenantId);
 		userSearchRequest.put("userType", "CITIZEN");
     	for(String mobileNo: mobileNumbers) {
+    		if(CollectionUtils.isEmpty(config.getDummyMobileStartsWith()) || !config.getDummyMobileStartsWith().contains(mobileNo.substring(0,1)) ) {
     		userSearchRequest.put("userName", mobileNo);
     		try {
     			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
@@ -325,6 +326,7 @@ public class PaymentNotificationService {
     			}
     		}catch(Exception e) {
     			log.error("Exception trace: ",e);
+    		}
     		}
     	}
     	return mapOfPhoneNoAndUUIDs;

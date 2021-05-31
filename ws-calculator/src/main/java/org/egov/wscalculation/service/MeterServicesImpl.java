@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.validator.WSCalculationValidator;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
@@ -36,9 +35,6 @@ public class MeterServicesImpl implements MeterService {
 	
 	@Autowired
 	private WSCalculationWorkflowValidator wsCalulationWorkflowValidator;
-	
-	@Autowired
-	private WSCalculationConfiguration config;
 
 	@Autowired
 	public MeterServicesImpl(EnrichmentService enrichmentService) {
@@ -62,7 +58,7 @@ public class MeterServicesImpl implements MeterService {
 		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
 		meterReadingsList.add(meterConnectionRequest.getMeterReading());
 		wSCalculationDao.saveMeterReading(meterConnectionRequest);
-		if (meterConnectionRequest.getMeterReading().getGenerateDemand() && config.getGenerateBill()) {
+		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
 		return meterReadingsList;

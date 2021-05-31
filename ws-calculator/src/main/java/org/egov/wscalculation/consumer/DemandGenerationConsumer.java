@@ -59,9 +59,7 @@ public class DemandGenerationConsumer {
 	public void listen(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
 
-		List<CalculationCriteria> calculationCriteria = new ArrayList<>();
 		HashMap<String, List<CalculationCriteria>> hashMapForCbs = new HashMap<String, List<CalculationCriteria>>();
-		HashSet<String> tenantIds = new HashSet<String>();
 		 
 		records.forEach(record -> {
 			try {
@@ -70,20 +68,20 @@ public class DemandGenerationConsumer {
 					hashMapForCbs.put(calcReq.getCalculationCriteria().get(0).getTenantId() , new ArrayList<CalculationCriteria>());
 				}
 				hashMapForCbs.get(calcReq.getCalculationCriteria().get(0).getTenantId() ).addAll(calcReq.getCalculationCriteria());
-				//tenantIds.add(calcReq.getCalculationCriteria().get(0).getTenantId());
-				//calculationCriteria.addAll(calcReq.getCalculationCriteria());
-				log.info("Consuming record: " + mapper.writeValueAsString(record));
 			} catch (final Exception e) {
 				StringBuilder builder = new StringBuilder();
 				try {
 					builder.append("Error while listening to value: ").append(mapper.writeValueAsString(record))
 							.append(" on topic: ").append(e);
 				} catch (JsonProcessingException e1) {
-					e1.printStackTrace();
+					log.error("KAFKA_PROCESS_ERROR", e1);
+				}catch (Exception e2) {
+					log.error("GENERIC_EXCEPTION", e2);
 				}
 				log.error(builder.toString());
 			}
 		});
+		
 		for (String tenant : hashMapForCbs.keySet()) {
 			Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),tenant);
 			CalculationReq request = CalculationReq.builder().calculationCriteria(hashMapForCbs.get(tenant))
@@ -112,7 +110,6 @@ public class DemandGenerationConsumer {
 		int index =0;
 		records.forEach(record -> {
 			try {
-				log.info("Consuming record on dead letter topic : " + mapper.writeValueAsString(record));
 				CalculationReq calcReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
 				if(hashMapForCbs.get( calcReq.getCalculationCriteria().get(0).getTenantId())==null ) {
 					hashMapForCbs.put(calcReq.getCalculationCriteria().get(0).getTenantId() , new ArrayList<CalculationReq>());
@@ -120,8 +117,15 @@ public class DemandGenerationConsumer {
 				hashMapForCbs.get( calcReq.getCalculationCriteria().get(0).getTenantId()).add(calcReq);
 			} catch (final Exception e) {
 				StringBuilder builder = new StringBuilder();
-				builder.append("Error while listening to value: ").append(record).append(" on dead letter topic.");
-				log.error(builder.toString(), e);
+				try {
+					builder.append("Error while listening to value: ").append(mapper.writeValueAsString(record))
+							.append(" on dead letter topic. ").append(e);
+				} catch (JsonProcessingException e1) {
+					log.error("KAFKA_PROCESS_ERROR", e1);
+				}catch (Exception e2) {
+					log.error("GENERIC_EXCEPTION", e2);
+				} 
+				log.error(builder.toString() );
 			}
 		});
 		try {
@@ -139,10 +143,10 @@ public class DemandGenerationConsumer {
 							} catch (final Exception e) {
 								StringBuilder builder = new StringBuilder();
 								try {
-									builder.append("Error while generating Demand for Criteria: ")
+									builder.append("Error while generating Demand in DEAD letter for Criteria: ")
 											.append(mapper.writeValueAsString(calcCriteria));
 								} catch (JsonProcessingException e1) {
-									e1.printStackTrace();
+									log.error("KAFKA_PROCESS_ERROR", e1);
 								}
 								log.error(builder.toString(), e);
 							}
@@ -154,10 +158,8 @@ public class DemandGenerationConsumer {
 					}
 				});
 			}
-		}catch (final Exception e) {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Error while listening to value: on dead letter topic.");
-			log.error(builder.toString(), e);
+		}catch (final Exception e) { 
+			log.error("Error while listening to value: on dead letter topic.", e);
 		}
 		
 		
