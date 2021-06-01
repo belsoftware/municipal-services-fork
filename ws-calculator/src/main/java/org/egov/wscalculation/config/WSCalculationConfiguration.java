@@ -225,4 +225,8 @@ public class WSCalculationConfiguration {
 	
 	@Value("${wscalc.validate.property}")
 	private Boolean validateProperty;
+	
+	@Value("${wscalc.validate.legacy.connection}")
+	private Boolean validateLegacyConnection;
+	
 }

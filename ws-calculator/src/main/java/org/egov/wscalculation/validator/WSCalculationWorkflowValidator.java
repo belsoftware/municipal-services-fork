@@ -42,9 +42,12 @@ public class WSCalculationWorkflowValidator {
 		 if(waterConnectionList != null){
 			 int size = waterConnectionList.size();
 			 waterConnection = waterConnectionList.get(size-1);
-
-			 String waterApplicationNumber = waterConnection.getApplicationNo();
-			 waterConnectionValidation(requestInfo, tenantId, waterApplicationNumber, errorMap);
+			 if(size ==1 && !StringUtils.isEmpty(waterConnection.getOldConnectionNo()) && !configurations.getValidateLegacyConnection()   ) {
+				 //legacy data so no need to validate according to configured logic
+			 }else {
+				 String waterApplicationNumber = waterConnection.getApplicationNo();
+				 waterConnectionValidation(requestInfo, tenantId, waterApplicationNumber, errorMap);
+			 }
 			 if(configurations.getValidateProperty()) {
 				 String propertyId = waterConnection.getPropertyId();
 				 Property property = util.getProperty(requestInfo,tenantId,propertyId);
