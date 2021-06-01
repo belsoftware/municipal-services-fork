@@ -425,12 +425,12 @@ public class EstimationService {
 				break;
 			case "waterSource":
 				long waterSourceCount =0 ;
-				if(!StringUtils.isEmpty(waterConnection.getWaterSourceSubSource())) {
+				if(!StringUtils.isEmpty(waterConnection.getWaterSource())) {
 					waterSourceCount=billingSlabs.stream().filter(slab -> { 
-						return slab.getWaterSource().equalsIgnoreCase(waterConnection.getWaterSourceSubSource());
+						return slab.getWaterSource().equalsIgnoreCase(waterConnection.getWaterSource());
 					}).count();
 				}
-				final String waterSource = waterSourceCount > 0 ?  waterConnection.getWaterSourceSubSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
+				final String waterSource = waterSourceCount > 0 ?  waterConnection.getWaterSource() :WSCalculationConstant.GENERIC_ATTRIBUTE;
 				billingSlabs= billingSlabs.stream().filter(slab -> {
 					return slab.getWaterSource().equalsIgnoreCase(waterSource); 
 				}).collect(Collectors.toList());
