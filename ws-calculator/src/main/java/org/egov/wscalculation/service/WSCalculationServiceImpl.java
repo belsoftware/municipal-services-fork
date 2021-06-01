@@ -476,12 +476,12 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	/**
 	 * Generate Demand Manually
 	 */
-	public void generateDemandBasedOnTimePeriod_manual(RequestInfo requestInfo,String tenantId, String connectionno) {
+	public void generateDemandBasedOnTimePeriod_manual(RequestInfo requestInfo,String tenantId, List<String> connectionnos) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
 		
-		demandService.generateDemandForTenantId(tenantId, requestInfo,connectionno,false);
+		demandService.generateDemandForTenantId(tenantId, requestInfo,connectionnos,false);
 	}
 	/**
 	 * 

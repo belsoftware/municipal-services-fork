@@ -678,7 +678,7 @@ public class DemandService {
 	 * @param tenantId
 	 *            TenantId for getting master data.
 	 */
-	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, String connectionNo, boolean checkDate) {
+	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, List<String> connectionNos, boolean checkDate) {
 		try {
 			requestInfo.getUserInfo().setTenantId(tenantId);
 			Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
@@ -686,7 +686,7 @@ public class DemandService {
 				if(checkDate) {
 					generateDemandForULB(billingMasterData, requestInfo, tenantId);	
 				}else {
-					generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNo);	
+					generateDemandForULB(billingMasterData, requestInfo, tenantId,connectionNos);	
 				}
 					
 			}
@@ -715,14 +715,15 @@ public class DemandService {
 	}
 	
 	
-	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId, String connectionno) {
+	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId, List<String> connectionnos) {
 		List<String> connectionNos =new ArrayList<String>();
-		if(StringUtils.isBlank(connectionno)) {
+		if(CollectionUtils.isEmpty(connectionnos)) {
 			connectionNos = waterCalculatorDao.getConnectionsNoList(tenantId,
 					WSCalculationConstant.nonMeterdConnection);
 		}else {
-			connectionNos.add(connectionno);
+			connectionNos.addAll(connectionnos);
 		}
+				
 		String assessmentYear = estimationService.getAssessmentYear();
 		for (String connectionNo : connectionNos) {
 			CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId)

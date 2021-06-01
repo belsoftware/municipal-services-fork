@@ -113,10 +113,10 @@ public class CalculatorController {
 	@PostMapping("/_jobscheduler_manual")
 	public void _jobscheduler_manual(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@RequestParam String   tenantId,
-			@RequestParam(required = false) String  connectionno
+			@RequestParam(required = false) List<String>  connectionnos
 			) {
  
-			wSCalculationService.generateDemandBasedOnTimePeriod_manual(requestInfoWrapper.getRequestInfo(),tenantId,connectionno);
+			wSCalculationService.generateDemandBasedOnTimePeriod_manual(requestInfoWrapper.getRequestInfo(),tenantId,connectionnos);
 	}
 	
 	@PostMapping("/_jobscheduler_checkFailedBill")
