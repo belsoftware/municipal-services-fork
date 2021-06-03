@@ -61,226 +61,226 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 	@Autowired
 	private EstimationService estimationService;
-	
+
 	@Autowired
 	private CalculatorUtil calculatorUtil;
-	
+
 	@Autowired
 	private DemandService demandService;
-	
+
 	@Autowired
-	private MasterDataService masterDataService; 
+	private MasterDataService masterDataService;
 
 	@Autowired
 	private WSCalculationDao wSCalculationDao;
-	
+
 	@Autowired
 	private ServiceRequestRepository repository;
-	
+
 	@Autowired
 	private WSCalculationUtil wSCalculationUtil;
-	
+
 	@Autowired
 	private WSCalculationProducer producer;
-	
+
 	@Autowired
 	private WSCalculationConfiguration config;
-	
-	
-	  @Autowired
-	    private CalculatorUtil calculatorUtils;
-	  
-	   @Autowired
-	    private WSCalculationProducer wsCalculationProducer;
-	    
 
-		@Autowired
-		private MasterDataService mDataService;
-		
+	@Autowired
+	private CalculatorUtil calculatorUtils;
+
+	@Autowired
+	private WSCalculationProducer wsCalculationProducer;
+
+	@Autowired
+	private MasterDataService mDataService;
 
 	/**
-	 * Get CalculationReq and Calculate the Tax Head on Water Charge And Estimation Charge
+	 * Get CalculationReq and Calculate the Tax Head on Water Charge And Estimation
+	 * Charge
 	 */
 	public List<Calculation> getCalculation(CalculationReq request) {
 		List<Calculation> calculations;
 
 		Map<String, Object> masterMap;
 		if (request.getIsconnectionCalculation()) {
-			//Calculate and create demand for connection
+			// Calculate and create demand for connection
 			masterMap = masterDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
 		} else {
-			//Calculate and create demand for application
+			// Calculate and create demand for application
 			masterMap = masterDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getFeeCalculation(request, masterMap);
 		}
-		demandService.generateDemand(request.getRequestInfo(), calculations, masterMap, request.getIsconnectionCalculation());
+		demandService.generateDemand(request.getRequestInfo(), calculations, masterMap,
+				request.getIsconnectionCalculation());
 		unsetWaterConnection(calculations);
 		return calculations;
 	}
-	
-	public double getBillMonthsToCharge(Map<String, Object>startAndEndDate ) {
-		    Long billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");		   
-		    LocalDate billingPeriodEndDate = LocalDate.ofEpochDay(billingCycleEndDate / 86400000L);		    
-		    LocalDate toDay = LocalDate.now();		   
-		    Period difference = Period.between(toDay, billingPeriodEndDate);
-		    double monthsToCharge = difference.getMonths()+1; 		    
-		    return monthsToCharge;
+
+	public double getBillMonthsToCharge(Map<String, Object> startAndEndDate) {
+		Long billingCycleEndDate = (Long) startAndEndDate.get("endingDay");
+		LocalDate billingPeriodEndDate = LocalDate.ofEpochDay(billingCycleEndDate / 86400000L);
+		LocalDate toDay = LocalDate.now();
+		Period difference = Period.between(toDay, billingPeriodEndDate);
+		double monthsToCharge = difference.getMonths() + 1;
+		return monthsToCharge;
 	}
 
-	
 	public BillEstimation getBillEstimate(CalculationReq request) {
 		String tenantId = request.getCalculationCriteria().get(0).getTenantId();
-		BillEstimation billEstimation = new BillEstimation();		
-		Map<String, Object> billingMasterData = new HashMap<String, Object>();		
-		if(request.getCalculationCriteria().get(0).getWaterConnection().getConnectionType().equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
-			 billingMasterData = calculatorUtils.loadBillingFrequencyMasterDataMeterConnection(request.getRequestInfo(), tenantId);				
+		BillEstimation billEstimation = new BillEstimation();
+		Map<String, Object> billingMasterData = new HashMap<String, Object>();
+		if (request.getCalculationCriteria().get(0).getWaterConnection().getConnectionType()
+				.equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
+			billingMasterData = calculatorUtils.loadBillingFrequencyMasterDataMeterConnection(request.getRequestInfo(),
+					tenantId);
+		} else {
+			billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(request.getRequestInfo(), tenantId);
 		}
-		else {		
-		    billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(request.getRequestInfo(), tenantId);	
-		}
-		
-		
-		if(billingMasterData!=null) {
-				String billingCycle = billingMasterData.get("billingCycle").toString();
-				String assessmentYear = estimationService.getAssessmentYear();
-		
-				CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId).assessmentYear(assessmentYear).build();
-				List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
-				calculationCriteriaList.add(calculationCriteria);
-				CalculationReq calculationReq = CalculationReq.builder().calculationCriteria(calculationCriteriaList)
-						.requestInfo(request.getRequestInfo()).isconnectionCalculation(true).build();
-			
-				Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),tenantId);		
-				for (CalculationCriteria criteria : request.getCalculationCriteria()) {
-					
-					BillingSlab billingSlab = estimationService.getEstimationMapForApplicationNo(criteria, request.getRequestInfo(),masterMap);
-					double billAmountForBillingPeriod=0;
-					double fianlBillAmount = 0;
-					double monthsToCharge = 0;
-					double motorChargePayable = 0;
-					Long billingCycleEndDate = null;
-					
-					if(billingSlab != null) {
-						
-						if(criteria.getWaterConnection().getMotorInfo() != null)
-						    motorChargePayable = criteria.getWaterConnection().getMotorInfo().equalsIgnoreCase(WSCalculationConstant.WC_MOTOR_CONN)?billingSlab.getMotorCharge():0;
-						billEstimation.setMotorChargePayable(motorChargePayable);
-						billEstimation.setBillingSlab(billingSlab);
-						
-						Map<String, Object> billingPeriod = new HashMap<>();
-						  Map<String, Object>startAndEndDate = new HashMap<String, Object>();
-						  
-						  if(billingSlab.getSlabs().isEmpty()) {
-								
-								billAmountForBillingPeriod = billingSlab.getMinimumCharge();														
-							}
-							else {
-								
-								//Only tap count condition
-								if ((criteria.getWaterConnection().getConnectionType().equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection) && 
-												billingSlab.getCalculationAttribute().equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)
-												)) {
-									for (Slab slab : billingSlab.getSlabs()) {
-										if (criteria.getWaterConnection().getNoOfTaps() > slab.getTo()) {
-											billAmountForBillingPeriod += (((slab.getTo()) - (slab.getFrom())) * slab.getCharge());
-										} else if (criteria.getWaterConnection().getNoOfTaps() <= slab.getTo()) {
-											billAmountForBillingPeriod += ((criteria.getWaterConnection().getNoOfTaps()-slab.getFrom()) * slab.getCharge());
-											break;
-										}
-									}		
-								}
-								else if(criteria.getWaterConnection().getConnectionType().equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
-									
-									billAmountForBillingPeriod = billingSlab.getMinimumCharge();
-									billEstimation.setPayableBillAmount(billAmountForBillingPeriod);
+
+		if (billingMasterData != null) {
+			String billingCycle = billingMasterData.get("billingCycle").toString();
+			String assessmentYear = estimationService.getAssessmentYear();		
+			CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(tenantId)
+					.assessmentYear(assessmentYear).build();
+			List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
+			calculationCriteriaList.add(calculationCriteria);
+			CalculationReq calculationReq = CalculationReq.builder().calculationCriteria(calculationCriteriaList)
+					.requestInfo(request.getRequestInfo()).isconnectionCalculation(true).build();
+
+			Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(), tenantId);
+			for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+
+				BillingSlab billingSlab = estimationService.getEstimationMapForApplicationNo(criteria,
+						request.getRequestInfo(), masterMap);
+				double billAmountForBillingPeriod = 0;
+				double fianlBillAmount = 0;
+				double monthsToCharge = 0;
+				double motorChargePayable = 0;
+				Long billingCycleEndDate = null;
+
+				if (billingSlab != null) {
+
+					if (criteria.getWaterConnection().getMotorInfo() != null)
+						motorChargePayable = criteria.getWaterConnection().getMotorInfo().equalsIgnoreCase(
+								WSCalculationConstant.WC_MOTOR_CONN) ? billingSlab.getMotorCharge() : 0;
+					billEstimation.setMotorChargePayable(motorChargePayable);
+					billEstimation.setBillingSlab(billingSlab);
+
+					Map<String, Object> billingPeriod = new HashMap<>();
+					Map<String, Object> startAndEndDate = new HashMap<String, Object>();
+
+					if (billingSlab.getSlabs().isEmpty()) {
+
+						billAmountForBillingPeriod = billingSlab.getMinimumCharge();
+					} else {
+
+						// Only tap count condition
+						if ((criteria.getWaterConnection().getConnectionType()
+								.equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection)
+								&& billingSlab.getCalculationAttribute()
+										.equalsIgnoreCase(WSCalculationConstant.noOfTapsConst))) {
+							for (Slab slab : billingSlab.getSlabs()) {
+								if (criteria.getWaterConnection().getNoOfTaps() > slab.getTo()) {
+									billAmountForBillingPeriod += (((slab.getTo()) - (slab.getFrom()))
+											* slab.getCharge());
+								} else if (criteria.getWaterConnection().getNoOfTaps() <= slab.getTo()) {
+									billAmountForBillingPeriod += ((criteria.getWaterConnection().getNoOfTaps()
+											- slab.getFrom()) * slab.getCharge());
 									break;
 								}
-								else {
-									
-									billAmountForBillingPeriod = billingSlab.getSlabs().get(0).getCharge();
-								}
-								
-								
 							}
-						  
-						switch(billingCycle) {
-						case(WSCalculationConstant.Monthly_Billing_Period) :
-							 
-						  	//billAmountForBillingPeriod = billingSlab.getMinimumCharge();
-							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();	
-							
-						  break;
-						case(WSCalculationConstant.Quaterly_Billing_Period) :
-							
-						    startAndEndDate = estimationService.getQuarterStartAndEndDate(billingPeriod);
-							billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
-						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
-						    billAmountForBillingPeriod = (billAmountForBillingPeriod/3.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();
-							billEstimation.setMonthsToCharge(monthsToCharge);		
-							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
-						   break;
-						case(WSCalculationConstant.Yearly_Billing_Period) :
-							
-						    startAndEndDate = estimationService.getYearStartAndEndDate(billingPeriod);
-						    billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
-						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);						
-						    billAmountForBillingPeriod = (billAmountForBillingPeriod/12.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();						
-							billEstimation.setMonthsToCharge(monthsToCharge);		
-							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
-						   break;
-						   
-						case(WSCalculationConstant.Half_Yearly_Billing_Period) :							
-						    startAndEndDate = estimationService.getHalfYearStartAndEndDate(billingPeriod);	
-						   billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
-						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
-						    billAmountForBillingPeriod = (billAmountForBillingPeriod/6.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();
-							billEstimation.setMonthsToCharge(monthsToCharge);		
-							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
-						    break;
-						   
-						case(WSCalculationConstant.Bi_Monthly_Billing_Period) :
-						
-						    startAndEndDate = estimationService.getBiMonthStartAndEndDate(billingPeriod);
-						    billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
-						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
-						    billAmountForBillingPeriod = (billAmountForBillingPeriod/12.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();						
-							billEstimation.setMonthsToCharge(monthsToCharge);		
-							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
-						
-						   break;
-						  default :
-							  Map<String, String> errorMap = new HashMap<>();
-								errorMap.put("FEE_SLAB_NOT_FOUND", "Fee slab master data not found!!");
-						 
-						}
-						
-					
-						billEstimation.setBillAmount(billAmountForBillingPeriod);
-						billEstimation.setPayableBillAmount(fianlBillAmount);
-					}
-					
+						} else if (criteria.getWaterConnection().getConnectionType()
+								.equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
 
+							billAmountForBillingPeriod = billingSlab.getMinimumCharge();
+							billEstimation.setPayableBillAmount(billAmountForBillingPeriod);
+							//break;
+						} else {
+
+							billAmountForBillingPeriod = billingSlab.getSlabs().get(0).getCharge();
+						}
+
+					}					
+					switch (billingCycle) {
+					case (WSCalculationConstant.Monthly_Billing_Period):
+
+						// billAmountForBillingPeriod = billingSlab.getMinimumCharge();
+						fianlBillAmount = billAmountForBillingPeriod + motorChargePayable
+								+ billingSlab.getMaintenanceCharge();
+
+						break;
+					case (WSCalculationConstant.Quaterly_Billing_Period):
+
+						startAndEndDate = estimationService.getQuarterStartAndEndDate(billingPeriod);
+						billingCycleEndDate = (Long) startAndEndDate.get("endingDay");
+						monthsToCharge = getBillMonthsToCharge(startAndEndDate);
+						billAmountForBillingPeriod = (billAmountForBillingPeriod / 3.0) * monthsToCharge;
+						fianlBillAmount = billAmountForBillingPeriod + motorChargePayable
+								+ billingSlab.getMaintenanceCharge();
+						billEstimation.setMonthsToCharge(monthsToCharge);
+						billEstimation.setBillingCycleEndDate(billingCycleEndDate);
+						break;
+					case (WSCalculationConstant.Yearly_Billing_Period):
+
+						startAndEndDate = estimationService.getYearStartAndEndDate(billingPeriod);
+						billingCycleEndDate = (Long) startAndEndDate.get("endingDay");
+						monthsToCharge = getBillMonthsToCharge(startAndEndDate);
+						billAmountForBillingPeriod = (billAmountForBillingPeriod / 12.0) * monthsToCharge;
+						fianlBillAmount = billAmountForBillingPeriod + motorChargePayable
+								+ billingSlab.getMaintenanceCharge();
+						billEstimation.setMonthsToCharge(monthsToCharge);
+						billEstimation.setBillingCycleEndDate(billingCycleEndDate);
+						break;
+
+					case (WSCalculationConstant.Half_Yearly_Billing_Period):						
+						startAndEndDate = estimationService.getHalfYearStartAndEndDate(billingPeriod);					
+						billingCycleEndDate = (Long) startAndEndDate.get("endingDay");
+						monthsToCharge = getBillMonthsToCharge(startAndEndDate);
+						billAmountForBillingPeriod = (billAmountForBillingPeriod / 6.0) * monthsToCharge;
+						fianlBillAmount = billAmountForBillingPeriod + motorChargePayable
+								+ billingSlab.getMaintenanceCharge();
+						billEstimation.setMonthsToCharge(monthsToCharge);
+						billEstimation.setBillingCycleEndDate(billingCycleEndDate);
+						break;
+
+					case (WSCalculationConstant.Bi_Monthly_Billing_Period):
+
+						startAndEndDate = estimationService.getBiMonthStartAndEndDate(billingPeriod);
+						billingCycleEndDate = (Long) startAndEndDate.get("endingDay");
+						monthsToCharge = getBillMonthsToCharge(startAndEndDate);
+						billAmountForBillingPeriod = (billAmountForBillingPeriod / 12.0) * monthsToCharge;
+						fianlBillAmount = billAmountForBillingPeriod + motorChargePayable
+								+ billingSlab.getMaintenanceCharge();
+						billEstimation.setMonthsToCharge(monthsToCharge);
+						billEstimation.setBillingCycleEndDate(billingCycleEndDate);
+
+						break;
+					default:
+						Map<String, String> errorMap = new HashMap<>();
+						errorMap.put("FEE_SLAB_NOT_FOUND", "Fee slab master data not found!!");
+
+					}
+
+					billEstimation.setBillAmount(billAmountForBillingPeriod);
+					billEstimation.setPayableBillAmount(fianlBillAmount);
 				}
-						
-		}
-		else {
-			
+
+			}
+
+		} else {
+
 			Map<String, String> errorMap = new HashMap<>();
 			errorMap.put("FEE_SLAB_NOT_FOUND", "Fee slab master data not found!!");
-		
+
 		}
-		
-		
+
 		return billEstimation;
 	}
-	
+
 	/**
 	 * 
 	 * 
@@ -305,13 +305,14 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		unsetWaterConnection(calculations);
 		return calculations;
 	}
+
 	/**
-	 * It will take calculation and return calculation with tax head code 
+	 * It will take calculation and return calculation with tax head code
 	 * 
-	 * @param requestInfo Request Info Object
-	 * @param criteria Calculation criteria on meter charge
+	 * @param requestInfo              Request Info Object
+	 * @param criteria                 Calculation criteria on meter charge
 	 * @param estimatesAndBillingSlabs Billing Slabs
-	 * @param masterMap Master MDMS Data
+	 * @param masterMap                Master MDMS Data
 	 * @return Calculation With Tax head
 	 */
 	public Calculation getCalculation(RequestInfo requestInfo, CalculationCriteria criteria,
@@ -324,15 +325,16 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		WaterConnection waterConnection = criteria.getWaterConnection();
 		String tenantId = criteria.getTenantId();
 
-		if(StringUtils.isEmpty(tenantId)) {
+		if (StringUtils.isEmpty(tenantId)) {
 			Property property = wSCalculationUtil.getProperty(
-				WaterConnectionRequest.builder().waterConnection(waterConnection).requestInfo(requestInfo).build());
-			tenantId =   property.getTenantId();
+					WaterConnectionRequest.builder().waterConnection(waterConnection).requestInfo(requestInfo).build());
+			tenantId = property.getTenantId();
 		}
 		@SuppressWarnings("unchecked")
 		Map<String, TaxHeadCategory> taxHeadCategoryMap = ((List<TaxHeadMaster>) masterMap
 				.get(WSCalculationConstant.TAXHEADMASTER_MASTER_KEY)).stream()
-						.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory, (OldValue, NewValue) -> NewValue));
+						.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory,
+								(OldValue, NewValue) -> NewValue));
 
 		BigDecimal taxAmt = BigDecimal.ZERO;
 		BigDecimal waterCharge = BigDecimal.ZERO;
@@ -385,13 +387,13 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(waterCharge).add(fee);
 		return Calculation.builder().totalAmount(totalAmount).taxAmount(taxAmt).penalty(penalty).exemption(exemption)
 				.charge(waterCharge).fee(fee).waterConnection(waterConnection).rebate(rebate).tenantId(tenantId)
-				.taxHeadEstimates(estimates).billingSlabIds(billingSlabIds).connectionNo(criteria.getConnectionNo()).applicationNO(criteria.getApplicationNo())
-				.build();
+				.taxHeadEstimates(estimates).billingSlabIds(billingSlabIds).connectionNo(criteria.getConnectionNo())
+				.applicationNO(criteria.getApplicationNo()).build();
 	}
-	
+
 	/**
 	 * 
-	 * @param request would be calculations request
+	 * @param request   would be calculations request
 	 * @param masterMap master data
 	 * @return all calculations including water charge and taxhead on that
 	 */
@@ -403,12 +405,12 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
 					.get(WSCalculationConstant.Billing_Period_Master);
 			masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap);
-			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true);
+			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap,
+					true);
 			calculations.add(calculation);
 		}
 		return calculations;
 	}
-
 
 	@Override
 	public void jobScheduler() {
@@ -432,7 +434,6 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			getBillingPeriod(mdmsResponse, requestInfo, tenantId);
 		}
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	public void getBillingPeriod(ArrayList<?> mdmsResponse, RequestInfo requestInfo, String tenantId) {
@@ -476,24 +477,25 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		if (tenantIds.isEmpty())
 			return;
 		tenantIds.forEach(tenantId -> {
-			demandService.generateDemandForTenantId(tenantId, requestInfo,null,true);
+			demandService.generateDemandForTenantId(tenantId, requestInfo, null, true);
 		});
 	}
-	
-	
+
 	/**
 	 * Generate Demand Manually
 	 */
-	public void generateDemandBasedOnTimePeriod_manual(RequestInfo requestInfo,String tenantId, List<String> connectionnos) {
+	public void generateDemandBasedOnTimePeriod_manual(RequestInfo requestInfo, String tenantId,
+			List<String> connectionnos) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
-		
-		demandService.generateDemandForTenantId(tenantId, requestInfo,connectionnos,false);
+
+		demandService.generateDemandForTenantId(tenantId, requestInfo, connectionnos, false);
 	}
+
 	/**
 	 * 
-	 * @param request - Calculation Request Object
+	 * @param request   - Calculation Request Object
 	 * @param masterMap - Master MDMS Data
 	 * @return list of calculation based on estimation criteria
 	 */
@@ -503,18 +505,20 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			Map<String, List> estimationMap = estimationService.getFeeEstimation(criteria, request.getRequestInfo(),
 					masterMap);
 			masterDataService.enrichBillingPeriodForFee(masterMap);
-			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, false);
+			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap,
+					false);
 			calculations.add(calculation);
 		}
 		return calculations;
 	}
-	
+
 	public void unsetWaterConnection(List<Calculation> calculation) {
 		calculation.forEach(cal -> cal.setWaterConnection(null));
 	}
-	
+
 	/**
 	 * Add adhoc tax to demand
+	 * 
 	 * @param adhocTaxReq - Adhox Tax Request Object
 	 * @return List of Calculation
 	 */
@@ -533,35 +537,36 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		return demandService.updateDemandForAdhocTax(adhocTaxReq.getRequestInfo(), calculations);
 	}
 
-
 	@Override
-	public void checkFailedBills(RequestInfo requestInfo,Long fromDateSearch , Long toDateSearch , String tenantId, String connectionno) {
+	public void checkFailedBills(RequestInfo requestInfo, Long fromDateSearch, Long toDateSearch, String tenantId,
+			String connectionno) {
 		// TODO Auto-generated method stub
-		List<Demand> demands = demandService.getDemandForFailedBills( requestInfo ,  fromDateSearch, toDateSearch, tenantId , connectionno);
-		List<BillFailureNotificationObj>  billDtls =  wSCalculationDao.getFailedBillDtl(tenantId , connectionno);
+		List<Demand> demands = demandService.getDemandForFailedBills(requestInfo, fromDateSearch, toDateSearch,
+				tenantId, connectionno);
+		List<BillFailureNotificationObj> billDtls = wSCalculationDao.getFailedBillDtl(tenantId, connectionno);
 		List<BillFailureNotificationObj> filterDemand = new ArrayList<BillFailureNotificationObj>();
-		if(demands.size()>0 && billDtls.size()>0)
-		{
-			demands.forEach(passedDemand ->{
-				//String passedConsumer = billDtls.stream().filter(d -> d.equals(passedDemand.getConsumerCode())).findAny().orElse(null);
-				BillFailureNotificationObj passedConsumer = billDtls.stream().filter(d -> d.getConnectionNo().equals(passedDemand.getConsumerCode())).findAny().orElse(null);
-				if(passedConsumer!=null)
-				filterDemand.add(passedConsumer);
-			}); 
+		if (demands.size() > 0 && billDtls.size() > 0) {
+			demands.forEach(passedDemand -> {
+				// String passedConsumer = billDtls.stream().filter(d ->
+				// d.equals(passedDemand.getConsumerCode())).findAny().orElse(null);
+				BillFailureNotificationObj passedConsumer = billDtls.stream()
+						.filter(d -> d.getConnectionNo().equals(passedDemand.getConsumerCode())).findAny().orElse(null);
+				if (passedConsumer != null)
+					filterDemand.add(passedConsumer);
+			});
 		}
-	
-		  if(filterDemand.size()>0)
-		 {
-			 filterDemand.forEach(demandObj ->{
-				 BillFailureNotificationRequest billFailureNotificationRequest = new BillFailureNotificationRequest();
-				 demandObj.setStatus(WSCalculationConstant.WS_BILL_STATUS_SUCCESS);
-				 demandObj.setLastModifiedTime( System.currentTimeMillis());
-				 demandObj.setLastModifiedBy(requestInfo.getUserInfo().getName());
-				 billFailureNotificationRequest.setBillFailureNotificationObj(demandObj);
-				 log.info("Send update msg to ws-failedBill-topic  :"+billFailureNotificationRequest);
-				 producer.push(config.getUpdatewsFailedBillTopic(), billFailureNotificationRequest);
-			 });
-		 } 
+
+		if (filterDemand.size() > 0) {
+			filterDemand.forEach(demandObj -> {
+				BillFailureNotificationRequest billFailureNotificationRequest = new BillFailureNotificationRequest();
+				demandObj.setStatus(WSCalculationConstant.WS_BILL_STATUS_SUCCESS);
+				demandObj.setLastModifiedTime(System.currentTimeMillis());
+				demandObj.setLastModifiedBy(requestInfo.getUserInfo().getName());
+				billFailureNotificationRequest.setBillFailureNotificationObj(demandObj);
+				log.info("Send update msg to ws-failedBill-topic  :" + billFailureNotificationRequest);
+				producer.push(config.getUpdatewsFailedBillTopic(), billFailureNotificationRequest);
+			});
+		}
 	}
-	
+
 }
