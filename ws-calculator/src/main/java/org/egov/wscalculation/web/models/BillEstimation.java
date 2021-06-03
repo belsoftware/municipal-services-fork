@@ -28,8 +28,17 @@ public class BillEstimation {
 	 @JsonProperty("billAmount")
 	 double billAmount;
 	 
+	 @JsonProperty("motorChargePayable")
+	 double motorChargePayable;
+	 
 	 @JsonProperty("payableBillAmount")
 	 double payableBillAmount;
+	 
+	 @JsonProperty("billingCycleEndDate")
+	 long billingCycleEndDate;
+	 
+	 @JsonProperty("monthsToCharge")
+	 double monthsToCharge;
 	 
 
 }

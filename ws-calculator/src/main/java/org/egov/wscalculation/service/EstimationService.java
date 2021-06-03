@@ -150,7 +150,11 @@ public class EstimationService {
         String calculationAttribute = getCalculationAttribute(calculationAttributeMaster, criteria.getWaterConnection().getConnectionType());
 		List<String> filterAttrs =getFilterAttribute(calculationAttributeMaster, criteria.getWaterConnection().getConnectionType());
 		
-		List<BillingSlab> billingSlabs = getSlabsFiltered(criteria.getWaterConnection(), mappingBillingSlab, calculationAttribute, filterAttrs, propertytry);
+		//This is required since waterSrc coming from UI is only PIPE and the slab is configured with PIPE.TREATED.
+		WaterConnection inputWaterConnection = criteria.getWaterConnection();
+		inputWaterConnection.setWaterSource(inputWaterConnection.getWaterSourceSubSource());
+		
+		List<BillingSlab> billingSlabs = getSlabsFiltered(inputWaterConnection, mappingBillingSlab, calculationAttribute, filterAttrs, propertytry);
 		if (billingSlabs == null || billingSlabs.isEmpty())
 			throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
 		if (billingSlabs.size() > 1)
@@ -425,8 +429,9 @@ public class EstimationService {
 				break;
 			case "waterSource":
 				long waterSourceCount =0 ;
+				
 				if(!StringUtils.isEmpty(waterConnection.getWaterSource())) {
-					waterSourceCount=billingSlabs.stream().filter(slab -> { 
+					waterSourceCount=billingSlabs.stream().filter(slab -> { 						
 						return slab.getWaterSource().equalsIgnoreCase(waterConnection.getWaterSource());
 					}).count();
 				}

@@ -133,19 +133,14 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	
 	public BillEstimation getBillEstimate(CalculationReq request) {
 		String tenantId = request.getCalculationCriteria().get(0).getTenantId();
-		BillEstimation billEstimation = new BillEstimation();
-		
-		Map<String, Object> billingMasterData = new HashMap<String, Object>();
-		
+		BillEstimation billEstimation = new BillEstimation();		
+		Map<String, Object> billingMasterData = new HashMap<String, Object>();		
 		if(request.getCalculationCriteria().get(0).getWaterConnection().getConnectionType().equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
-			 billingMasterData = calculatorUtils.loadBillingFrequencyMasterDataMeterConnection(request.getRequestInfo(), tenantId);	
-			
+			 billingMasterData = calculatorUtils.loadBillingFrequencyMasterDataMeterConnection(request.getRequestInfo(), tenantId);				
 		}
-		else {
-		
+		else {		
 		    billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(request.getRequestInfo(), tenantId);	
 		}
-		
 		
 		
 		if(billingMasterData!=null) {
@@ -165,7 +160,14 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 					double billAmountForBillingPeriod=0;
 					double fianlBillAmount = 0;
 					double monthsToCharge = 0;
+					double motorChargePayable = 0;
+					Long billingCycleEndDate = null;
+					
 					if(billingSlab != null) {
+						
+						if(criteria.getWaterConnection().getMotorInfo() != null)
+						    motorChargePayable = criteria.getWaterConnection().getMotorInfo().equalsIgnoreCase(WSCalculationConstant.WC_MOTOR_CONN)?billingSlab.getMotorCharge():0;
+						billEstimation.setMotorChargePayable(motorChargePayable);
 						billEstimation.setBillingSlab(billingSlab);
 						
 						Map<String, Object> billingPeriod = new HashMap<>();
@@ -208,43 +210,49 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 						case(WSCalculationConstant.Monthly_Billing_Period) :
 							 
 						  	//billAmountForBillingPeriod = billingSlab.getMinimumCharge();
-							fianlBillAmount = billAmountForBillingPeriod + billingSlab.getMotorCharge()+billingSlab.getMaintenanceCharge();	
+							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();	
 							
 						  break;
 						case(WSCalculationConstant.Quaterly_Billing_Period) :
 							
 						    startAndEndDate = estimationService.getQuarterStartAndEndDate(billingPeriod);
+							billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
 						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
 						    billAmountForBillingPeriod = (billAmountForBillingPeriod/3.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + billingSlab.getMotorCharge()+billingSlab.getMaintenanceCharge();
-											
+							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();
+							billEstimation.setMonthsToCharge(monthsToCharge);		
+							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
 						   break;
 						case(WSCalculationConstant.Yearly_Billing_Period) :
 							
-						     startAndEndDate = estimationService.getYearStartAndEndDate(billingPeriod);
-						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
-						//	billAmountForBillingPeriod = (billingSlab.getMinimumCharge()/12 )*monthsToCharge;
+						    startAndEndDate = estimationService.getYearStartAndEndDate(billingPeriod);
+						    billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
+						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);						
 						    billAmountForBillingPeriod = (billAmountForBillingPeriod/12.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + billingSlab.getMotorCharge()+billingSlab.getMaintenanceCharge();						
-						
+							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();						
+							billEstimation.setMonthsToCharge(monthsToCharge);		
+							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
 						   break;
 						   
 						case(WSCalculationConstant.Half_Yearly_Billing_Period) :							
-						    startAndEndDate = estimationService.getHalfYearStartAndEndDate(billingPeriod);						  
+						    startAndEndDate = estimationService.getHalfYearStartAndEndDate(billingPeriod);	
+						   billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
 						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
 						    billAmountForBillingPeriod = (billAmountForBillingPeriod/6.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + billingSlab.getMotorCharge()+billingSlab.getMaintenanceCharge();						
-			
-						
+							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();
+							billEstimation.setMonthsToCharge(monthsToCharge);		
+							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
 						    break;
 						   
 						case(WSCalculationConstant.Bi_Monthly_Billing_Period) :
 						
 						    startAndEndDate = estimationService.getBiMonthStartAndEndDate(billingPeriod);
+						    billingCycleEndDate =  (Long) startAndEndDate.get("endingDay");	
 						    monthsToCharge = getBillMonthsToCharge(startAndEndDate);
 						    billAmountForBillingPeriod = (billAmountForBillingPeriod/12.0)*monthsToCharge;
-							fianlBillAmount = billAmountForBillingPeriod + billingSlab.getMotorCharge()+billingSlab.getMaintenanceCharge();						
-						
+							fianlBillAmount = billAmountForBillingPeriod + motorChargePayable+billingSlab.getMaintenanceCharge();						
+							billEstimation.setMonthsToCharge(monthsToCharge);		
+							billEstimation.setBillingCycleEndDate(billingCycleEndDate);
 						
 						   break;
 						  default :
