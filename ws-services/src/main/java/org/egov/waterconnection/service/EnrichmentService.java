@@ -21,6 +21,7 @@ import org.egov.waterconnection.web.models.users.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -82,6 +83,20 @@ public class EnrichmentService {
 	  			reqType == WCConstants.MODIFY_CONNECTION ? WCConstants.MODIFY_WATER_CONNECTION :  WCConstants.NEW_WATER_CONNECTION);
 		setApplicationIdGenIds(waterConnectionRequest);
 		setStatusForCreate(waterConnectionRequest);
+		if(reqType == WCConstants.CREATE_APPLICATION) {
+			if(StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getUsageCategory())) {
+				waterConnectionRequest.getWaterConnection().setUsageCategory(waterConnectionRequest.getWaterConnection().getProposedUsageCategory());
+			}
+			if(StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getSubUsageCategory())) {
+				waterConnectionRequest.getWaterConnection().setSubUsageCategory(waterConnectionRequest.getWaterConnection().getProposedSubUsageCategory());
+			}
+			if(ObjectUtils.isEmpty(waterConnectionRequest.getWaterConnection().getPipeSize())) {
+				waterConnectionRequest.getWaterConnection().setPipeSize(waterConnectionRequest.getWaterConnection().getProposedPipeSize());
+			}
+			if(ObjectUtils.isEmpty(waterConnectionRequest.getWaterConnection().getNoOfTaps())) {
+				waterConnectionRequest.getWaterConnection().setNoOfTaps(waterConnectionRequest.getWaterConnection().getProposedTaps());
+			}
+		}
 		
 	}
 	@SuppressWarnings("unchecked")
