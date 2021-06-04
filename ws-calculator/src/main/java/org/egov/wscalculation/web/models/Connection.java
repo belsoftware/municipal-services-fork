@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
- 
 import org.egov.wscalculation.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
@@ -141,6 +140,12 @@ public class Connection {
 	
 	@JsonProperty("subUsageCategory")
 	private String subUsageCategory;
+	
+	@JsonProperty("proposedUsageCategory")
+	private String proposedUsageCategory;
+	
+	@JsonProperty("proposedSubUsageCategory")
+	private String proposedSubUsageCategory;
 
 	public Connection id(String id) {
 		this.id = id;
@@ -637,7 +642,7 @@ public class Connection {
 	}
 
 	
-	@ApiModelProperty(value = "Connection Usage Categoryf")
+	@ApiModelProperty(value = "Connection Usage Category")
 	public String getUsageCategory() {
 		return usageCategory;
 	}
@@ -654,6 +659,24 @@ public class Connection {
 
 	public void setSubUsageCategory(String subUsageCategory) {
 		this.subUsageCategory = subUsageCategory;
+	}
+	
+	
+
+	public String getProposedUsageCategory() {
+		return proposedUsageCategory;
+	}
+
+	public void setProposedUsageCategory(String proposedUsageCategory) {
+		this.proposedUsageCategory = proposedUsageCategory;
+	}
+
+	public String getProposedSubUsageCategory() {
+		return proposedSubUsageCategory;
+	}
+
+	public void setProposedSubUsageCategory(String proposedSubUsageCategory) {
+		this.proposedSubUsageCategory = proposedSubUsageCategory;
 	}
 
 	@Override
@@ -687,7 +710,9 @@ public class Connection {
 				&& Objects.equals(this.roadTypeEst, connection.roadTypeEst)
 				&& Objects.equals(this.wsTaxHeads, connection.wsTaxHeads) 
 				&& Objects.equals(this.usageCategory, connection.usageCategory)
-				&& Objects.equals(this.subUsageCategory, connection.subUsageCategory);
+				&& Objects.equals(this.subUsageCategory, connection.subUsageCategory)
+				&& Objects.equals(this.proposedUsageCategory, connection.proposedUsageCategory)
+				&& Objects.equals(this.proposedSubUsageCategory, connection.proposedSubUsageCategory);
 	}
 
 	@Override
@@ -695,7 +720,7 @@ public class Connection {
 		return Objects.hash(id, tenantId, propertyId, applicationNo, applicationStatus, status, connectionNo,
 				oldConnectionNo, documents, plumberInfo, roadType, roadCuttingArea, connectionExecutionDate,
 				connectionCategory, connectionType, additionalDetails, auditDetails, connectionHolders,
-				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads,usageCategory ,subUsageCategory);
+				applicationType, dateEffectiveFrom, oldApplication, roadTypeEst, wsTaxHeads,usageCategory ,subUsageCategory,proposedUsageCategory,proposedSubUsageCategory);
 	}
 
 	@Override
@@ -728,6 +753,8 @@ public class Connection {
 		sb.append("	   wsTaxHeads: ").append(toIndentedString(wsTaxHeads)).append("\n");
 		sb.append("	   usageCategory: ").append(toIndentedString(usageCategory)).append("\n");
 		sb.append("	   subUsageCategory: ").append(toIndentedString(subUsageCategory)).append("\n");
+		sb.append("	   proposedUsageCategory: ").append(toIndentedString(proposedUsageCategory)).append("\n");
+		sb.append("	   proposedSubUsageCategory: ").append(toIndentedString(proposedSubUsageCategory)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
