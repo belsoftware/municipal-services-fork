@@ -335,8 +335,8 @@ public class EstimationService {
 		//For metered connection calculation on graded fee slab
 		//For Non metered connection calculation on normal connection
 		if (isRangeCalculation(calculationAttribute)) {
-			if (totalUOM == 0.0)
-				return waterCharge;
+//			if (totalUOM == 0.0)
+//				return waterCharge;
 			if (waterConnection.getConnectionType().equalsIgnoreCase(WSCalculationConstant.meteredConnectionType) ||
 					(waterConnection.getConnectionType().equalsIgnoreCase(WSCalculationConstant.nonMeterdConnection) && 
 							billSlab.getCalculationAttribute().equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)
