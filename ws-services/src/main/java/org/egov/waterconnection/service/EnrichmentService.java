@@ -93,7 +93,7 @@ public class EnrichmentService {
 			if(ObjectUtils.isEmpty(waterConnectionRequest.getWaterConnection().getPipeSize())) {
 				waterConnectionRequest.getWaterConnection().setPipeSize(waterConnectionRequest.getWaterConnection().getProposedPipeSize());
 			}
-			if(ObjectUtils.isEmpty(waterConnectionRequest.getWaterConnection().getNoOfTaps())) {
+			if(ObjectUtils.isEmpty(waterConnectionRequest.getWaterConnection().getNoOfTaps())|| waterConnectionRequest.getWaterConnection().getNoOfTaps()<=0) {
 				waterConnectionRequest.getWaterConnection().setNoOfTaps(waterConnectionRequest.getWaterConnection().getProposedTaps());
 			}
 		}
