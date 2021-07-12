@@ -152,4 +152,12 @@ config:
         image-name: "birth-death-services"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "birth-death-services/src/main/resources/db"
-        image-name: "birth-death-services-db"      
+        image-name: "birth-death-services-db"    
+
+  - name: "builds/municipal-services/obm-services"
+    build:
+      - work-dir: "obm-services"
+        image-name: "obm-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "obm-services/src/main/resources/db"
+        image-name: "obm-services-db"        
