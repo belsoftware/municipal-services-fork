@@ -161,3 +161,9 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "obm-services/src/main/resources/db"
         image-name: "obm-services-db"        
+
+  - name: "builds/municipal-services/obm-calculator"
+    build:
+      - work-dir: "obm-calculator"
+        image-name: "obm-calculator"
+        dockerfile: "build/maven/Dockerfile"        
